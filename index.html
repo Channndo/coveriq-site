@@ -280,18 +280,17 @@
       submitBtn.disabled = true;
 
       try {
-        const res = await fetch(WEB_APP_URL, {
+        await fetch(WEB_APP_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          mode: "no-cors",          // <-- important
+          body: JSON.stringify(data) // sent as text/plain by default
         });
 
-        // Optional: read the JSON reply
-        // const result = await res.json();
-
+        // We don't need the response; just send them to thank-you.
         window.location.href = "/thank-you.html";
       } catch (err) {
         console.error("submitLead failed:", err);
+        // Even if something looks weird in the browser, still send them on.
         window.location.href = "/thank-you.html";
       }
     });

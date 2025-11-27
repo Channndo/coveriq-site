@@ -1,0 +1,110 @@
+/* Global font */
+* {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* Brand palette */
+:root {
+  --primary-dark: #1a3d4d;
+  --primary-medium: #2a5668;
+  --primary-light: #3a6b80;
+  --accent-teal: #2a9d8f;
+  --accent-light: #52b9aa;
+}
+
+/* Background gradient for both pages */
+body {
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+}
+
+/* Glass card effect (hero pill + containers + thank-you shell) */
+.glass-effect {
+  background: rgba(26, 61, 77, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(42, 157, 143, 0.2);
+}
+
+/* Gradient border wrapper around the form card */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(135deg, #1a3d4d, #2a9d8f);
+  padding: 1px;
+}
+
+/* Gradient text (hero highlight) */
+.gradient-text {
+  background: linear-gradient(135deg, #52b9aa 0%, #2a9d8f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Primary CTA button */
+.btn-gradient {
+  background: linear-gradient(135deg, #2a9d8f 0%, #3a6b80 100%);
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(42, 157, 143, 0.4);
+}
+
+/* Input styling for all form fields */
+.input-field {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(42, 157, 143, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-field:focus {
+  border-color: #2a9d8f;
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+  outline: none;
+}
+
+/* Progress bar fill */
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2a9d8f 0%, #52b9aa 100%);
+  transition: width 0.5s ease;
+}
+
+/* Small stat cards under hero */
+.feature-card {
+  background: rgba(26, 61, 77, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(42, 157, 143, 0.15);
+}
+
+/* Vehicle count field: collapsed by default */
+.vehicle-field {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease,
+    margin 0.3s ease;
+  margin-top: 0;
+}
+
+/* Vehicle count field: visible when auto/bundle selected */
+.vehicle-field.show {
+  max-height: 80px;
+  opacity: 1;
+  margin-top: 16px;
+}
+
+/* Thank-you page shell */
+.thankyou-shell {
+  background: rgba(26, 61, 77, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(42, 157, 143, 0.2);
+}
+
+/* Tiny helper for subtle dividers (if needed later) */
+.divider-light {
+  border-top: 1px solid rgba(148, 163, 184, 0.35);
+}

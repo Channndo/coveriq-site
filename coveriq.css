@@ -64,6 +64,11 @@ body {
   outline: none;
 }
 
+/* OPTIONAL: address field helper if you ever want to target it separately */
+.address-field {
+  width: 100%;
+}
+
 /* Progress bar fill */
 .progress-fill {
   height: 100%;

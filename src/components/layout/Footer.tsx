@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { LogoMark } from "../ui/LogoMark";
 import {
   GLOBAL_DISCLAIMER,
   SUPPORT_EMAIL,
@@ -14,9 +15,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="mb-4 flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-teal-600 text-sm font-bold text-slate-950">
-                IQ
-              </span>
+              <LogoMark />
               <span className="font-display text-lg font-bold text-white">CoverIQ</span>
             </div>
             <p className="mb-4 max-w-md text-sm text-slate-500">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { LogoMark } from "../ui/LogoMark";
 
 const NAV = [
   { label: "Coverage", href: "#coverage" },
@@ -30,9 +31,7 @@ export function Header() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link to="/" className="group flex items-center gap-3">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-teal-600 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/25 transition group-hover:shadow-cyan-500/40">
-            IQ
-          </span>
+          <LogoMark className="transition group-hover:shadow-cyan-500/40" />
           <span className="font-display text-lg font-bold text-white">CoverIQ</span>
         </Link>
 

@@ -1,3 +1,4 @@
-# Force HTTPS (Netlify)
-http://cover-iq.com/*   https://cover-iq.com/:splat   301!
-http://www.cover-iq.com/*   https://cover-iq.com/:splat   301!
+# Force HTTPS (Netlify) — must run before SPA /*
+http://cover-iq.com/*       https://cover-iq.com/:splat       301!
+http://www.cover-iq.com/*   https://cover-iq.com/:splat       301!
+https://www.cover-iq.com/*  https://cover-iq.com/:splat       301!

@@ -14,20 +14,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
-# MIRA API proxy (same Mindroot stack as Syntrix — avoids CORS, keeps HTTPS on cover-iq.com)
-[[redirects]]
-  from = "/api/mira/*"
-  to = "https://api.syntrix.solutions/api/mira/:splat"
-  status = 200
-  force = true
-
-# SPA fallback for client-side routes
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# Force HTTPS and canonical host (www → apex)
+# HTTPS + canonical host FIRST (before SPA /* catch-all, which would otherwise serve over HTTP)
 [[redirects]]
   from = "http://cover-iq.com/*"
   to = "https://cover-iq.com/:splat"
@@ -45,3 +32,16 @@
   to = "https://cover-iq.com/:splat"
   status = 301
   force = true
+
+# MIRA API proxy (same-origin — avoids CORS)
+[[redirects]]
+  from = "/api/mira/*"
+  to = "https://api.syntrix.solutions/api/mira/:splat"
+  status = 200
+  force = true
+
+# SPA fallback — must be last
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

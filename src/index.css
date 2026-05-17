@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-dark: #0a1628;
+  --color-primary-medium: #132337;
+  --color-primary-light: #1e3a52;
+  --color-accent-teal: #14b8a6;
+  --color-accent-cyan: #22d3ee;
+  --color-accent-light: #5eead4;
+  --color-surface: #030712;
+  --color-surface-elevated: #0c1222;
+  --color-surface-card: #111827;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+* {
+  font-family: var(--font-sans);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-[#030712] text-slate-200 antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(20, 184, 166, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(34, 211, 238, 0.06), transparent);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Grid overlay */
+.tech-grid {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+}
+
+/* Glass */
+.glass {
+  @apply border border-cyan-500/10 bg-slate-900/40 backdrop-blur-2xl;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 24px 48px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-dark {
+  @apply border border-cyan-400/15 bg-slate-900/60 backdrop-blur-2xl;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 40px -10px rgba(20, 184, 166, 0.15);
+}
+
+.glass-card {
+  @apply relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-b from-slate-800/50 to-slate-900/80 backdrop-blur-xl;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.6);
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(34, 211, 238, 0.08) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(20, 184, 166, 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-400 bg-clip-text text-transparent;
+}
+
+.gradient-border {
+  position: relative;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.5), rgba(20, 184, 166, 0.3), rgba(99, 102, 241, 0.2));
+  padding: 1px;
+  border-radius: 1rem;
+}
+
+.gradient-border > * {
+  @apply rounded-[15px] bg-slate-900;
+}
+
+.btn-primary {
+  @apply relative inline-flex items-center justify-center overflow-hidden rounded-xl px-6 py-3 text-sm font-semibold text-slate-950 transition;
+  background: linear-gradient(135deg, #5eead4 0%, #22d3ee 50%, #14b8a6 100%);
+  box-shadow:
+    0 0 20px -4px rgba(34, 211, 238, 0.5),
+    0 4px 24px -4px rgba(20, 184, 166, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 32px -4px rgba(34, 211, 238, 0.6),
+    0 8px 32px -4px rgba(20, 184, 166, 0.5);
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-slate-200 backdrop-blur-sm transition;
+}
+
+.btn-secondary:hover {
+  @apply border-cyan-400/30 bg-cyan-500/10 text-white;
+}
+
+.section-padding {
+  @apply px-4 py-20 sm:px-6 lg:px-8 lg:py-28;
+}
+
+.section-dark {
+  @apply relative bg-[#030712];
+}
+
+.section-elevated {
+  @apply relative bg-[#0a0f1a];
+}
+
+.prose-disclaimer {
+  @apply text-xs leading-relaxed text-slate-500;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-12px) scale(1.02); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* Inputs */
+.input-tech {
+  @apply w-full rounded-xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 transition;
+}
+
+.input-tech:focus {
+  @apply border-cyan-400/50 outline-none ring-2 ring-cyan-400/20;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #030712;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}

@@ -6,6 +6,7 @@ import { StickyCTA } from "./components/layout/StickyCTA";
 import { HomePage } from "./pages/HomePage";
 import { ThankYouPage } from "./pages/ThankYouPage";
 import { GlossaryPage } from "./pages/GlossaryPage";
+import { MiraWidget } from "./components/mira/MiraWidget";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -34,6 +35,7 @@ export default function App() {
         <>
           <Footer />
           <StickyCTA />
+          <MiraWidget />
         </>
       )}
     </>

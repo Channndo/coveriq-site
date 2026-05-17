@@ -7,6 +7,12 @@ const TRUST_ITEMS = [
   { icon: "○", text: "Educational-first AI" },
 ];
 
+const COVERAGE_TOPICS = [
+  { label: "Auto", width: 72 },
+  { label: "Home", width: 85 },
+  { label: "Life", width: 68 },
+];
+
 export function Hero() {
   return (
     <section className="relative min-h-[92vh] overflow-hidden bg-[#030712] text-white">
@@ -94,68 +100,44 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Tech dashboard visual */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
             className="relative"
           >
-            <motion.div className="gradient-border animate-float">
+            <div className="gradient-border animate-float">
               <div className="glass-card p-6 sm:p-8">
-                <motion.div className="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
                   <span className="font-mono text-xs text-cyan-400">COVERIQ.INTEL</span>
                   <span className="flex gap-1.5">
                     <span className="h-2 w-2 rounded-full bg-red-400/80" />
                     <span className="h-2 w-2 rounded-full bg-amber-400/80" />
                     <span className="h-2 w-2 rounded-full bg-emerald-400/80" />
                   </span>
-                </motion.div>
-
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { val: "150k+", label: "Protected", trend: "+12%" },
-                    { val: "4.9", label: "Rating", trend: "★" },
-                    { val: "$520", label: "Avg saved", trend: "est." },
-                  ].map((s, i) => (
-                    <motion.div
-                      key={s.label}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 + i * 0.1 }}
-                      className="rounded-xl border border-white/5 bg-slate-950/50 p-4 text-center"
-                    >
-                      <p className="font-display text-2xl font-bold text-white">{s.val}</p>
-                      <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-500">
-                        {s.label}
-                      </p>
-                      <p className="mt-1 text-[10px] text-cyan-400">{s.trend}</p>
-                    </motion.div>
-                  ))}
                 </div>
 
-                <motion.div className="mt-4 space-y-2 rounded-xl border border-white/5 bg-slate-950/30 p-4">
-                  <motion.div className="flex justify-between font-mono text-[10px] text-slate-500">
-                    <span>COVERAGE ANALYSIS</span>
-                    <span className="text-emerald-400">LIVE</span>
-                  </motion.div>
-                  {[85, 72, 94].map((w, i) => (
-                    <div key={i} className="h-1.5 overflow-hidden rounded-full bg-slate-800">
-                      <motion.div
-                        className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-teal-400"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${w}%` }}
-                        transition={{ delay: 0.8 + i * 0.15, duration: 1 }}
-                      />
+                <div className="space-y-3 rounded-xl border border-white/5 bg-slate-950/30 p-4">
+                  <div className="flex justify-between font-mono text-[10px] text-slate-500">
+                    <span>COVERAGE EDUCATION</span>
+                    <span className="text-emerald-400">READY</span>
+                  </div>
+                  {COVERAGE_TOPICS.map((topic, i) => (
+                    <div key={topic.label} className="space-y-1">
+                      <span className="font-mono text-[10px] text-slate-600">{topic.label}</span>
+                      <div className="h-1.5 overflow-hidden rounded-full bg-slate-800">
+                        <motion.div
+                          className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-teal-400"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${topic.width}%` }}
+                          transition={{ delay: 0.5 + i * 0.15, duration: 1 }}
+                        />
+                      </div>
                     </div>
                   ))}
-                </motion.div>
-
-                <p className="mt-4 text-center font-mono text-[10px] text-slate-600">
-                  *Educational estimates only · Not a guarantee
-                </p>
+                </div>
               </div>
-            </motion.div>
+            </div>
 
             <motion.div
               className="absolute -right-4 -top-4 rounded-lg border border-cyan-400/20 bg-slate-900/90 px-3 py-2 font-mono text-[10px] text-cyan-300 backdrop-blur-xl"

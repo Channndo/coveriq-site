@@ -5,6 +5,22 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# MIRA API proxy (same Mindroot stack as Syntrix — avoids CORS, keeps HTTPS on cover-iq.com)
+[[redirects]]
+  from = "/api/mira/*"
+  to = "https://api.syntrix.solutions/api/mira/:splat"
+  status = 200
+  force = true
+
 # SPA fallback for client-side routes
 [[redirects]]
   from = "/*"

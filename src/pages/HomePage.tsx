@@ -4,6 +4,7 @@ import { CoverageHub } from "../components/sections/CoverageHub";
 import { LineSelector } from "../components/sections/LineSelector";
 import { HowInsuranceWorks } from "../components/sections/HowInsuranceWorks";
 import { AiGuidance } from "../components/sections/AiGuidance";
+import { AgentPlatform } from "../components/sections/AgentPlatform";
 import { TrustSection } from "../components/sections/TrustSection";
 import { FAQ } from "../components/sections/FAQ";
 import { QuoteSection } from "../components/sections/QuoteSection";
@@ -28,6 +29,7 @@ export function HomePage() {
       <LineSelector onSelect={handleGetQuote} />
       <HowInsuranceWorks />
       <AiGuidance />
+      <AgentPlatform />
       <TrustSection />
       <FAQ />
       <QuoteSection selectedType={selectedType} />

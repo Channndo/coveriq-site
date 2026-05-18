@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { LogoMark } from "../ui/LogoMark";
 import {
+  AGENT_LOGIN_URL,
   GLOBAL_DISCLAIMER,
   SUPPORT_EMAIL,
   SUPPORT_PHONE,
@@ -41,6 +42,12 @@ export function Footer() {
               <li><a href="#how-it-works" className="hover:text-cyan-400">How It Works</a></li>
               <li><a href="#faq" className="hover:text-cyan-400">FAQ</a></li>
               <li><Link to="/glossary" className="hover:text-cyan-400">Glossary</Link></li>
+              <li><Link to="/agent" className="hover:text-cyan-400">CoverIQ Agent</Link></li>
+              <li>
+                <a href={AGENT_LOGIN_URL} className="hover:text-cyan-400">
+                  Agent login
+                </a>
+              </li>
             </ul>
           </div>
 

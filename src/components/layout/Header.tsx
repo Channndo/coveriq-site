@@ -7,6 +7,7 @@ const NAV = [
   { label: "Coverage", href: "#coverage" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "AI", href: "#ai-guidance" },
+  { label: "Agent", href: "/agent" },
   { label: "FAQ", href: "#faq" },
   { label: "Glossary", href: "/glossary" },
 ];
@@ -55,7 +56,13 @@ export function Header() {
               </a>
             )
           )}
-          <a href="#quote" className="btn-primary ml-3 !py-2.5 !px-5 text-sm">
+          <Link
+            to="/login"
+            className="ml-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm text-slate-300 transition hover:border-cyan-500/40 hover:text-white"
+          >
+            Login
+          </Link>
+          <a href="#quote" className="btn-primary ml-2 !py-2.5 !px-5 text-sm">
             Get Quote
           </a>
         </nav>
@@ -106,6 +113,13 @@ export function Header() {
                   </a>
                 )
               )}
+              <Link
+                to="/login"
+                className="mt-2 rounded-lg border border-white/15 px-3 py-2.5 text-center text-slate-300 hover:bg-white/5"
+                onClick={() => setOpen(false)}
+              >
+                Login
+              </Link>
               <a href="#quote" className="btn-primary mt-2 text-center" onClick={() => setOpen(false)}>
                 Get Quote
               </a>

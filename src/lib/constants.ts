@@ -4,7 +4,16 @@ export const WEB_APP_URL =
 
 export const SUPPORT_PHONE = "(574) 309-0107";
 export const SUPPORT_PHONE_HREF = "tel:5743090107";
-export const SUPPORT_EMAIL = "support@cover-iq.com";
+export const SUPPORT_EMAIL = "chandler@cover-iq.com";
+
+/** Licensed-agent portal (set VITE_AGENT_PORTAL_URL in Netlify for production) */
+export const AGENT_PORTAL_URL =
+  (import.meta.env.VITE_AGENT_PORTAL_URL as string | undefined)?.replace(/\/$/, "") ||
+  "https://agent.cover-iq.com";
+
+export const AGENT_LOGIN_URL =
+  (import.meta.env.VITE_AGENT_LOGIN_URL as string | undefined)?.replace(/\/$/, "") ||
+  `${AGENT_PORTAL_URL}/login`;
 
 export const GLOBAL_DISCLAIMER =
   "This content is provided for educational purposes only and should not be interpreted as legal, financial, or coverage advice. Coverage availability, definitions, exclusions, and limits vary by carrier and state. Always refer to your actual insurance policy for exact coverage details.";

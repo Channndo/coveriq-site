@@ -6,6 +6,8 @@ import { StickyCTA } from "./components/layout/StickyCTA";
 import { HomePage } from "./pages/HomePage";
 import { ThankYouPage } from "./pages/ThankYouPage";
 import { GlossaryPage } from "./pages/GlossaryPage";
+import { AgentPage } from "./pages/AgentPage";
+import { LoginPage } from "./pages/LoginPage";
 import { MiraWidget } from "./components/mira/MiraWidget";
 import { SyntrixGuard } from "./components/layout/SyntrixGuard";
 
@@ -30,6 +32,8 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
+          <Route path="/agent" element={<AgentPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </main>
       {!isThankYou && (

@@ -5,7 +5,7 @@ export const WEB_APP_URL =
 /** Consumer accounts (MIRA signups) — google-apps-script/coveriq-user-accounts */
 export const USER_ACCOUNTS_WEB_APP_URL =
   (import.meta.env.VITE_USER_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") ||
-  "https://script.google.com/macros/s/AKfycbzzd-mmwY2-f5ahqZHGsavym-aF2SMyJPIUGvILtKgZoCKmBOuxtmhcqz2QjMy_C2T3/exec";
+  "https://script.google.com/macros/s/AKfycbxg_X7kTnvTxE7XSZPc-55mvfwOjjrl_oEY_abxxMD4iT_vHDIxPKPmlHuDLI9aXaTj/exec";
 
 /** Licensed producer accounts — google-apps-script/coveriq-agent-accounts */
 export const AGENT_ACCOUNTS_WEB_APP_URL =

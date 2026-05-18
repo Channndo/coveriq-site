@@ -16,7 +16,7 @@ const CONFIG = {
   BRAND: 'coveriq',
   WEBSITE_URL: 'https://cover-iq.com',
 
-  EMAIL_RECIPIENTS: ['chandler@cover-iq.com'],
+  EMAIL_RECIPIENTS: ['chandler@cover-iq.com', 'chandler.hill.24@gmail.com'],
   SEND_EMAIL_NOTIFICATIONS: true,
 
   RATE_LIMIT_SECONDS: 180,

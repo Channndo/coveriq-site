@@ -1,5 +1,5 @@
-/** White logo on transparent background — no colored box */
-const LOGO_SRC = "/coveriq-logo.svg?v=3";
+/** White head mark on transparent background */
+const LOGO_SRC = "/coveriq-logo.png?v=4";
 
 export function LogoMark({ className = "" }: { className?: string }) {
   return (

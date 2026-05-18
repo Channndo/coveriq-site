@@ -39,6 +39,15 @@ The quote form in `src/components/quote/QuoteEngine.tsx` preserves the original 
 
 Legacy static pages are kept as `legacy-index.html` and `legacy-thank-you.html` for reference.
 
+## User accounts spreadsheet (separate from quotes)
+
+- **Script:** `google-apps-script/coveriq-user-accounts/` — deploy to its own Google Sheet.
+- **Site constant:** `USER_ACCOUNTS_WEB_APP_URL` / `VITE_USER_ACCOUNTS_WEB_APP_URL` in `src/lib/constants.ts`
+- **Client helper:** `submitUserAccount()` in `src/lib/userAccounts.ts`
+- **Fields:** `firstName`, `lastName`, `email`, `phone`, `accountType` (`consumer` | `agent`), `action`, `status`, `source`, `timestamp`, `utm_*`
+
+Do not use the quote `WEB_APP_URL` for account rows.
+
 ## Insurance line parity
 
 Coverage lines align with Chandler Hill Agency funnel options plus commercial lines. See `src/lib/insuranceLines.ts`.

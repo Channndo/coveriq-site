@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useConsumerAuth } from "../../context/ConsumerAuthContext";
 import { LogoMark } from "../ui/LogoMark";
 
 const NAV = [
@@ -13,6 +14,7 @@ const NAV = [
 ];
 
 export function Header() {
+  const { user, isAdmin } = useConsumerAuth();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -58,9 +60,14 @@ export function Header() {
           )}
           <Link
             to="/login"
-            className="ml-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm text-slate-300 transition hover:border-cyan-500/40 hover:text-white"
+            className="ml-2 flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm text-slate-300 transition hover:border-cyan-500/40 hover:text-white"
           >
-            Login
+            {user ? (isAdmin ? "Admin" : "Account") : "Login"}
+            {isAdmin && (
+              <span className="rounded bg-amber-500/15 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
+                Admin
+              </span>
+            )}
           </Link>
           <a href="#quote" className="btn-primary ml-2 !py-2.5 !px-5 text-sm">
             Get Quote

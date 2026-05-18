@@ -2,9 +2,16 @@
 export const WEB_APP_URL =
   "https://script.google.com/macros/s/AKfycbyt1mrcdt6HP3uuaNwOQ1FcQKdHk95YK7z7KWph8azpx8HzhVkThX9Ept7IwwYQ2VhD/exec";
 
+/** User accounts spreadsheet — separate deploy from quote leads. Set after deploying google-apps-script/coveriq-user-accounts */
+export const USER_ACCOUNTS_WEB_APP_URL =
+  (import.meta.env.VITE_USER_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") || "";
+
 export const SUPPORT_PHONE = "(574) 309-0107";
 export const SUPPORT_PHONE_HREF = "tel:5743090107";
 export const SUPPORT_EMAIL = "chandler@cover-iq.com";
+
+/** Sole site admin (see src/lib/admin.ts). */
+export const SITE_ADMIN_EMAIL = SUPPORT_EMAIL;
 
 /** CoverIQ Exchange — B2B agent portal (github.com/Channndo/coveriq-exchange) */
 export const EXCHANGE_PORTAL_URL =

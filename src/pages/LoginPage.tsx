@@ -1,59 +1,106 @@
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { LogoMark } from "../components/ui/LogoMark";
-import {
-  EXCHANGE_LOGIN_URL,
-  EXCHANGE_PORTAL_URL,
-  EXCHANGE_REGISTER_URL,
-} from "../lib/constants";
+import { useState, type FormEvent } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { AuthShell } from "../components/auth/AuthShell";
+import { useConsumerAuth } from "../context/ConsumerAuthContext";
+import { formatPhone } from "../lib/formatPhone";
 
 export function LoginPage() {
-  return (
-    <div className="relative flex min-h-[calc(100vh-5rem)] items-center justify-center bg-[#030712] px-4 py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45 }}
-        className="gradient-border w-full max-w-md rounded-2xl p-8 text-center"
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const fromMira = searchParams.get("from") === "mira";
+  const { user, isAdmin, signIn, signOut } = useConsumerAuth();
+
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+
+  const afterAuthPath = fromMira ? "/?openMira=1" : "/";
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+    const result = signIn(email, phone);
+    if (!result.ok) {
+      setError(result.error || "Could not sign in.");
+      return;
+    }
+    navigate(afterAuthPath, { replace: true });
+  };
+
+  if (user) {
+    return (
+      <AuthShell
+        title={`Welcome back, ${user.firstName}`}
+        subtitle={
+          isAdmin
+            ? "Signed in as site admin. You have full access including MIRA."
+            : "You're signed in and can use MIRA on CoverIQ."
+        }
       >
-        <div className="mb-6 flex justify-center">
-          <LogoMark className="h-12 w-12" />
-        </div>
-
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-400">CoverIQ Exchange</p>
-        <h1 className="font-display mt-2 text-2xl font-bold text-white">Licensed producer sign in</h1>
-        <p className="mt-3 text-sm leading-relaxed text-slate-400">
-          Consumer education and quotes live on cover-iq.com. Exchange is the B2B portal where licensed
-          agents claim leads and manage pipeline.
-        </p>
-
-        <a href={EXCHANGE_LOGIN_URL} className="btn-primary mt-8 block w-full text-center">
-          Continue to Exchange login
-        </a>
-
-        <p className="mt-4 text-sm text-slate-500">
-          New producer?{" "}
-          <a href={EXCHANGE_REGISTER_URL} className="text-cyan-400 hover:text-cyan-300">
-            Create an account
-          </a>
-        </p>
-
-        <p className="mt-4 text-xs text-slate-600">
-          Redirects to{" "}
-          <span className="font-mono text-slate-500">{EXCHANGE_PORTAL_URL}</span>
-        </p>
-
-        <Link to="/" className="mt-6 inline-block text-sm text-slate-500 hover:text-cyan-400">
-          ← Back to CoverIQ
-        </Link>
-
-        <p className="mt-8 border-t border-white/5 pt-6 text-xs text-slate-600">
-          Looking for a quote?{" "}
-          <Link to="/#quote" className="text-cyan-400 hover:text-cyan-300">
-            Get a quote on the homepage
+        <div className="mt-6 space-y-3">
+          <Link to="/?openMira=1" className="btn-primary block w-full text-center">
+            Open MIRA
           </Link>
-        </p>
-      </motion.div>
-    </div>
+          <Link to="/" className="btn-secondary block w-full text-center">
+            Back to homepage
+          </Link>
+          <button type="button" className="w-full py-2 text-sm text-slate-500 hover:text-slate-300" onClick={signOut}>
+            Sign out
+          </button>
+        </div>
+      </AuthShell>
+    );
+  }
+
+  return (
+    <AuthShell
+      title="Sign in"
+      subtitle="Use the email and phone from when you created your account."
+      miraNote={fromMira}
+    >
+      <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+        <input
+          type="email"
+          required
+          autoComplete="email"
+          className="input-tech w-full"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="tel"
+          required
+          autoComplete="tel"
+          className="input-tech w-full"
+          placeholder="Phone"
+          value={phone}
+          onChange={(e) => setPhone(formatPhone(e.target.value))}
+        />
+
+        {error && (
+          <p className="text-sm text-rose-400">
+            {error}{" "}
+            <Link to={fromMira ? "/signup?from=mira" : "/signup"} className="text-cyan-400 hover:text-cyan-300">
+              Create an account
+            </Link>
+          </p>
+        )}
+
+        <button type="submit" className="btn-primary mt-2 w-full">
+          Sign in
+        </button>
+      </form>
+
+      <p className="mt-5 text-center text-sm text-slate-500">
+        New to CoverIQ?{" "}
+        <Link
+          to={fromMira ? "/signup?from=mira" : "/signup"}
+          className="font-medium text-cyan-400 hover:text-cyan-300"
+        >
+          Create a free account
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

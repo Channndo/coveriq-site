@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { useConsumerAuth } from "../../context/ConsumerAuthContext";
 import {
   MIRA_DISCLAIMER_AVAILABLE,
   MIRA_QUICK_PROMPTS,
@@ -9,6 +11,9 @@ import { fetchMiraStatus, sendMiraChat, type MiraMessage } from "../../lib/miraA
 import "./mira-widget.css";
 
 export function MiraWidget() {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { user, ready: authReady } = useConsumerAuth();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<MiraMessage[]>([]);
   const [input, setInput] = useState("");
@@ -41,6 +46,14 @@ export function MiraWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  useEffect(() => {
+    if (!authReady || !user) return;
+    if (searchParams.get("openMira") === "1") {
+      setOpen(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [authReady, user, searchParams, setSearchParams]);
+
   const sendText = useCallback(
     async (text: string) => {
       const trimmed = text.trim();
@@ -62,6 +75,11 @@ export function MiraWidget() {
   );
 
   const toggle = () => {
+    if (!authReady) return;
+    if (!user) {
+      navigate("/login?from=mira");
+      return;
+    }
     setOpen((o) => !o);
     if (!open) setTimeout(() => textareaRef.current?.focus(), 150);
   };
@@ -74,7 +92,9 @@ export function MiraWidget() {
             <span className="mira-launcher-inner">
               <span className="mira-launcher-copy">
                 <strong>MIRA</strong>
-                <span className="mira-launcher-desc">Insurance education · plain language</span>
+                <span className="mira-launcher-desc">
+                  {user ? "Insurance education · plain language" : "Sign in to chat"}
+                </span>
               </span>
               <span className="mira-launcher-icon-wrap">
                 <img src="/mira-logo.svg" alt="" width={36} height={36} />

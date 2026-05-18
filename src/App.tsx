@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { ConsumerAuthProvider } from "./context/ConsumerAuthContext";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
 import { StickyCTA } from "./components/layout/StickyCTA";
@@ -8,6 +9,7 @@ import { ThankYouPage } from "./pages/ThankYouPage";
 import { GlossaryPage } from "./pages/GlossaryPage";
 import { AgentPage } from "./pages/AgentPage";
 import { LoginPage } from "./pages/LoginPage";
+import { SignupPage } from "./pages/SignupPage";
 import { MiraWidget } from "./components/mira/MiraWidget";
 import { SyntrixGuard } from "./components/layout/SyntrixGuard";
 
@@ -23,10 +25,13 @@ export default function App() {
   const location = useLocation();
   const isThankYou = location.pathname === "/thank-you";
 
+  const hideChrome =
+    isThankYou || location.pathname === "/login" || location.pathname === "/signup";
+
   return (
-    <>
+    <ConsumerAuthProvider>
       <ScrollToTop />
-      {!isThankYou && <Header />}
+      {!hideChrome && <Header />}
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -34,9 +39,10 @@ export default function App() {
           <Route path="/glossary" element={<GlossaryPage />} />
           <Route path="/agent" element={<AgentPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
         </Routes>
       </main>
-      {!isThankYou && (
+      {!hideChrome && (
         <>
           <Footer />
           <StickyCTA />
@@ -44,6 +50,6 @@ export default function App() {
           <SyntrixGuard />
         </>
       )}
-    </>
+    </ConsumerAuthProvider>
   );
 }

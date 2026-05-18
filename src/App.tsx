@@ -7,6 +7,7 @@ import { HomePage } from "./pages/HomePage";
 import { ThankYouPage } from "./pages/ThankYouPage";
 import { GlossaryPage } from "./pages/GlossaryPage";
 import { MiraWidget } from "./components/mira/MiraWidget";
+import { SyntrixGuard } from "./components/layout/SyntrixGuard";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -36,6 +37,7 @@ export default function App() {
           <Footer />
           <StickyCTA />
           <MiraWidget />
+          <SyntrixGuard />
         </>
       )}
     </>

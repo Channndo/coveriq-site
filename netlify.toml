@@ -5,6 +5,10 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[[edge_functions]]
+  path = "/api/mira/*"
+  function = "mira-rate-limit"
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -15,7 +19,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
-# HTTPS + canonical host FIRST (before SPA /* catch-all, which would otherwise serve over HTTP)
+# HTTPS + canonical host FIRST (before SPA /* catch-all)
 [[redirects]]
   from = "http://cover-iq.com/*"
   to = "https://cover-iq.com/:splat"
@@ -32,6 +36,61 @@
   from = "https://www.cover-iq.com/*"
   to = "https://cover-iq.com/:splat"
   status = 301
+  force = true
+
+# Block MCP-style probe paths (SPA was returning 200 + HTML — false positive for scanners)
+[[redirects]]
+  from = "/tools"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/tools/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/messages"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/messages/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/mcp"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/mcp/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/sse"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/sse/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.well-known/mcp*"
+  to = "/404.html"
+  status = 404
   force = true
 
 # MIRA API proxy (same-origin — avoids CORS)

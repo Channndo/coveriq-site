@@ -1,6 +1,9 @@
-/** Per-IP rate limit for MIRA proxy — satisfies security scanners expecting 429 + rate-limit headers */
+/**
+ * Per-IP rate limit for agent/MIRA endpoints (Syntrix RATE-01).
+ * Burst of 12 probe requests should receive 429 + rate-limit headers.
+ */
 const WINDOW_MS = 60_000;
-const MAX_REQUESTS = 24;
+const MAX_REQUESTS = 10;
 
 type Bucket = { count: number; reset: number };
 const buckets = new Map<string, Bucket>();
@@ -13,16 +16,21 @@ function clientIp(request: Request): string {
   );
 }
 
+function rateLimitKey(request: Request, ip: string): string {
+  const path = new URL(request.url).pathname;
+  return `${ip}:${path.startsWith("/api/mira") ? "mira" : "root"}`;
+}
+
 export default async function handler(
   request: Request,
   context: { next: () => Promise<Response> }
 ): Promise<Response> {
-  const ip = clientIp(request);
+  const key = rateLimitKey(request, clientIp(request));
   const now = Date.now();
-  let bucket = buckets.get(ip);
+  let bucket = buckets.get(key);
   if (!bucket || now > bucket.reset) {
     bucket = { count: 0, reset: now + WINDOW_MS };
-    buckets.set(ip, bucket);
+    buckets.set(key, bucket);
   }
   bucket.count += 1;
 

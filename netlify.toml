@@ -5,9 +5,14 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Rate-limit agent probe targets (Syntrix RATE-01: 12 burst → 429)
+[[edge_functions]]
+  path = "/"
+  function = "rate-limit"
+
 [[edge_functions]]
   path = "/api/mira/*"
-  function = "mira-rate-limit"
+  function = "rate-limit"
 
 [[headers]]
   for = "/*"

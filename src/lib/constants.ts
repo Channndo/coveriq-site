@@ -9,7 +9,8 @@ export const USER_ACCOUNTS_WEB_APP_URL =
 
 /** Licensed producer accounts — google-apps-script/coveriq-agent-accounts */
 export const AGENT_ACCOUNTS_WEB_APP_URL =
-  (import.meta.env.VITE_AGENT_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") || "";
+  (import.meta.env.VITE_AGENT_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") ||
+  "https://script.google.com/macros/s/AKfycbw-qeYdrL5WNhUtejTJildMepB1uVuVv0M3v7oPVwEKMnOpdys3APPkJs6wRL8ZSK7K/exec";
 
 export const SUPPORT_PHONE = "(574) 309-0107";
 export const SUPPORT_PHONE_HREF = "tel:5743090107";

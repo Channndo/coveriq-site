@@ -7,7 +7,7 @@ const NAV = [
   { label: "Coverage", href: "#coverage" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "AI", href: "#ai-guidance" },
-  { label: "Agent", href: "/agent" },
+  { label: "Exchange", href: "/agent" },
   { label: "FAQ", href: "#faq" },
   { label: "Glossary", href: "/glossary" },
 ];

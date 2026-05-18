@@ -6,14 +6,24 @@ export const SUPPORT_PHONE = "(574) 309-0107";
 export const SUPPORT_PHONE_HREF = "tel:5743090107";
 export const SUPPORT_EMAIL = "chandler@cover-iq.com";
 
-/** Licensed-agent portal (set VITE_AGENT_PORTAL_URL in Netlify for production) */
-export const AGENT_PORTAL_URL =
+/** CoverIQ Exchange — B2B agent portal (github.com/Channndo/coveriq-exchange) */
+export const EXCHANGE_PORTAL_URL =
+  (import.meta.env.VITE_EXCHANGE_PORTAL_URL as string | undefined)?.replace(/\/$/, "") ||
   (import.meta.env.VITE_AGENT_PORTAL_URL as string | undefined)?.replace(/\/$/, "") ||
-  "https://agent.cover-iq.com";
+  "https://agents.cover-iq.com";
 
-export const AGENT_LOGIN_URL =
+export const EXCHANGE_LOGIN_URL =
+  (import.meta.env.VITE_EXCHANGE_LOGIN_URL as string | undefined)?.replace(/\/$/, "") ||
   (import.meta.env.VITE_AGENT_LOGIN_URL as string | undefined)?.replace(/\/$/, "") ||
-  `${AGENT_PORTAL_URL}/login`;
+  `${EXCHANGE_PORTAL_URL}/login`;
+
+export const EXCHANGE_REGISTER_URL =
+  (import.meta.env.VITE_EXCHANGE_REGISTER_URL as string | undefined)?.replace(/\/$/, "") ||
+  `${EXCHANGE_PORTAL_URL}/register`;
+
+/** @deprecated Use EXCHANGE_* — kept for existing imports */
+export const AGENT_PORTAL_URL = EXCHANGE_PORTAL_URL;
+export const AGENT_LOGIN_URL = EXCHANGE_LOGIN_URL;
 
 export const GLOBAL_DISCLAIMER =
   "This content is provided for educational purposes only and should not be interpreted as legal, financial, or coverage advice. Coverage availability, definitions, exclusions, and limits vary by carrier and state. Always refer to your actual insurance policy for exact coverage details.";

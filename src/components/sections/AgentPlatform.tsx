@@ -1,27 +1,30 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { SectionHeading } from "../ui/SectionHeading";
-import { AGENT_LOGIN_URL, AGENT_PORTAL_URL } from "../../lib/constants";
+import {
+  EXCHANGE_LOGIN_URL,
+  EXCHANGE_PORTAL_URL,
+  EXCHANGE_REGISTER_URL,
+} from "../../lib/constants";
 
 const FEATURES = [
   {
-    title: "Agent workspace",
-    desc: "Manage leads, follow-ups, and client conversations in one place built for licensed producers.",
+    title: "Lead exchange",
+    desc: "Licensed producers browse and claim qualified leads from the CoverIQ consumer funnel.",
     icon: "01",
   },
   {
-    title: "MIRA + Mindroot",
-    desc: "AI-assisted explanations you can share with clients — educational tone, compliance-aware guardrails.",
+    title: "Producer dashboard",
+    desc: "Track pipeline, follow-ups, and account status in one workspace built for agents.",
     icon: "02",
   },
   {
-    title: "Quote intake sync",
-    desc: "CoverIQ.com submissions flow into your pipeline so nothing falls through after a web quote.",
+    title: "MIRA + Mindroot",
+    desc: "AI-assisted coverage explanations you can use with clients — educational, compliance-aware.",
     icon: "03",
   },
   {
-    title: "Coverage intelligence",
-    desc: "Line-of-business context for auto, home, life, and commercial — before you talk to the carrier.",
+    title: "Plans & billing",
+    desc: "Starter and Professional tiers via Stripe — scale as your book grows.",
     icon: "04",
   },
 ];
@@ -39,9 +42,9 @@ export function AgentPlatform() {
 
       <motion.div className="section-padding mx-auto max-w-7xl">
         <SectionHeading
-          eyebrow="CoverIQ Agent"
-          title="Built for licensed insurance professionals"
-          description="The public site educates consumers. CoverIQ Agent is where producers sign in to work leads, collaborate with MIRA, and move quotes forward."
+          eyebrow="CoverIQ Exchange"
+          title="The intelligent lead exchange for licensed producers"
+          description="CoverIQ.com educates consumers and captures quotes. CoverIQ Exchange is where licensed agents sign in to claim leads, manage pipeline, and grow their book."
         />
 
         <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -62,28 +65,25 @@ export function AgentPlatform() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a
-            href={AGENT_LOGIN_URL}
-            className="btn-primary min-w-[200px] text-center"
-          >
-            Agent sign in
+          <a href={EXCHANGE_LOGIN_URL} className="btn-primary min-w-[200px] text-center">
+            Exchange sign in
           </a>
-          <Link to="/agent" className="btn-secondary min-w-[200px] text-center">
-            Learn more
-          </Link>
+          <a href={EXCHANGE_REGISTER_URL} className="btn-secondary min-w-[200px] text-center">
+            Create account
+          </a>
           <a
-            href={AGENT_PORTAL_URL}
+            href={EXCHANGE_PORTAL_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-sm text-slate-500 underline-offset-4 hover:text-cyan-400 hover:underline"
           >
-            Open agent portal →
+            Open Exchange →
           </a>
         </div>
 
         <p className="prose-disclaimer mt-10 text-slate-600">
-          CoverIQ Agent is for licensed insurance professionals. It does not replace carrier systems,
-          underwriting, or your obligations as a licensed producer.
+          CoverIQ Exchange is for licensed insurance professionals only. Accounts may require verification
+          before dashboard access. Binding coverage always flows through licensed carriers and underwriting.
         </p>
       </motion.div>
     </section>

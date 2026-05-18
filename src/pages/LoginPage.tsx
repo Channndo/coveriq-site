@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { LogoMark } from "../components/ui/LogoMark";
-import { AGENT_LOGIN_URL, AGENT_PORTAL_URL } from "../lib/constants";
+import {
+  EXCHANGE_LOGIN_URL,
+  EXCHANGE_PORTAL_URL,
+  EXCHANGE_REGISTER_URL,
+} from "../lib/constants";
 
 export function LoginPage() {
   return (
@@ -16,26 +20,30 @@ export function LoginPage() {
           <LogoMark className="h-12 w-12" />
         </div>
 
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-400">CoverIQ Agent</p>
-        <h1 className="font-display mt-2 text-2xl font-bold text-white">Licensed agent sign in</h1>
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-400">CoverIQ Exchange</p>
+        <h1 className="font-display mt-2 text-2xl font-bold text-white">Licensed producer sign in</h1>
         <p className="mt-3 text-sm leading-relaxed text-slate-400">
-          Consumer quotes and education live on CoverIQ.com. Agents sign in to the producer portal to
-          manage leads and work with MIRA.
+          Consumer education and quotes live on cover-iq.com. Exchange is the B2B portal where licensed
+          agents claim leads and manage pipeline.
         </p>
 
-        <a href={AGENT_LOGIN_URL} className="btn-primary mt-8 block w-full text-center">
-          Continue to sign in
+        <a href={EXCHANGE_LOGIN_URL} className="btn-primary mt-8 block w-full text-center">
+          Continue to Exchange login
         </a>
 
-        <p className="mt-4 text-xs text-slate-600">
-          You will be redirected to{" "}
-          <span className="font-mono text-slate-500">{AGENT_PORTAL_URL}</span>
+        <p className="mt-4 text-sm text-slate-500">
+          New producer?{" "}
+          <a href={EXCHANGE_REGISTER_URL} className="text-cyan-400 hover:text-cyan-300">
+            Create an account
+          </a>
         </p>
 
-        <Link
-          to="/"
-          className="mt-6 inline-block text-sm text-slate-500 hover:text-cyan-400"
-        >
+        <p className="mt-4 text-xs text-slate-600">
+          Redirects to{" "}
+          <span className="font-mono text-slate-500">{EXCHANGE_PORTAL_URL}</span>
+        </p>
+
+        <Link to="/" className="mt-6 inline-block text-sm text-slate-500 hover:text-cyan-400">
           ← Back to CoverIQ
         </Link>
 

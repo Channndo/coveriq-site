@@ -2,9 +2,14 @@
 export const WEB_APP_URL =
   "https://script.google.com/macros/s/AKfycbyt1mrcdt6HP3uuaNwOQ1FcQKdHk95YK7z7KWph8azpx8HzhVkThX9Ept7IwwYQ2VhD/exec";
 
-/** User accounts spreadsheet — separate deploy from quote leads. Set after deploying google-apps-script/coveriq-user-accounts */
+/** Consumer accounts (MIRA signups) — google-apps-script/coveriq-user-accounts */
 export const USER_ACCOUNTS_WEB_APP_URL =
-  (import.meta.env.VITE_USER_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") || "";
+  (import.meta.env.VITE_USER_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") ||
+  "https://script.google.com/macros/s/AKfycbzzd-mmwY2-f5ahqZHGsavym-aF2SMyJPIUGvILtKgZoCKmBOuxtmhcqz2QjMy_C2T3/exec";
+
+/** Licensed producer accounts — google-apps-script/coveriq-agent-accounts */
+export const AGENT_ACCOUNTS_WEB_APP_URL =
+  (import.meta.env.VITE_AGENT_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") || "";
 
 export const SUPPORT_PHONE = "(574) 309-0107";
 export const SUPPORT_PHONE_HREF = "tel:5743090107";

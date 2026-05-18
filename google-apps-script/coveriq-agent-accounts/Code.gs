@@ -1,20 +1,19 @@
 /**
- * CoverIQ — User accounts Web App
- * Separate spreadsheet from quote leads (WEB_APP_URL on coveriq-site).
+ * CoverIQ — Agent accounts Web App (licensed producers / Exchange)
+ * Separate spreadsheet from quote leads AND consumer user accounts.
  *
  * FIRST TIME: In the Apps Script editor, run createSpreadsheet() once (authorize when asked).
  * Then Deploy → Web app. No need to create a Google Sheet manually.
  */
 
-const SCRIPT_PROP_SPREADSHEET_ID = 'COVERIQ_USER_SPREADSHEET_ID';
+const SCRIPT_PROP_SPREADSHEET_ID = 'COVERIQ_AGENT_SPREADSHEET_ID';
 
 const CONFIG = {
-  /** Optional override. Leave empty — createSpreadsheet() saves the ID automatically. */
   SPREADSHEET_ID: '',
-  SPREADSHEET_TITLE: 'CoverIQ User Accounts',
-  SHEET_NAME: 'User Accounts',
-  BRAND: 'coveriq',
-  WEBSITE_URL: 'https://cover-iq.com',
+  SPREADSHEET_TITLE: 'CoverIQ Agent Accounts',
+  SHEET_NAME: 'Agent Accounts',
+  BRAND: 'coveriq_exchange',
+  WEBSITE_URL: 'https://agents.cover-iq.com',
 
   EMAIL_RECIPIENTS: ['chandler@cover-iq.com'],
   SEND_EMAIL_NOTIFICATIONS: true,
@@ -25,7 +24,9 @@ const CONFIG = {
     lastName: 80,
     email: 120,
     phone: 20,
-    accountType: 40,
+    agencyName: 120,
+    npn: 20,
+    licensedStates: 80,
     status: 40,
     source: 80,
     action: 40,
@@ -36,14 +37,16 @@ const CONFIG = {
 };
 
 const HEADERS = [
-  'Account ID',
+  'Agent ID',
   'Date',
   'Time',
   'First Name',
   'Last Name',
   'Email',
   'Phone',
-  'Account Type',
+  'Agency Name',
+  'NPN',
+  'Licensed States',
   'Status',
   'Action',
   'Source',
@@ -63,21 +66,23 @@ function doPost(e) {
     checkRateLimit_(payload.email);
 
     const sheet = getSheet_();
-    const accountId = generateAccountId_(sheet);
+    const agentId = generateAgentId_(sheet);
     const now = new Date();
     const tz = Session.getScriptTimeZone();
     const dateStr = Utilities.formatDate(now, tz, 'yyyy-MM-dd');
     const timeStr = Utilities.formatDate(now, tz, 'h:mm:ss a');
 
     sheet.appendRow([
-      accountId,
+      agentId,
       dateStr,
       timeStr,
       payload.firstName,
       payload.lastName,
       payload.email,
       payload.phone,
-      payload.accountType,
+      payload.agencyName,
+      payload.npn,
+      payload.licensedStates,
       payload.status,
       payload.action,
       payload.source,
@@ -90,10 +95,10 @@ function doPost(e) {
     ]);
 
     if (CONFIG.SEND_EMAIL_NOTIFICATIONS) {
-      sendAccountNotification_(accountId, dateStr, timeStr, payload);
+      sendAgentNotification_(agentId, dateStr, timeStr, payload);
     }
 
-    return jsonResponse_({ ok: true, accountId: accountId });
+    return jsonResponse_({ ok: true, agentId: agentId });
   } catch (err) {
     const message = err && err.message ? err.message : 'Something went wrong.';
     return jsonResponse_({ ok: false, error: message });
@@ -105,7 +110,7 @@ function doGet() {
     checkBurstRateLimit_();
     return jsonResponse_({
       ok: true,
-      message: 'CoverIQ user accounts endpoint is running.',
+      message: 'CoverIQ agent accounts endpoint is running.',
       sheet: CONFIG.SHEET_NAME
     });
   } catch (err) {
@@ -114,10 +119,6 @@ function doGet() {
   }
 }
 
-/**
- * Run once from the Apps Script editor. Creates the spreadsheet, tab, and headers.
- * Check View → Logs for the spreadsheet URL.
- */
 function createSpreadsheet() {
   const storedId = getStoredSpreadsheetId_();
   if (storedId) {
@@ -143,7 +144,6 @@ function createSpreadsheet() {
   return ss;
 }
 
-/** Alias — same as createSpreadsheet() */
 function setupSheetHeaders() {
   const ss = getSpreadsheet_();
   setupSheetHeadersOnSpreadsheet_(ss);
@@ -175,9 +175,9 @@ function applyHeadersToSheet_(sheet) {
 
   sheet.setColumnWidth(1, 140);
   sheet.setColumnWidth(6, 220);
-  sheet.setColumnWidth(8, 120);
-  sheet.setColumnWidth(12, 240);
-  sheet.setColumnWidth(16, 280);
+  sheet.setColumnWidth(8, 160);
+  sheet.setColumnWidth(13, 240);
+  sheet.setColumnWidth(18, 280);
 }
 
 function logSpreadsheetInfo_(ss, prefix) {
@@ -206,17 +206,16 @@ function parsePayload_(e) {
     throw new Error('Invalid JSON payload.');
   }
 
-  const accountType = normalizeAccountType_(data.accountType);
-  const action = trim_(data.action, CONFIG.MAX_LEN.action) || 'signup';
-
   return {
     firstName: trim_(data.firstName, CONFIG.MAX_LEN.firstName),
     lastName: trim_(data.lastName, CONFIG.MAX_LEN.lastName),
     email: trim_(data.email, CONFIG.MAX_LEN.email).toLowerCase(),
     phone: cleanPhone_(data.phone),
-    accountType: accountType,
-    status: trim_(data.status, CONFIG.MAX_LEN.status) || 'pending',
-    action: action,
+    agencyName: trim_(data.agencyName || data.agency_name, CONFIG.MAX_LEN.agencyName),
+    npn: trim_(data.npn || data.NPN, CONFIG.MAX_LEN.npn),
+    licensedStates: trim_(data.licensedStates || data.licensed_states, CONFIG.MAX_LEN.licensedStates),
+    status: trim_(data.status, CONFIG.MAX_LEN.status) || 'pending_verification',
+    action: trim_(data.action, CONFIG.MAX_LEN.action) || 'signup',
     source: trim_(data.source, CONFIG.MAX_LEN.source) || CONFIG.WEBSITE_URL,
     pageUrl: trim_(data.pageUrl || data.page_url, CONFIG.MAX_LEN.pageUrl),
     utmSource: trim_(data.utm_source || data.utmSource, CONFIG.MAX_LEN.utm),
@@ -234,21 +233,12 @@ function validatePayload_(p) {
   if (!isValidEmail_(p.email)) throw new Error('Please enter a valid email address.');
   if (!p.phone) throw new Error('Phone is required.');
   if (p.phone.length < 10) throw new Error('Please enter a valid phone number.');
-  if (!p.accountType) throw new Error('Account type is required.');
-}
-
-function normalizeAccountType_(value) {
-  const raw = trim_(value, CONFIG.MAX_LEN.accountType).toLowerCase();
-  if (!raw) return '';
-  if (raw === 'consumer' || raw === 'user') return 'consumer';
-  if (raw === 'agent' || raw === 'producer' || raw === 'licensed_producer') return 'agent';
-  return raw.slice(0, CONFIG.MAX_LEN.accountType);
 }
 
 function checkBurstRateLimit_() {
   const cache = CacheService.getScriptCache();
   const minute = Math.floor(Date.now() / 60000);
-  const key = 'burst_accounts_' + minute;
+  const key = 'burst_agents_' + minute;
   const n = parseInt(cache.get(key) || '0', 10) + 1;
   cache.put(key, String(n), 120);
   if (n > 15) {
@@ -259,7 +249,7 @@ function checkBurstRateLimit_() {
 function checkRateLimit_(email) {
   if (!email) return;
   const cache = CacheService.getScriptCache();
-  const key = 'account_' + email;
+  const key = 'agent_' + email;
   if (cache.get(key)) {
     throw new Error('Please wait a few minutes before submitting again.');
   }
@@ -292,12 +282,12 @@ function getSheet_() {
   return sheet;
 }
 
-function generateAccountId_(sheet) {
+function generateAgentId_(sheet) {
   const tz = Session.getScriptTimeZone();
   const datePart = Utilities.formatDate(new Date(), tz, 'yyyyMMdd');
   const dataRows = Math.max(0, sheet.getLastRow() - 1);
   const seq = Utilities.formatString('%04d', dataRows + 1);
-  return 'CIQ-ACC-' + datePart + '-' + seq;
+  return 'CIQ-AGT-' + datePart + '-' + seq;
 }
 
 function getNotificationRecipients_() {
@@ -314,7 +304,7 @@ function getNotificationRecipients_() {
   });
 }
 
-function sendAccountNotification_(accountId, dateStr, timeStr, p) {
+function sendAgentNotification_(agentId, dateStr, timeStr, p) {
   const recipients = getNotificationRecipients_();
   if (!recipients.length) {
     Logger.log('No EMAIL_RECIPIENTS configured — skipping email.');
@@ -322,20 +312,12 @@ function sendAccountNotification_(accountId, dateStr, timeStr, p) {
   }
 
   const subject =
-    'New CoverIQ account — ' +
-    p.firstName +
-    ' ' +
-    p.lastName +
-    ' (' +
-    p.accountType +
-    ') [' +
-    accountId +
-    ']';
+    'New CoverIQ agent — ' + p.firstName + ' ' + p.lastName + ' [' + agentId + ']';
 
   const body = [
-    'New user account record from ' + (CONFIG.WEBSITE_URL || 'cover-iq.com'),
+    'New licensed producer / agent account from ' + (CONFIG.WEBSITE_URL || 'agents.cover-iq.com'),
     '',
-    'Account ID: ' + accountId,
+    'Agent ID: ' + agentId,
     'Date: ' + dateStr,
     'Time: ' + timeStr,
     '',
@@ -344,31 +326,20 @@ function sendAccountNotification_(accountId, dateStr, timeStr, p) {
     '  Email: ' + p.email,
     '  Phone: ' + formatPhoneDisplay_(p.phone),
     '',
-    'Account',
-    '  Type: ' + p.accountType,
+    'Producer',
+    '  Agency: ' + (p.agencyName || '—'),
+    '  NPN: ' + (p.npn || '—'),
+    '  Licensed states: ' + (p.licensedStates || '—'),
     '  Status: ' + p.status,
     '  Action: ' + p.action,
     '  Source: ' + p.source,
     '  Page: ' + (p.pageUrl || '—'),
-  ];
+    '',
+    '—',
+    'CoverIQ agent accounts (separate from consumer accounts and quote leads)'
+  ].join('\n');
 
-  if (p.utmSource || p.utmMedium || p.utmCampaign) {
-    body.push(
-      '',
-      'UTM',
-      '  Source: ' + (p.utmSource || '—'),
-      '  Medium: ' + (p.utmMedium || '—'),
-      '  Campaign: ' + (p.utmCampaign || '—')
-    );
-  }
-
-  if (p.notes) {
-    body.push('', 'Notes', '  ' + p.notes);
-  }
-
-  body.push('', '—', 'CoverIQ user accounts (separate from quote leads sheet)');
-
-  MailApp.sendEmail(recipients.join(','), subject, body.join('\n'));
+  MailApp.sendEmail(recipients.join(','), subject, body);
 }
 
 function trim_(value, maxLen) {

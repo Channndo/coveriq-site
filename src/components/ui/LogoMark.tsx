@@ -1,5 +1,5 @@
 /** White head mark on transparent background */
-const LOGO_SRC = "/coveriq-logo.png?v=4";
+const LOGO_SRC = "/coveriq-logo.png?v=5";
 
 export function LogoMark({ className = "" }: { className?: string }) {
   return (

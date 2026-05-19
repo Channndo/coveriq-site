@@ -50,7 +50,9 @@ export function ConsumerOnboardingPage() {
   return (
     <AuthShell
       title="Personalize your experience"
-      subtitle={`Step ${step + 1} of ${CONSUMER_ONBOARDING_STEPS.length} — tap the options that fit you.`}
+      subtitle={`Step ${step + 1} of ${CONSUMER_ONBOARDING_STEPS.length} — ${
+        current.multi ? "tap all options that fit you." : "tap one option to continue."
+      }`}
       miraNote={fromMira}
     >
       <AnimatePresence mode="wait">

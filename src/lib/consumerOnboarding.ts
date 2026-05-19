@@ -10,6 +10,8 @@ export const CONSUMER_ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: "primaryInterest",
     title: "What do you want to learn about most?",
+    subtitle: "Select all that apply.",
+    multi: true,
     options: [
       { id: "auto", label: "Auto insurance" },
       { id: "home", label: "Homeowners / renters" },
@@ -22,6 +24,8 @@ export const CONSUMER_ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: "household",
     title: "Who are you shopping for?",
+    subtitle: "Select all that apply.",
+    multi: true,
     options: [
       { id: "self", label: "Just me" },
       { id: "couple", label: "Me + spouse/partner" },

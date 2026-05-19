@@ -10,6 +10,7 @@ import { GlossaryPage } from "./pages/GlossaryPage";
 import { AgentPage } from "./pages/AgentPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SignupPage } from "./pages/SignupPage";
+import { ConsumerOnboardingPage } from "./pages/ConsumerOnboardingPage";
 import { MiraWidget } from "./components/mira/MiraWidget";
 import { SyntrixGuard } from "./components/layout/SyntrixGuard";
 
@@ -26,7 +27,10 @@ export default function App() {
   const isThankYou = location.pathname === "/thank-you";
 
   const hideChrome =
-    isThankYou || location.pathname === "/login" || location.pathname === "/signup";
+    isThankYou ||
+    location.pathname === "/login" ||
+    location.pathname === "/signup" ||
+    location.pathname === "/onboarding";
 
   return (
     <ConsumerAuthProvider>
@@ -40,6 +44,7 @@ export default function App() {
           <Route path="/agent" element={<AgentPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/onboarding" element={<ConsumerOnboardingPage />} />
         </Routes>
       </main>
       {!hideChrome && (

@@ -80,6 +80,10 @@ export function MiraWidget() {
       navigate("/login?from=mira");
       return;
     }
+    if (!user.onboardingComplete) {
+      navigate("/onboarding?from=mira");
+      return;
+    }
     setOpen((o) => !o);
     if (!open) setTimeout(() => textareaRef.current?.focus(), 150);
   };

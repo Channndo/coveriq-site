@@ -5,12 +5,12 @@ export const WEB_APP_URL =
 /** Consumer accounts (MIRA signups) — google-apps-script/coveriq-user-accounts */
 export const USER_ACCOUNTS_WEB_APP_URL =
   (import.meta.env.VITE_USER_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") ||
-  "https://script.google.com/macros/s/AKfycbxg_X7kTnvTxE7XSZPc-55mvfwOjjrl_oEY_abxxMD4iT_vHDIxPKPmlHuDLI9aXaTj/exec";
+  "https://script.google.com/macros/s/AKfycbxxfasEMttNXmhcrzFJGZ8V82Jh2SYfwxS-LFPBNNqr8AGSBehPC68rt2Ja4WcfyLLZ/exec";
 
 /** Licensed producer accounts — google-apps-script/coveriq-agent-accounts */
 export const AGENT_ACCOUNTS_WEB_APP_URL =
   (import.meta.env.VITE_AGENT_ACCOUNTS_WEB_APP_URL as string | undefined)?.replace(/\/$/, "") ||
-  "https://script.google.com/macros/s/AKfycbw-qeYdrL5WNhUtejTJildMepB1uVuVv0M3v7oPVwEKMnOpdys3APPkJs6wRL8ZSK7K/exec";
+  "https://script.google.com/macros/s/AKfycbzucxSuI3S04zq60X6MgiM2mR9vwWyEmt0qqjWJFxxX2f9mihew5IuQntYONfsrqH6e/exec";
 
 export const SUPPORT_PHONE = "(574) 309-0107";
 export const SUPPORT_PHONE_HREF = "tel:5743090107";

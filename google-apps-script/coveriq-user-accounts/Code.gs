@@ -25,13 +25,21 @@ const CONFIG = {
     lastName: 80,
     email: 120,
     phone: 20,
+    street: 120,
+    city: 80,
+    state: 2,
+    zip: 10,
+    currentInsurance: 120,
+    securityQ: 120,
+    securityA: 200,
     accountType: 40,
     status: 40,
     source: 80,
     action: 40,
     notes: 500,
     pageUrl: 300,
-    utm: 120
+    utm: 120,
+    json: 8000
   }
 };
 
@@ -43,6 +51,16 @@ const HEADERS = [
   'Last Name',
   'Email',
   'Phone',
+  'Street',
+  'City',
+  'State',
+  'ZIP',
+  'Current Insurance Provider',
+  'Security Question 1',
+  'Security Answer 1',
+  'Security Question 2',
+  'Security Answer 2',
+  'Onboarding JSON',
   'Account Type',
   'Status',
   'Action',
@@ -77,6 +95,16 @@ function doPost(e) {
       payload.lastName,
       payload.email,
       payload.phone,
+      payload.street,
+      payload.city,
+      payload.state,
+      payload.zip,
+      payload.currentInsurance,
+      payload.securityQ1,
+      payload.securityA1,
+      payload.securityQ2,
+      payload.securityA2,
+      payload.onboardingJson,
       payload.accountType,
       payload.status,
       payload.action,
@@ -214,6 +242,19 @@ function parsePayload_(e) {
     lastName: trim_(data.lastName, CONFIG.MAX_LEN.lastName),
     email: trim_(data.email, CONFIG.MAX_LEN.email).toLowerCase(),
     phone: cleanPhone_(data.phone),
+    street: trim_(data.street || data.address, CONFIG.MAX_LEN.street),
+    city: trim_(data.city, CONFIG.MAX_LEN.city),
+    state: trim_(data.state, CONFIG.MAX_LEN.state).toUpperCase(),
+    zip: trim_(data.zip || data.zipCode, CONFIG.MAX_LEN.zip),
+    currentInsurance: trim_(
+      data.currentInsurance || data.currentInsuranceProvider,
+      CONFIG.MAX_LEN.currentInsurance
+    ),
+    securityQ1: trim_(data.securityQ1 || data.securityQuestion1, CONFIG.MAX_LEN.securityQ),
+    securityA1: trim_(data.securityA1 || data.securityAnswer1, CONFIG.MAX_LEN.securityA),
+    securityQ2: trim_(data.securityQ2 || data.securityQuestion2, CONFIG.MAX_LEN.securityQ),
+    securityA2: trim_(data.securityA2 || data.securityAnswer2, CONFIG.MAX_LEN.securityA),
+    onboardingJson: jsonField_(data, 'onboardingJson', 'onboarding'),
     accountType: accountType,
     status: trim_(data.status, CONFIG.MAX_LEN.status) || 'pending',
     action: action,
@@ -227,13 +268,39 @@ function parsePayload_(e) {
   };
 }
 
+function jsonField_(data, key, altKey) {
+  var raw = data[key];
+  if (raw === undefined || raw === null) raw = data[altKey];
+  if (typeof raw === 'object') {
+    try {
+      return JSON.stringify(raw).slice(0, CONFIG.MAX_LEN.json);
+    } catch (e) {
+      return '';
+    }
+  }
+  return trim_(raw, CONFIG.MAX_LEN.json);
+}
+
 function validatePayload_(p) {
-  if (!p.firstName) throw new Error('First name is required.');
-  if (!p.lastName) throw new Error('Last name is required.');
   if (!p.email) throw new Error('Email is required.');
   if (!isValidEmail_(p.email)) throw new Error('Please enter a valid email address.');
+
+  if (p.action === 'onboarding') {
+    if (!p.onboardingJson) throw new Error('Onboarding selections are required.');
+    return;
+  }
+
+  if (!p.firstName) throw new Error('First name is required.');
+  if (!p.lastName) throw new Error('Last name is required.');
   if (!p.phone) throw new Error('Phone is required.');
   if (p.phone.length < 10) throw new Error('Please enter a valid phone number.');
+  if (!p.street) throw new Error('Street address is required.');
+  if (!p.city) throw new Error('City is required.');
+  if (!p.state || p.state.length !== 2) throw new Error('State is required (2 letters).');
+  if (!p.zip) throw new Error('ZIP code is required.');
+  if (!p.currentInsurance) throw new Error('Current insurance provider is required.');
+  if (!p.securityQ1 || !p.securityA1) throw new Error('Security question 1 and answer are required.');
+  if (!p.securityQ2 || !p.securityA2) throw new Error('Security question 2 and answer are required.');
   if (!p.accountType) throw new Error('Account type is required.');
 }
 
@@ -343,6 +410,11 @@ function sendAccountNotification_(accountId, dateStr, timeStr, p) {
     '  Name: ' + p.firstName + ' ' + p.lastName,
     '  Email: ' + p.email,
     '  Phone: ' + formatPhoneDisplay_(p.phone),
+    '',
+    'Address',
+    '  ' +
+      [p.street, p.city, p.state, p.zip].filter(Boolean).join(', ') || '—',
+    '  Current insurance: ' + (p.currentInsurance || '—'),
     '',
     'Account',
     '  Type: ' + p.accountType,

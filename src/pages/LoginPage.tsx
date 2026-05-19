@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AuthShell } from "../components/auth/AuthShell";
 import { useConsumerAuth } from "../context/ConsumerAuthContext";
-import { formatPhone } from "../lib/formatPhone";
+import { readConsumerSession } from "../lib/consumerSession";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export function LoginPage() {
   const { user, isAdmin, signIn, signOut } = useConsumerAuth();
 
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const afterAuthPath = fromMira ? "/?openMira=1" : "/";
@@ -19,9 +19,14 @@ export function LoginPage() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setError("");
-    const result = signIn(email, phone);
+    const result = signIn(email, password);
     if (!result.ok) {
       setError(result.error || "Could not sign in.");
+      return;
+    }
+    const session = readConsumerSession();
+    if (session && !session.onboardingComplete) {
+      navigate(fromMira ? "/onboarding?from=mira" : "/onboarding", { replace: true });
       return;
     }
     navigate(afterAuthPath, { replace: true });
@@ -38,9 +43,18 @@ export function LoginPage() {
         }
       >
         <div className="mt-6 space-y-3">
-          <Link to="/?openMira=1" className="btn-primary block w-full text-center">
-            Open MIRA
-          </Link>
+          {!user.onboardingComplete ? (
+            <Link
+              to={fromMira ? "/onboarding?from=mira" : "/onboarding"}
+              className="btn-primary block w-full text-center"
+            >
+              Complete setup
+            </Link>
+          ) : (
+            <Link to="/?openMira=1" className="btn-primary block w-full text-center">
+              Open MIRA
+            </Link>
+          )}
           <Link to="/" className="btn-secondary block w-full text-center">
             Back to homepage
           </Link>
@@ -55,7 +69,7 @@ export function LoginPage() {
   return (
     <AuthShell
       title="Sign in"
-      subtitle="Use the email and phone from when you created your account."
+      subtitle="Sign in with the email and password you used when you created your account."
       miraNote={fromMira}
     >
       <form onSubmit={handleSubmit} className="mt-6 space-y-3">
@@ -69,13 +83,14 @@ export function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          type="tel"
+          type="password"
           required
-          autoComplete="tel"
+          autoComplete="current-password"
+          minLength={8}
           className="input-tech w-full"
-          placeholder="Phone"
-          value={phone}
-          onChange={(e) => setPhone(formatPhone(e.target.value))}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
 
         {error && (

@@ -4,3 +4,10 @@ dist
 *.local
 .env
 .env.*
+
+# Local Netlify folder
+.netlify
+.vercel
+
+# Local clone for cross-repo work (coveriq-exchange has its own git remote)
+coveriq-exchange/

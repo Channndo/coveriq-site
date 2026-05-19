@@ -27,12 +27,17 @@ const CONFIG = {
     agencyName: 120,
     npn: 20,
     licensedStates: 80,
+    carrier: 120,
+    producerType: 40,
+    securityQ: 120,
+    securityA: 200,
     status: 40,
     source: 80,
     action: 40,
     notes: 500,
     pageUrl: 300,
-    utm: 120
+    utm: 120,
+    json: 12000
   }
 };
 
@@ -47,6 +52,14 @@ const HEADERS = [
   'Agency Name',
   'NPN',
   'Licensed States',
+  'Carrier',
+  'Producer Type',
+  'Security Question 1',
+  'Security Answer 1',
+  'Security Question 2',
+  'Security Answer 2',
+  'Want Walkthrough',
+  'Lead Filters JSON',
   'Status',
   'Action',
   'Source',
@@ -83,6 +96,14 @@ function doPost(e) {
       payload.agencyName,
       payload.npn,
       payload.licensedStates,
+      payload.carrier,
+      payload.producerType,
+      payload.securityQ1,
+      payload.securityA1,
+      payload.securityQ2,
+      payload.securityA2,
+      payload.wantWalkthrough,
+      payload.leadFiltersJson,
       payload.status,
       payload.action,
       payload.source,
@@ -213,7 +234,15 @@ function parsePayload_(e) {
     phone: cleanPhone_(data.phone),
     agencyName: trim_(data.agencyName || data.agency_name, CONFIG.MAX_LEN.agencyName),
     npn: trim_(data.npn || data.NPN, CONFIG.MAX_LEN.npn),
-    licensedStates: trim_(data.licensedStates || data.licensed_states, CONFIG.MAX_LEN.licensedStates),
+    licensedStates: trim_(data.licensedStates || data.licensed_states || data.state, CONFIG.MAX_LEN.licensedStates),
+    carrier: trim_(data.carrier || data.carriers, CONFIG.MAX_LEN.carrier),
+    producerType: normalizeProducerType_(data.producerType || data.role_type),
+    securityQ1: trim_(data.securityQ1 || data.securityQuestion1, CONFIG.MAX_LEN.securityQ),
+    securityA1: trim_(data.securityA1 || data.securityAnswer1, CONFIG.MAX_LEN.securityA),
+    securityQ2: trim_(data.securityQ2 || data.securityQuestion2, CONFIG.MAX_LEN.securityQ),
+    securityA2: trim_(data.securityA2 || data.securityAnswer2, CONFIG.MAX_LEN.securityA),
+    wantWalkthrough: trim_(data.wantWalkthrough || data.want_walkthrough, 10),
+    leadFiltersJson: jsonField_(data, 'leadFiltersJson', 'leadFilters'),
     status: trim_(data.status, CONFIG.MAX_LEN.status) || 'pending_verification',
     action: trim_(data.action, CONFIG.MAX_LEN.action) || 'signup',
     source: trim_(data.source, CONFIG.MAX_LEN.source) || CONFIG.WEBSITE_URL,
@@ -226,13 +255,46 @@ function parsePayload_(e) {
   };
 }
 
+function jsonField_(data, key, altKey) {
+  var raw = data[key];
+  if (raw === undefined || raw === null) raw = data[altKey];
+  if (typeof raw === 'object') {
+    try {
+      return JSON.stringify(raw).slice(0, CONFIG.MAX_LEN.json);
+    } catch (e) {
+      return '';
+    }
+  }
+  return trim_(raw, CONFIG.MAX_LEN.json);
+}
+
+function normalizeProducerType_(value) {
+  var raw = trim_(value, CONFIG.MAX_LEN.producerType).toLowerCase();
+  if (raw === 'producer' || raw === 'licensed_producer') return 'producer';
+  if (raw === 'agent') return 'agent';
+  return raw.slice(0, CONFIG.MAX_LEN.producerType);
+}
+
 function validatePayload_(p) {
-  if (!p.firstName) throw new Error('First name is required.');
-  if (!p.lastName) throw new Error('Last name is required.');
   if (!p.email) throw new Error('Email is required.');
   if (!isValidEmail_(p.email)) throw new Error('Please enter a valid email address.');
+
+  if (p.action === 'onboarding' || p.action === 'lead_filters') {
+    if (!p.leadFiltersJson) throw new Error('Lead filter preferences are required.');
+    return;
+  }
+
+  if (!p.firstName) throw new Error('First name is required.');
+  if (!p.lastName) throw new Error('Last name is required.');
   if (!p.phone) throw new Error('Phone is required.');
   if (p.phone.length < 10) throw new Error('Please enter a valid phone number.');
+  if (!p.agencyName) throw new Error('Agency name is required.');
+  if (!p.npn) throw new Error('NPN is required.');
+  if (!p.licensedStates) throw new Error('Licensed state(s) are required.');
+  if (!p.carrier) throw new Error('Carrier is required.');
+  if (!p.producerType) throw new Error('Producer type is required (producer or agent).');
+  if (!p.securityQ1 || !p.securityA1) throw new Error('Security question 1 and answer are required.');
+  if (!p.securityQ2 || !p.securityA2) throw new Error('Security question 2 and answer are required.');
 }
 
 function checkBurstRateLimit_() {
@@ -330,6 +392,9 @@ function sendAgentNotification_(agentId, dateStr, timeStr, p) {
     '  Agency: ' + (p.agencyName || '—'),
     '  NPN: ' + (p.npn || '—'),
     '  Licensed states: ' + (p.licensedStates || '—'),
+    '  Carrier: ' + (p.carrier || '—'),
+    '  Type: ' + (p.producerType || '—'),
+    '  Walkthrough: ' + (p.wantWalkthrough || '—'),
     '  Status: ' + p.status,
     '  Action: ' + p.action,
     '  Source: ' + p.source,

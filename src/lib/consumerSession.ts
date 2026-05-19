@@ -1,28 +1,61 @@
 import { withResolvedRole, type AccountRole } from "./admin";
-import { normalizePhoneDigits } from "./formatPhone";
 
-const SESSION_KEY = "coveriq_consumer_v1";
-const REGISTRY_KEY = "coveriq_consumer_registry_v1";
+const SESSION_KEY = "coveriq_consumer_v3";
+const REGISTRY_KEY = "coveriq_consumer_registry_v3";
 
 export interface ConsumerUser {
   firstName: string;
   lastName: string;
   email: string;
+  password: string;
   phone: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  currentInsuranceProvider: string;
+  securityQuestion1: string;
+  securityAnswer1: string;
+  securityQuestion2: string;
+  securityAnswer2: string;
   createdAt: string;
   role: AccountRole;
+  onboardingComplete: boolean;
 }
+
+export type ConsumerSignupInput = Omit<ConsumerUser, "createdAt" | "role" | "onboardingComplete">;
 
 function normalizeUser(user: ConsumerUser): ConsumerUser {
-  return withResolvedRole(user);
+  return {
+    ...withResolvedRole(user),
+    onboardingComplete: Boolean(user.onboardingComplete),
+  };
 }
 
-function readRegistry(): ConsumerUser[] {
+export function readConsumerRegistry(): ConsumerUser[] {
   try {
     const raw = localStorage.getItem(REGISTRY_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as ConsumerUser[];
-    return Array.isArray(parsed) ? parsed.map((u) => normalizeUser({ ...u, role: u.role ?? "consumer" })) : [];
+    return Array.isArray(parsed)
+      ? parsed.map((u) =>
+          normalizeUser({
+            ...u,
+            role: u.role ?? "consumer",
+            onboardingComplete: u.onboardingComplete ?? false,
+            street: u.street ?? "",
+            city: u.city ?? "",
+            state: u.state ?? "",
+            zip: u.zip ?? "",
+            currentInsuranceProvider: u.currentInsuranceProvider ?? "",
+            securityQuestion1: u.securityQuestion1 ?? "",
+            securityAnswer1: u.securityAnswer1 ?? "",
+            securityQuestion2: u.securityQuestion2 ?? "",
+            securityAnswer2: u.securityAnswer2 ?? "",
+            password: u.password ?? "",
+          })
+        )
+      : [];
   } catch {
     return [];
   }
@@ -38,7 +71,7 @@ export function readConsumerSession(): ConsumerUser | null {
     if (!raw) return null;
     const user = JSON.parse(raw) as ConsumerUser;
     if (!user?.email) return null;
-    return normalizeUser({ ...user, role: user.role ?? "consumer" });
+    return normalizeUser(user);
   } catch {
     return null;
   }
@@ -47,12 +80,9 @@ export function readConsumerSession(): ConsumerUser | null {
 export function writeConsumerSession(user: ConsumerUser) {
   const normalized = normalizeUser(user);
   localStorage.setItem(SESSION_KEY, JSON.stringify(normalized));
-  const registry = readRegistry();
+  const registry = readConsumerRegistry();
   const email = normalized.email.toLowerCase();
-  const phone = normalizePhoneDigits(normalized.phone);
-  const idx = registry.findIndex(
-    (u) => u.email.toLowerCase() === email && normalizePhoneDigits(u.phone) === phone
-  );
+  const idx = registry.findIndex((u) => u.email.toLowerCase() === email);
   if (idx >= 0) registry[idx] = normalized;
   else registry.push(normalized);
   writeRegistry(registry);
@@ -62,28 +92,22 @@ export function clearConsumerSession() {
   localStorage.removeItem(SESSION_KEY);
 }
 
-export function findConsumerByCredentials(email: string, phone: string): ConsumerUser | null {
+export function findConsumerByCredentials(email: string, password: string): ConsumerUser | null {
   const emailNorm = email.trim().toLowerCase();
-  const phoneNorm = normalizePhoneDigits(phone);
-  if (!emailNorm || phoneNorm.length < 10) return null;
+  if (!emailNorm || !password) return null;
 
-  const match = readRegistry().find(
-    (u) => u.email.toLowerCase() === emailNorm && normalizePhoneDigits(u.phone) === phoneNorm
-  );
-  if (match) return match;
-
-  return null;
+  const user = readConsumerRegistry().find((u) => u.email.toLowerCase() === emailNorm);
+  if (!user || user.password !== password) return null;
+  return normalizeUser(user);
 }
 
-/** Admin can sign in on a new device without a prior local registry entry. */
-export function createAdminSessionUser(email: string, phone: string): ConsumerUser | null {
-  const normalized = normalizeUser({
-    firstName: "Chandler",
-    lastName: "Hill",
-    email: email.trim().toLowerCase(),
-    phone: phone.trim(),
-    createdAt: new Date().toISOString(),
-    role: "consumer",
-  });
-  return normalized.role === "admin" ? normalized : null;
+export function createAdminSessionUser(email: string, password: string): ConsumerUser | null {
+  const match = findConsumerByCredentials(email, password);
+  return match?.role === "admin" ? match : null;
+}
+
+export function markOnboardingComplete() {
+  const user = readConsumerSession();
+  if (!user) return;
+  writeConsumerSession({ ...user, onboardingComplete: true });
 }

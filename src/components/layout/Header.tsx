@@ -34,7 +34,7 @@ export function Header() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link to="/" className="group flex items-center gap-3">
-          <LogoMark className="h-11 w-11 transition group-hover:opacity-90" />
+          <LogoMark className="transition group-hover:opacity-90" />
           <span className="font-display text-lg font-bold text-white">CoverIQ</span>
         </Link>
 

@@ -10,145 +10,276 @@ import {
 import { isSiteAdmin, resolveAccountRole } from "../lib/admin";
 import {
   clearConsumerSession,
-  createAdminSessionUser,
-  findConsumerByCredentials,
+  clearLegacyAuthStorage,
+  getAccessToken,
+  mapSyntrixUserToProfile,
   markOnboardingComplete,
-  readConsumerRegistry,
   readConsumerSession,
   writeConsumerSession,
   type ConsumerSignupInput,
   type ConsumerUser,
 } from "../lib/consumerSession";
 import { validateConsumerPassword } from "../lib/passwordRules";
+import {
+  buildRegisterPayload,
+  SyntrixAuthError,
+  syntrixLogin,
+  syntrixLoginSecurity,
+  syntrixMe,
+  syntrixRegister,
+} from "../lib/syntrixAuthApi";
 import { submitUserAccount, submitUserOnboarding } from "../lib/userAccounts";
+
+export interface SecurityLoginChallenge {
+  email: string;
+  password: string;
+  securityQuestion1: string;
+  securityQuestion2: string;
+}
 
 interface ConsumerAuthContextValue {
   user: ConsumerUser | null;
   isAdmin: boolean;
   ready: boolean;
   signUp: (data: ConsumerSignupInput) => Promise<{ ok: boolean; error?: string }>;
-  signIn: (email: string, password: string) => { ok: boolean; error?: string };
+  signIn: (
+    email: string,
+    password: string
+  ) => Promise<
+    | { ok: true }
+    | { ok: false; error: string }
+    | { ok: false; needsSecurity: true; challenge: SecurityLoginChallenge }
+  >;
+  completeSecurityLogin: (
+    challenge: SecurityLoginChallenge,
+    securityAnswer1: string,
+    securityAnswer2: string
+  ) => Promise<{ ok: boolean; error?: string }>;
   completeOnboarding: (selections: Record<string, string | string[]>) => Promise<{ ok: boolean }>;
   signOut: () => void;
 }
 
 const ConsumerAuthContext = createContext<ConsumerAuthContextValue | null>(null);
 
+function applySession(accessToken: string, profile: ConsumerUser) {
+  writeConsumerSession(accessToken, profile);
+}
+
 export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<ConsumerUser | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setUser(readConsumerSession());
-    setReady(true);
+    clearLegacyAuthStorage();
+    const token = getAccessToken();
+    const cached = readConsumerSession();
+    if (!token) {
+      clearConsumerSession();
+      setReady(true);
+      return;
+    }
+    if (cached) setUser(cached);
+    void syntrixMe(token)
+      .then((me) => {
+        const profile = mapSyntrixUserToProfile(me, cached ?? undefined);
+        const withRole = {
+          ...profile,
+          role: resolveAccountRole(profile.email, profile.phone),
+        };
+        applySession(token, withRole);
+        setUser(withRole);
+      })
+      .catch(() => {
+        clearConsumerSession();
+        setUser(null);
+      })
+      .finally(() => setReady(true));
   }, []);
 
   const signUp = useCallback(async (data: ConsumerSignupInput) => {
     const email = data.email.trim().toLowerCase();
     const phone = data.phone.trim();
-    const userRecord: ConsumerUser = {
-      ...data,
-      email,
-      phone,
-      state: data.state.trim().toUpperCase(),
-      createdAt: new Date().toISOString(),
-      role: resolveAccountRole(email, phone),
-      onboardingComplete: false,
-    };
 
-    if (!userRecord.firstName || !userRecord.lastName) {
+    if (!data.firstName.trim() || !data.lastName.trim()) {
       return { ok: false, error: "Please enter your first and last name." };
     }
     if (!email.includes("@")) {
       return { ok: false, error: "Please enter a valid email address." };
     }
-    if (userRecord.phone.replace(/\D/g, "").length < 10) {
+    if (phone.replace(/\D/g, "").length < 10) {
       return { ok: false, error: "Please enter a valid phone number." };
     }
-    if (!userRecord.street || !userRecord.city || !userRecord.state || !userRecord.zip) {
+    if (!data.street.trim() || !data.city.trim() || !data.state.trim() || !data.zip.trim()) {
       return { ok: false, error: "Please complete your mailing address." };
     }
-    if (!userRecord.currentInsuranceProvider) {
+    if (!data.currentInsuranceProvider.trim()) {
       return { ok: false, error: "Please enter your current insurance provider." };
     }
-    if (!userRecord.securityQuestion1 || !userRecord.securityAnswer1) {
-      return { ok: false, error: "Please complete security question 1." };
-    }
-    if (!userRecord.securityQuestion2 || !userRecord.securityAnswer2) {
-      return { ok: false, error: "Please complete security question 2." };
+    if (!data.securityQuestion1 || !data.securityAnswer1 || !data.securityQuestion2 || !data.securityAnswer2) {
+      return { ok: false, error: "Please complete both security questions." };
     }
     const passwordError = validateConsumerPassword(data.password);
     if (passwordError) {
       return { ok: false, error: passwordError };
     }
 
-    const existing = readConsumerRegistry().find((u) => u.email.toLowerCase() === email);
-    if (existing) {
-      return { ok: false, error: "An account with this email already exists. Sign in instead." };
-    }
-
-    void submitUserAccount({
-      ...userRecord,
-      accountType: "consumer",
-      action: "signup",
-      status: "active",
-      notes: userRecord.role === "admin" ? "site admin · MIRA access" : "MIRA access",
-    });
-
-    writeConsumerSession(userRecord);
-    setUser(userRecord);
-    return { ok: true };
-  }, []);
-
-  const signIn = useCallback((email: string, password: string) => {
-    const match = findConsumerByCredentials(email, password) ?? createAdminSessionUser(email, password);
-    if (!match) {
-      return {
-        ok: false,
-        error: "Invalid email or password. Create a free account if you're new.",
-      };
-    }
-    writeConsumerSession(match);
-    setUser(match);
-    void submitUserAccount({
-      firstName: match.firstName,
-      lastName: match.lastName,
-      email: match.email,
-      phone: match.phone,
-      street: match.street,
-      city: match.city,
-      state: match.state,
-      zip: match.zip,
-      currentInsuranceProvider: match.currentInsuranceProvider,
-      securityQuestion1: match.securityQuestion1,
-      securityAnswer1: match.securityAnswer1,
-      securityQuestion2: match.securityQuestion2,
-      securityAnswer2: match.securityAnswer2,
-      accountType: "consumer",
-      action: "login",
-      status: "active",
-    });
-    return { ok: true };
-  }, []);
-
-  const completeOnboarding = useCallback(
-    async (selections: Record<string, string | string[]>) => {
-      const current = readConsumerSession();
-      if (!current) return { ok: false };
-      void submitUserOnboarding({
-        email: current.email,
-        phone: current.phone,
-        firstName: current.firstName,
-        lastName: current.lastName,
-        onboarding: selections,
+    try {
+      const payload = buildRegisterPayload(data);
+      const result = await syntrixRegister(payload);
+      const profile = mapSyntrixUserToProfile(result.user ?? {}, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email,
+        phone,
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        zip: data.zip,
+        currentInsuranceProvider: data.currentInsuranceProvider,
+        securityQuestion1: data.securityQuestion1,
+        securityQuestion2: data.securityQuestion2,
+        createdAt: new Date().toISOString(),
+        role: resolveAccountRole(email, phone),
+        onboardingComplete: false,
       });
-      markOnboardingComplete();
-      const updated = readConsumerSession();
-      setUser(updated);
+      applySession(result.accessToken, profile);
+      setUser(profile);
+
+      void submitUserAccount({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        email: profile.email,
+        phone: profile.phone,
+        street: profile.street,
+        city: profile.city,
+        state: profile.state,
+        zip: profile.zip,
+        currentInsuranceProvider: profile.currentInsuranceProvider,
+        securityQuestion1: data.securityQuestion1,
+        securityAnswer1: "[redacted]",
+        securityQuestion2: data.securityQuestion2,
+        securityAnswer2: "[redacted]",
+        accountType: "consumer",
+        action: "signup",
+        status: "active",
+        notes: profile.role === "admin" ? "site admin · MIRA access" : "MIRA access · Syntrix",
+      });
+
       return { ok: true };
+    } catch (err) {
+      const message =
+        err instanceof SyntrixAuthError
+          ? err.message
+          : err instanceof Error
+            ? err.message
+            : "Could not create your account.";
+      return { ok: false, error: message };
+    }
+  }, []);
+
+  const finishLogin = useCallback(
+    (accessToken: string, me: Parameters<typeof mapSyntrixUserToProfile>[0], email: string, phone: string) => {
+      const profile = mapSyntrixUserToProfile(me, {
+        email,
+        phone,
+        role: resolveAccountRole(email, phone),
+        onboardingComplete: Boolean(me.onboarding_complete ?? me.onboardingComplete),
+      });
+      applySession(accessToken, profile);
+      setUser(profile);
+      void submitUserAccount({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        email: profile.email,
+        phone: profile.phone,
+        street: profile.street,
+        city: profile.city,
+        state: profile.state,
+        zip: profile.zip,
+        currentInsuranceProvider: profile.currentInsuranceProvider,
+        securityQuestion1: profile.securityQuestion1,
+        securityAnswer1: "[redacted]",
+        securityQuestion2: profile.securityQuestion2,
+        securityAnswer2: "[redacted]",
+        accountType: "consumer",
+        action: "login",
+        status: "active",
+      });
     },
     []
   );
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    const emailNorm = email.trim().toLowerCase();
+    try {
+      const result = await syntrixLogin(emailNorm, password);
+      if (result.requiresSecurity) {
+        const cached = readConsumerSession();
+        return {
+          ok: false as const,
+          needsSecurity: true as const,
+          challenge: {
+            email: emailNorm,
+            password,
+            securityQuestion1:
+              result.securityQuestions?.[0] ?? cached?.securityQuestion1 ?? "Security question 1",
+            securityQuestion2:
+              result.securityQuestions?.[1] ?? cached?.securityQuestion2 ?? "Security question 2",
+          },
+        };
+      }
+      const me = result.user ?? (await syntrixMe(result.accessToken));
+      finishLogin(result.accessToken, me, emailNorm, me.phone ?? "");
+      return { ok: true as const };
+    } catch (err) {
+      return {
+        ok: false as const,
+        error:
+          err instanceof SyntrixAuthError
+            ? err.message
+            : "Invalid email or password. Create a free account if you're new.",
+      };
+    }
+  }, [finishLogin]);
+
+  const completeSecurityLogin = useCallback(
+    async (challenge: SecurityLoginChallenge, securityAnswer1: string, securityAnswer2: string) => {
+      try {
+        const result = await syntrixLoginSecurity({
+          email: challenge.email,
+          password: challenge.password,
+          security_answer_1: securityAnswer1,
+          security_answer_2: securityAnswer2,
+          securityAnswer1,
+          securityAnswer2,
+        });
+        const me = result.user ?? (await syntrixMe(result.accessToken));
+        finishLogin(result.accessToken, me, challenge.email, me.phone ?? "");
+        return { ok: true };
+      } catch (err) {
+        return {
+          ok: false,
+          error: err instanceof SyntrixAuthError ? err.message : "Security verification failed.",
+        };
+      }
+    },
+    [finishLogin]
+  );
+
+  const completeOnboarding = useCallback(async (selections: Record<string, string | string[]>) => {
+    const current = readConsumerSession();
+    if (!current) return { ok: false };
+    void submitUserOnboarding({
+      email: current.email,
+      phone: current.phone,
+      firstName: current.firstName,
+      lastName: current.lastName,
+      onboarding: selections,
+    });
+    markOnboardingComplete();
+    setUser(readConsumerSession());
+    return { ok: true };
+  }, []);
 
   const signOut = useCallback(() => {
     clearConsumerSession();
@@ -162,10 +293,11 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
       ready,
       signUp,
       signIn,
+      completeSecurityLogin,
       completeOnboarding,
       signOut,
     }),
-    [user, ready, signUp, signIn, completeOnboarding, signOut]
+    [user, ready, signUp, signIn, completeSecurityLogin, completeOnboarding, signOut]
   );
 
   return <ConsumerAuthContext.Provider value={value}>{children}</ConsumerAuthContext.Provider>;

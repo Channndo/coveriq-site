@@ -72,7 +72,7 @@ export function HowInsuranceWorks() {
                 onClick={() => setOpenFaq(openFaq === c.id ? null : c.id)}
                 className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-medium text-slate-200 hover:bg-white/[0.02]"
               >
-                What is {c.title.toLowerCase()}?
+                {c.reviewQuestion}
                 <span className="shrink-0 font-mono text-cyan-400">{openFaq === c.id ? "−" : "+"}</span>
               </button>
               <AnimatePresence>

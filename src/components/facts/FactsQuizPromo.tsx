@@ -8,10 +8,10 @@ export function FactsQuizPromo() {
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-500/90">
             End-of-text review
           </p>
-          <h2 className="font-display mt-2 text-2xl font-bold text-white">20-question knowledge check</h2>
+          <h2 className="font-display mt-2 text-2xl font-bold text-white">10-question chapter exam</h2>
           <p className="textbook-prose-muted mt-3">
-            After reading the chapters, test yourself with a randomized quiz from 75 vetted
-            multiple-choice questions on general U.S. insurance concepts — not state exam prep.
+            After reading all ten chapters, take a short exam with one question per chapter — drawn
+            from a larger vetted bank on general U.S. insurance concepts (not state exam prep).
           </p>
         </div>
         <Link

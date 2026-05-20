@@ -42,4 +42,4 @@ export const GLOBAL_DISCLAIMER =
   "This content is provided for educational purposes only and should not be interpreted as legal, financial, or coverage advice. Coverage availability, definitions, exclusions, and limits vary by carrier and state. Always refer to your actual insurance policy for exact coverage details.";
 
 export const QUOTE_DISCLAIMER =
-  "Submitting a quote request does not bind coverage. Quotes are estimates subject to carrier underwriting. By submitting, you agree to be contacted about your request.";
+  "Submitting this form does not bind coverage or guarantee a price. A licensed insurance professional may contact you by phone, email, or text about your request. By submitting, you consent to this contact and confirm the information is accurate to the best of your knowledge.";

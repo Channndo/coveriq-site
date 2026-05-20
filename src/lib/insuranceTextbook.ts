@@ -26,7 +26,7 @@ export const TEXTBOOK_INTRO = {
   paragraphs: [
     "Insurance is not a single product or company — it is a system societies built to survive unpredictable loss. When thousands of households and businesses each pay a relatively small amount into a pool, the pool can pay the few who suffer large losses. That idea has shaped commerce, homeownership, driving, healthcare, and employment for centuries.",
     "This guide explains where insurance came from, why it became essential to modern life, how the United States regulates it, which laws and acts apply, and what rules insurers must follow. It is written for learners — consumers, students, and future producers — not as legal advice. Every state has its own statutes; federal law intersects mainly in health, benefits, flood, terrorism, and privacy.",
-    "Use the table of contents to jump between chapters. Read straight through for the full narrative, or return to specific sections when you study for licensing exams or counsel clients.",
+    "Use the table of contents to jump between ten chapters. Read straight through for the full narrative, or return to specific sections when you study for licensing exams or counsel clients.",
   ],
 };
 
@@ -160,6 +160,19 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
           "Market conduct exams target claims delays and unfair sales",
         ],
       },
+      {
+        id: "state-themes",
+        title: "3.4 State laws consumers and producers should know",
+        paragraphs: [
+          "Every state requires financial responsibility for drivers — usually liability insurance minimums. SR-22 filings prove compliance after certain violations. Homeowners and renters policies are not required by state law but are required by lenders and landlords.",
+          "Workers' compensation is almost entirely state law: employers buy insurance or self-insure; benefits cover work-related injuries without requiring proof of employer negligence. Individual and small-group health plans face ACA federal rules alongside state mandates, network adequacy, and external review of denials.",
+        ],
+        bulletPoints: [
+          "Auto liability minimums and cancellation rules vary by state — verify with your Department of Insurance",
+          "Workers' comp is mandatory for most employers in most states",
+          "Health: ACA marketplace rules plus state benefit mandates",
+        ],
+      },
     ],
   },
   {
@@ -273,95 +286,71 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
           "Insurers must invest within state-approved guidelines, hold statutory reserves, and report annually. Risk-Based Capital (RBC) ratios trigger regulatory action if too low. Dividends to shareholders may be restricted when surplus is weak.",
         ],
       },
-    ],
-  },
-  {
-    id: "state-laws",
-    number: 6,
-    title: "State laws consumers and producers should know",
-    sections: [
       {
-        id: "auto-home",
-        title: "6.1 Auto, home, and renters",
+        id: "fraud-policyholder",
+        title: "5.5 Fraud and policyholder duties",
         paragraphs: [
-          "Every state requires financial responsibility for drivers — usually liability insurance minimums. SR-22 filings prove compliance after certain violations. Homeowners and renters policies are not required by state law but are required by lenders and landlords.",
-          "Cancellation and nonrenewal statutes limit when insurers can drop you mid-term or at renewal. Homeowners claim bill of rights laws exist in several states after catastrophes.",
+          "Insurance fraud inflates premiums for everyone. Hard fraud includes staged accidents and arson for profit; soft fraud includes exaggerating damages or misrepresenting facts on applications. Insurers investigate suspicious claims through special investigation units. Application misrepresentations can void coverage if material to risk.",
         ],
       },
       {
-        id: "workers-comp",
-        title: "6.2 Workers' compensation",
+        id: "producer-ethics",
+        title: "5.6 Producer ethics and anti-fraud enforcement",
         paragraphs: [
-          "Workers' comp is almost entirely state law. Employers buy insurance or self-insure per state rules. Benefits cover medical care and lost wages for work-related injuries without requiring the employee to prove employer negligence.",
+          "Licensed producers owe duties of honesty, disclosure, and suitability. Twisting and churning violate unfair trade practice laws. Producers must complete pre-licensing education, pass exams, and meet continuing education requirements. Many states require insurers to report suspected fraud; federal mail and wire fraud statutes apply to interstate schemes.",
         ],
-      },
-      {
-        id: "health",
-        title: "6.3 Health insurance (state + federal)",
-        paragraphs: [
-          "Individual and small-group health plans face ACA federal rules (guaranteed issue, essential health benefits in marketplace plans, premium tax credits). Large employer plans may fall under ERISA federally. State laws add mandates, network adequacy, and external review of denials.",
+        bulletPoints: [
+          "Material misrepresentation on applications can void coverage",
+          "Producers must be licensed in each state where they sell",
+          "State insurance departments investigate producer complaints",
         ],
       },
     ],
   },
   {
     id: "lines",
-    number: 7,
+    number: 6,
     title: "Major lines of insurance (overview)",
     sections: [
       {
         id: "p-and-c",
-        title: "7.1 Property and casualty",
+        title: "6.1 Property and casualty",
         paragraphs: [
           "Property insurance covers buildings and belongings against fire, wind, theft, and other perils (subject to exclusions). Casualty includes liability — auto, homeowners liability, commercial general liability, umbrella, and professional liability. Auto physical damage adds collision and comprehensive.",
         ],
       },
       {
         id: "life-health",
-        title: "7.2 Life and health",
+        title: "6.2 Life and health",
         paragraphs: [
           "Life insurance pays beneficiaries at death (term, whole, universal). Health insurance covers medical expenses (employer group, individual, Medicare, Medicaid). Disability income replaces wages when you cannot work.",
         ],
       },
       {
         id: "commercial",
-        title: "7.3 Commercial",
+        title: "6.3 Commercial",
         paragraphs: [
           "Businesses buy general liability, commercial property, business interruption, workers' comp, commercial auto, professional liability (E&O), cyber, and umbrella. BOPs package coverages for eligible small businesses.",
         ],
       },
-    ],
-  },
-  {
-    id: "modern",
-    number: 8,
-    title: "Modern challenges and the future",
-    sections: [
       {
-        id: "climate",
-        title: "8.1 Climate and catastrophe",
+        id: "modern-market",
+        title: "6.4 Climate, catastrophe, and insurtech",
         paragraphs: [
-          "Hurricanes, wildfires, and hail drive reinsurance costs and insurer withdrawals from high-risk areas. State wind pools and FAIR plans provide last-resort coverage. Building codes and mitigation discounts influence pricing.",
-        ],
-      },
-      {
-        id: "tech",
-        title: "8.2 Technology and insurtech",
-        paragraphs: [
-          "Telematics prices auto by driving behavior. AI assists claims triage and fraud detection. Embedded insurance sells coverage at point of purchase. Regulators scrutinize algorithms for bias and transparency.",
+          "Hurricanes, wildfires, and hail drive reinsurance costs and insurer withdrawals from high-risk areas. State wind pools and FAIR plans provide last-resort coverage. Telematics prices auto by driving behavior; AI assists claims triage and fraud detection. Regulators scrutinize algorithms for bias and transparency.",
         ],
       },
     ],
   },
   {
     id: "claims-process",
-    number: 9,
+    number: 7,
     title: "The claims process: from loss to settlement",
     subtitle: "What happens after something goes wrong",
     sections: [
       {
         id: "first-steps",
-        title: "9.1 Duties after a loss",
+        title: "7.1 Duties after a loss",
         paragraphs: [
           "When a loss occurs, policyholders have contractual duties: notify the insurer promptly, protect property from further damage (reasonable emergency repairs), cooperate with investigation, and document everything. Failure to give prompt notice can give the insurer grounds to deny a claim — though states often require the insurer to prove actual prejudice from delay.",
           "For auto accidents, exchange information, photograph damage, obtain police reports when appropriate, and seek medical care if injured. For property losses, inventory damaged items, keep receipts for temporary repairs, and do not discard evidence until the adjuster instructs you.",
@@ -375,7 +364,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "adjusters",
-        title: "9.2 Adjusters, investigations, and estimates",
+        title: "7.2 Adjusters, investigations, and estimates",
         paragraphs: [
           "The insurer assigns a claims adjuster — staff, independent, or public (if you hire one at your expense). Adjusters inspect damage, review policy language, interview witnesses, and estimate repair cost. They determine whether the loss is covered, whether limits and deductibles apply, and whether depreciation reduces payment.",
           "Supplemental claims may arise when hidden damage appears after initial repairs. Disputes often center on scope of damage, cause of loss (wear and tear vs. covered peril), and whether estimates use aftermarket or OEM parts.",
@@ -383,7 +372,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "denials-appeals",
-        title: "9.3 Denials, appeals, and disputes",
+        title: "7.3 Denials, appeals, and disputes",
         paragraphs: [
           "If a claim is denied, the insurer must explain the reason in writing, citing policy provisions. You may request internal appeal, file a complaint with your state insurance department, or consult an attorney. Some states allow bad-faith lawsuits when insurers unreasonably deny covered claims.",
           "Appraisal clauses in property policies can resolve valuation disputes without full litigation. Arbitration may be required for certain auto physical damage disagreements under policy terms.",
@@ -392,63 +381,14 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
     ],
   },
   {
-    id: "fraud-ethics",
-    number: 10,
-    title: "Fraud, ethics, and producer responsibilities",
-    subtitle: "Legal duties of insurers, agents, and policyholders",
-    sections: [
-      {
-        id: "policyholder-fraud",
-        title: "10.1 Policyholder fraud",
-        paragraphs: [
-          "Insurance fraud inflates premiums for everyone. Hard fraud includes staged accidents, arson for profit, and fake injuries. Soft fraud includes exaggerating damages, misrepresenting facts on applications, or padding inventories after a loss.",
-          "Insurers investigate suspicious claims using special investigation units (SIU), databases, and social media. Convictions can bring fines, restitution, policy rescission, and criminal penalties. Application misrepresentations can void coverage even for unrelated later claims if material to risk.",
-        ],
-      },
-      {
-        id: "producer-ethics",
-        title: "10.2 Producer ethics and licensing law",
-        paragraphs: [
-          "Licensed producers owe duties of honesty, disclosure, and suitability. Twisting and churning violate unfair trade practice laws. Replacing a policy solely for commission without consumer benefit is prohibited in many states.",
-          "Producers must complete pre-licensing education, pass exams, submit to background checks, and meet continuing education requirements. Commissions must be disclosed where required; rebating (sharing commission with the customer) is illegal in many states.",
-        ],
-        bulletPoints: [
-          "Material misrepresentation on applications can void coverage",
-          "Producers must be licensed in each state where they sell",
-          "Unfair claims settlement practices apply to insurers, not consumers",
-          "State insurance departments investigate producer complaints",
-        ],
-      },
-      {
-        id: "anti-fraud-laws",
-        title: "10.3 Anti-fraud statutes",
-        paragraphs: [
-          "Many states require insurers to report suspected fraud to bureaus and participate in fraud authorities. Federal mail and wire fraud statutes apply to interstate schemes. Healthcare fraud enforcement involves CMS, FBI, and state Medicaid fraud units for false billing.",
-        ],
-        laws: [
-          {
-            name: "State insurance fraud reporting laws",
-            year: "Varies",
-            summary: "Require investigation and reporting of suspected fraudulent claims.",
-          },
-          {
-            name: "False Claims Act (federal)",
-            year: "1863 / amended",
-            summary: "Civil and criminal penalties for false claims to government programs.",
-          },
-        ],
-      },
-    ],
-  },
-  {
     id: "reinsurance",
-    number: 11,
+    number: 8,
     title: "Reinsurance and catastrophic risk",
     subtitle: "How insurers protect themselves — and why it affects your premium",
     sections: [
       {
         id: "what-is-reinsurance",
-        title: "11.1 What reinsurance is",
+        title: "8.1 What reinsurance is",
         paragraphs: [
           "Reinsurance is insurance for insurance companies. A primary insurer transfers part of its risk to a reinsurer in exchange for premium. When a large hurricane hits, no single carrier wants all exposure concentrated in one state — reinsurance spreads catastrophic loss globally.",
           "Treaty reinsurance covers a block of policies automatically; facultative reinsurance covers a single large risk (e.g., a stadium or refinery) negotiated case by case.",
@@ -456,7 +396,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "why-it-matters",
-        title: "11.2 Why consumers should care",
+        title: "8.2 Why consumers should care",
         paragraphs: [
           "When reinsurance costs rise after global disasters (hurricanes, earthquakes, wildfires), primary insurers raise rates or reduce capacity in high-risk areas. Some carriers exit states entirely. State residual markets (wind pools, FAIR plans) grow when private market withdraws.",
           "Reinsurance does not change your policy contract directly — your claim is still paid by your insurer — but it influences whether coverage is available at all in your ZIP code.",
@@ -472,13 +412,13 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
   },
   {
     id: "government-programs",
-    number: 12,
+    number: 9,
     title: "Government insurance and social programs",
     subtitle: "When the private market stops and public programs begin",
     sections: [
       {
         id: "social-security",
-        title: "12.1 Social Security and disability",
+        title: "9.1 Social Security and disability",
         paragraphs: [
           "Social Security (1935) provides retirement, survivor, and disability benefits funded by payroll taxes — social insurance, not private underwriting. Supplemental Security Income (SSI) aids low-income disabled and elderly individuals separately.",
           "These programs differ from private life and disability policies but shape how families plan for income replacement.",
@@ -486,7 +426,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "medicare-medicaid",
-        title: "12.2 Medicare and Medicaid",
+        title: "9.2 Medicare and Medicaid",
         paragraphs: [
           "Medicare (1965) covers seniors 65+ and certain disabled individuals — Part A hospital, Part B medical, Part C Medicare Advantage plans, Part D prescription drugs. Medicaid is state-federal coverage for low-income populations with benefits varying by state.",
           "Private insurers administer many Medicare Advantage and Part D plans under federal contracts. Medicaid expansion under the ACA extended eligibility in participating states.",
@@ -506,7 +446,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "other-programs",
-        title: "12.3 NFIP, crop, and residual markets",
+        title: "9.3 NFIP, crop, and residual markets",
         paragraphs: [
           "The National Flood Insurance Program sells flood policies where private market declined. Federal crop insurance supports agriculture. State FAIR plans and wind pools offer basic property coverage when standard carriers will not write policies.",
           "Terrorism Risk Insurance Act creates a federal backstop for certified terrorism losses on commercial policies, with insurers required to offer terrorism coverage in many cases.",
@@ -521,13 +461,13 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
   },
   {
     id: "policy-contract",
-    number: 13,
-    title: "Reading and understanding your policy contract",
-    subtitle: "Declarations, insuring agreements, exclusions, and conditions",
+    number: 10,
+    title: "Reading your policy, resources, and disclaimer",
+    subtitle: "Declarations, exclusions, and where to learn more",
     sections: [
       {
         id: "parts",
-        title: "13.1 Parts of an insurance policy",
+        title: "10.1 Parts of an insurance policy",
         paragraphs: [
           "A policy is a legal contract. The declarations page summarizes who is insured, what is insured, limits, deductibles, premium, and policy period. The insuring agreement states what the insurer promises to pay. Exclusions list what is not covered. Conditions describe duties of insured and insurer (notice, cooperation, cancellation). Endorsements modify the base form.",
           "ISO (Insurance Services Office) and AAIS publish standard forms used by many carriers — but carriers may file modifications. Always read your specific policy, not a generic sample online.",
@@ -535,7 +475,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "key-clauses",
-        title: "13.2 Clauses that often surprise policyholders",
+        title: "10.2 Clauses that often surprise policyholders",
         paragraphs: [
           "Co-insurance clauses penalize underinsurance on commercial property. Actual cash value vs. replacement cost affects claim payment on older property. Ordinance or law coverage pays extra to meet current building codes when rebuilding. Other insurance clauses coordinate when multiple policies apply.",
           "Cancellation and nonrenewal notices must follow state statutes. Mortgage clauses name lenders as loss payees. Subrogation lets your insurer recover from at-fault parties after paying you.",
@@ -547,18 +487,11 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
           "Policy jacket — lists form numbers incorporated by reference",
         ],
       },
-    ],
-  },
-  {
-    id: "resources",
-    number: 14,
-    title: "Study resources and disclaimer",
-    sections: [
       {
         id: "resources-list",
-        title: "14.1 Where to learn more",
+        title: "10.3 Where to learn more",
         paragraphs: [
-          "National Association of Insurance Commissioners (NAIC.org) — model laws, consumer guides, complaint filing. Your state Department of Insurance website — licensing verification, bulletins, rate filings. Federal Insurance Office (Treasury) — national reports. For producer licensing, your state's exam content outline references state statutes and NAIC models.",
+          "National Association of Insurance Commissioners (NAIC.org) — model laws, consumer guides, complaint filing. Your state Department of Insurance website — licensing verification, bulletins, rate filings. Federal Insurance Office (Treasury) — national reports.",
         ],
         bulletPoints: [
           "NAIC.org — consumer information and insurer financial data",
@@ -569,7 +502,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "disclaimer",
-        title: "14.2 Educational disclaimer",
+        title: "10.4 Educational disclaimer",
         paragraphs: [
           "This textbook-style overview is published by CoverIQ for general education. It is not legal advice, not a substitute for your policy contract, and not exhaustive of every law in every jurisdiction. Statutes change; court decisions interpret them. Consult a licensed insurance professional and your state insurance department for matters affecting you.",
         ],

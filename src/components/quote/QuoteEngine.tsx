@@ -12,7 +12,7 @@ interface QuoteEngineProps {
 
 export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps) {
   const navigate = useNavigate();
-  const { data, setField, vehicleRequired, progress, submitting, formatPhone, submit } =
+  const { data, setField, vehicleRequired, progress, submitting, consent, setConsent, formatPhone, submit } =
     useQuoteForm(initialInsuranceType);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -40,8 +40,8 @@ export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps
             <span className="font-mono text-[10px] uppercase tracking-wider text-cyan-400">
               Quote Engine
             </span>
-            <h3 className="font-display mt-1 text-xl font-bold text-white">Start Your Quote</h3>
-            <p className="mt-1 text-sm text-slate-500">Licensed professional follow-up</p>
+            <h3 className="font-display mt-1 text-xl font-bold text-white">Request a Quote Review</h3>
+            <p className="mt-1 text-sm text-slate-500">Education first — a licensed agent follows up</p>
           </div>
           <span className="relative mt-1 flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
@@ -191,15 +191,29 @@ export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps
             </select>
           </div>
 
+          <label className="mt-2 flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-slate-950/40 px-3 py-3 text-left text-xs leading-relaxed text-slate-400">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              className="mt-0.5 shrink-0 accent-cyan-500"
+              required
+            />
+            <span>
+              I agree a licensed insurance professional may contact me about this request. I understand
+              this is not an instant bindable quote.
+            </span>
+          </label>
+
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !consent}
             className="btn-primary mt-2 w-full disabled:opacity-60"
           >
-            {submitting ? "Processing..." : "Get AI-Powered Quote"}
+            {submitting ? "Sending request…" : "Submit quote request"}
           </button>
           <p className="text-center font-mono text-[10px] text-slate-600">
-            Encrypted · Secure submission
+            Secure submission · We confirm delivery when possible
           </p>
           <p className="text-center text-[11px] text-slate-600">{QUOTE_DISCLAIMER}</p>
         </form>

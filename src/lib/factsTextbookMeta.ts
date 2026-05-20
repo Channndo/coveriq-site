@@ -12,10 +12,6 @@ export const ROMAN_NUMERALS = [
   "VIII",
   "IX",
   "X",
-  "XI",
-  "XII",
-  "XIII",
-  "XIV",
 ] as const;
 
 export const CHAPTER_META: Record<
@@ -39,11 +35,11 @@ export const CHAPTER_META: Record<
     ],
   },
   regulation: {
-    readMinutes: 7,
+    readMinutes: 9,
     objectives: [
       "Describe the state-based U.S. regulatory structure",
       "Explain McCarran-Ferguson and federal–state boundaries",
-      "Summarize licensing, solvency, and guaranty fund concepts",
+      "Summarize licensing, solvency, and common state-level themes",
     ],
   },
   "federal-laws": {
@@ -55,19 +51,11 @@ export const CHAPTER_META: Record<
     ],
   },
   "insurer-rules": {
-    readMinutes: 7,
+    readMinutes: 8,
     objectives: [
       "Outline fair claims handling and prompt payment expectations",
-      "Identify producer conduct and disclosure requirements",
-      "Describe privacy and financial solvency obligations",
-    ],
-  },
-  "state-laws": {
-    readMinutes: 6,
-    objectives: [
-      "Explain why rules vary by jurisdiction without memorizing state statutes",
-      "Compare auto, workers' comp, and health regulatory themes",
-      "Know where to verify requirements in your state",
+      "Identify producer conduct, privacy, and solvency obligations",
+      "Distinguish fraud types and anti-fraud enforcement",
     ],
   },
   lines: {
@@ -75,15 +63,7 @@ export const CHAPTER_META: Record<
     objectives: [
       "Differentiate property-casualty, life, health, and commercial lines",
       "Match common products to the risks they address",
-      "Recognize when multiple policies work together",
-    ],
-  },
-  modern: {
-    readMinutes: 5,
-    objectives: [
-      "Understand how climate and catastrophe affect availability and pricing",
-      "Describe technology's role in underwriting and claims",
-      "Anticipate evolving consumer and regulatory expectations",
+      "Understand climate, catastrophe, and insurtech trends",
     ],
   },
   "claims-process": {
@@ -94,20 +74,12 @@ export const CHAPTER_META: Record<
       "Outline appeals when coverage is disputed or denied",
     ],
   },
-  "fraud-ethics": {
-    readMinutes: 6,
-    objectives: [
-      "Distinguish hard fraud from soft fraud and application misrepresentation",
-      "Apply producer ethics and suitability standards",
-      "Recognize anti-fraud enforcement at federal and industry levels",
-    ],
-  },
   reinsurance: {
     readMinutes: 5,
     objectives: [
       "Define reinsurance and why primary insurers cede risk",
       "Explain treaty vs. facultative arrangements",
-      "Connect reinsurance to catastrophe capacity and solvency",
+      "Connect reinsurance to catastrophe capacity and availability",
     ],
   },
   "government-programs": {
@@ -119,19 +91,11 @@ export const CHAPTER_META: Record<
     ],
   },
   "policy-contract": {
-    readMinutes: 7,
+    readMinutes: 8,
     objectives: [
       "Locate declarations, insuring agreement, exclusions, and conditions",
-      "Interpret endorsements and ISO-style form structure",
       "Spot clauses that commonly surprise policyholders",
-    ],
-  },
-  resources: {
-    readMinutes: 4,
-    objectives: [
-      "Find authoritative NAIC and state regulator resources",
-      "Use this guide responsibly as education, not legal advice",
-      "Continue learning via glossary, FAQ, and quiz",
+      "Find authoritative resources and use this guide responsibly",
     ],
   },
 };

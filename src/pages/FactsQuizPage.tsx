@@ -84,9 +84,9 @@ export function FactsQuizPage() {
             Insurance knowledge quiz
           </h1>
           <p className="textbook-prose-muted mt-4">
-            {QUIZ_SESSION_LENGTH} questions drawn at random from a pool of {75} vetted items covering
-            principles, history, regulation, and major lines of coverage — general U.S. concepts, not
-            state exam prep.
+            A {QUIZ_SESSION_LENGTH}-question exam — one question per textbook chapter — drawn from a
+            vetted question bank covering principles, history, regulation, and major lines of coverage.
+            General U.S. concepts, not state exam prep.
           </p>
         </header>
 
@@ -101,7 +101,7 @@ export function FactsQuizPage() {
             >
               <div className="textbook-callout text-sm leading-relaxed text-slate-400">
                 <ul className="list-disc space-y-2 pl-5">
-                  <li>Each session picks {QUIZ_SESSION_LENGTH} different questions from the full bank.</li>
+                  <li>Each exam includes one question per chapter ({QUIZ_SESSION_LENGTH} total).</li>
                   <li>Answer every question, then review your score and explanations.</li>
                   <li>Retake anytime for a new mix — great after reading the Facts chapters.</li>
                 </ul>

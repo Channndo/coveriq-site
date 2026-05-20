@@ -1,3 +1,5 @@
+import { getAccessToken } from "./consumerSession";
+
 export interface MiraMessage {
   role: "user" | "assistant";
   content: string;
@@ -14,6 +16,13 @@ export interface MiraChatResponse {
   model?: string;
 }
 
+function authHeaders(): HeadersInit {
+  const headers: Record<string, string> = { Accept: "application/json" };
+  const token = getAccessToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
 /** Same-origin via Netlify proxy → api.syntrix.solutions Mindroot stack */
 export function miraApiBase(): string {
   const env = import.meta.env.VITE_MIRA_API_BASE as string | undefined;
@@ -24,7 +33,10 @@ export function miraApiBase(): string {
 export async function fetchMiraStatus(): Promise<MiraStatus> {
   const base = miraApiBase();
   try {
-    const r = await fetch(`${base}/api/mira/status`, { credentials: "omit" });
+    const r = await fetch(`${base}/api/mira/status`, {
+      credentials: "omit",
+      headers: authHeaders(),
+    });
     const d = (await r.json().catch(() => ({}))) as { enabled?: boolean };
     return { responded: true, httpOk: r.ok, enabled: !!(r.ok && d.enabled) };
   } catch {
@@ -42,7 +54,7 @@ export async function sendMiraChat(messages: MiraMessage[]): Promise<{
   try {
     const r = await fetch(`${base}/api/mira/chat`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       credentials: "omit",
       body: JSON.stringify({ messages }),
     });

@@ -6,4 +6,6 @@ export interface QuizQuestion {
   explanation: string;
 }
 
-export const QUIZ_SESSION_LENGTH = 20;
+/** One question per textbook chapter on each exam. */
+export const QUIZ_SESSION_LENGTH = 10;
+export const TEXTBOOK_CHAPTER_COUNT = 10;

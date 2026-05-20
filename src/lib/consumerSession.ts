@@ -1,9 +1,29 @@
 import { withResolvedRole, type AccountRole } from "./admin";
+import type { SyntrixMeUser } from "./syntrixAuthApi";
 
-const SESSION_KEY = "coveriq_consumer_v3";
-const REGISTRY_KEY = "coveriq_consumer_registry_v3";
+const TOKEN_KEY = "coveriq_access_token_v1";
+const PROFILE_KEY = "coveriq_profile_v1";
+const LEGACY_KEYS = ["coveriq_consumer_v3", "coveriq_consumer_registry_v3"] as const;
 
+/** Safe profile stored locally — never includes password or security answers. */
 export interface ConsumerUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  currentInsuranceProvider: string;
+  securityQuestion1: string;
+  securityQuestion2: string;
+  createdAt: string;
+  role: AccountRole;
+  onboardingComplete: boolean;
+}
+
+export type ConsumerSignupInput = {
   firstName: string;
   lastName: string;
   email: string;
@@ -18,12 +38,7 @@ export interface ConsumerUser {
   securityAnswer1: string;
   securityQuestion2: string;
   securityAnswer2: string;
-  createdAt: string;
-  role: AccountRole;
-  onboardingComplete: boolean;
-}
-
-export type ConsumerSignupInput = Omit<ConsumerUser, "createdAt" | "role" | "onboardingComplete">;
+};
 
 function normalizeUser(user: ConsumerUser): ConsumerUser {
   return {
@@ -32,42 +47,24 @@ function normalizeUser(user: ConsumerUser): ConsumerUser {
   };
 }
 
-export function readConsumerRegistry(): ConsumerUser[] {
-  try {
-    const raw = localStorage.getItem(REGISTRY_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as ConsumerUser[];
-    return Array.isArray(parsed)
-      ? parsed.map((u) =>
-          normalizeUser({
-            ...u,
-            role: u.role ?? "consumer",
-            onboardingComplete: u.onboardingComplete ?? false,
-            street: u.street ?? "",
-            city: u.city ?? "",
-            state: u.state ?? "",
-            zip: u.zip ?? "",
-            currentInsuranceProvider: u.currentInsuranceProvider ?? "",
-            securityQuestion1: u.securityQuestion1 ?? "",
-            securityAnswer1: u.securityAnswer1 ?? "",
-            securityQuestion2: u.securityQuestion2 ?? "",
-            securityAnswer2: u.securityAnswer2 ?? "",
-            password: u.password ?? "",
-          })
-        )
-      : [];
-  } catch {
-    return [];
+export function clearLegacyAuthStorage(): void {
+  for (const key of LEGACY_KEYS) {
+    localStorage.removeItem(key);
   }
 }
 
-function writeRegistry(users: ConsumerUser[]) {
-  localStorage.setItem(REGISTRY_KEY, JSON.stringify(users));
+export function getAccessToken(): string | null {
+  try {
+    const token = localStorage.getItem(TOKEN_KEY);
+    return token && token.length > 10 ? token : null;
+  } catch {
+    return null;
+  }
 }
 
 export function readConsumerSession(): ConsumerUser | null {
   try {
-    const raw = localStorage.getItem(SESSION_KEY);
+    const raw = localStorage.getItem(PROFILE_KEY);
     if (!raw) return null;
     const user = JSON.parse(raw) as ConsumerUser;
     if (!user?.email) return null;
@@ -77,37 +74,53 @@ export function readConsumerSession(): ConsumerUser | null {
   }
 }
 
-export function writeConsumerSession(user: ConsumerUser) {
+export function writeConsumerSession(accessToken: string, user: ConsumerUser): void {
   const normalized = normalizeUser(user);
-  localStorage.setItem(SESSION_KEY, JSON.stringify(normalized));
-  const registry = readConsumerRegistry();
-  const email = normalized.email.toLowerCase();
-  const idx = registry.findIndex((u) => u.email.toLowerCase() === email);
-  if (idx >= 0) registry[idx] = normalized;
-  else registry.push(normalized);
-  writeRegistry(registry);
+  localStorage.setItem(TOKEN_KEY, accessToken);
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(normalized));
+  clearLegacyAuthStorage();
 }
 
-export function clearConsumerSession() {
-  localStorage.removeItem(SESSION_KEY);
+export function updateConsumerProfile(patch: Partial<ConsumerUser>): void {
+  const current = readConsumerSession();
+  const token = getAccessToken();
+  if (!current || !token) return;
+  writeConsumerSession(token, { ...current, ...patch });
 }
 
-export function findConsumerByCredentials(email: string, password: string): ConsumerUser | null {
-  const emailNorm = email.trim().toLowerCase();
-  if (!emailNorm || !password) return null;
-
-  const user = readConsumerRegistry().find((u) => u.email.toLowerCase() === emailNorm);
-  if (!user || user.password !== password) return null;
-  return normalizeUser(user);
+export function clearConsumerSession(): void {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(PROFILE_KEY);
 }
 
-export function createAdminSessionUser(email: string, password: string): ConsumerUser | null {
-  const match = findConsumerByCredentials(email, password);
-  return match?.role === "admin" ? match : null;
+export function markOnboardingComplete(): void {
+  updateConsumerProfile({ onboardingComplete: true });
 }
 
-export function markOnboardingComplete() {
-  const user = readConsumerSession();
-  if (!user) return;
-  writeConsumerSession({ ...user, onboardingComplete: true });
+export function mapSyntrixUserToProfile(
+  me: SyntrixMeUser,
+  fallback?: Partial<ConsumerUser>
+): ConsumerUser {
+  const email = (me.email ?? fallback?.email ?? "").trim().toLowerCase();
+  const phone = (me.phone ?? fallback?.phone ?? "").trim();
+  return normalizeUser({
+    firstName: me.first_name ?? me.firstName ?? fallback?.firstName ?? "",
+    lastName: me.last_name ?? me.lastName ?? fallback?.lastName ?? "",
+    email,
+    phone,
+    street: me.street ?? fallback?.street ?? "",
+    city: me.city ?? fallback?.city ?? "",
+    state: (me.state ?? fallback?.state ?? "").toString().toUpperCase(),
+    zip: (me.zip ?? me.postal_code ?? fallback?.zip ?? "").toString(),
+    currentInsuranceProvider:
+      me.current_insurance_provider ??
+      me.currentInsuranceProvider ??
+      fallback?.currentInsuranceProvider ??
+      "",
+    securityQuestion1: me.security_question_1 ?? fallback?.securityQuestion1 ?? "",
+    securityQuestion2: me.security_question_2 ?? fallback?.securityQuestion2 ?? "",
+    createdAt: fallback?.createdAt ?? new Date().toISOString(),
+    role: fallback?.role ?? "consumer",
+    onboardingComplete: Boolean(me.onboarding_complete ?? me.onboardingComplete ?? fallback?.onboardingComplete),
+  });
 }

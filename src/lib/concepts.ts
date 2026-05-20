@@ -5,12 +5,15 @@ export interface InsuranceConcept {
   detail: string;
   example: string;
   whyItMatters: string;
+  /** Quick-review accordion prompt, e.g. "What are deductibles?" */
+  reviewQuestion: string;
 }
 
 export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "deductibles",
     title: "Deductibles",
+    reviewQuestion: "What are deductibles?",
     short: "What you pay out of pocket before coverage applies.",
     detail:
       "A deductible is the amount you generally pay toward a covered loss before your insurer contributes. Deductibles apply per claim (not per year) on many property policies, though health plans often use annual deductibles. Choosing a higher deductible usually lowers your premium because you're taking more financial risk upfront — but that means more cash out of pocket when something goes wrong.",
@@ -22,6 +25,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "liability",
     title: "Liability",
+    reviewQuestion: "What is liability coverage?",
     short: "Coverage for harm you may cause to others.",
     detail:
       "Liability coverage generally helps pay for bodily injury or property damage you're legally responsible for — plus legal defense costs in many cases. Auto policies often show split limits (e.g., $100,000 per person / $300,000 per accident / $100,000 property damage). Home and renters policies include personal liability for incidents like a guest injury. Liability does not usually pay for your own injuries or damage to your property.",
@@ -33,6 +37,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "comp-vs-collision",
     title: "Comprehensive vs Collision",
+    reviewQuestion: "What is comprehensive vs. collision?",
     short: "Two ways auto physical damage is commonly covered.",
     detail:
       "Collision typically covers damage to your vehicle from impact with another car, object, or rollover — regardless of fault, subject to your deductible. Comprehensive (sometimes called 'other than collision') generally covers theft, vandalism, fire, hail, falling objects, animal strikes, and similar events. Neither covers routine maintenance or mechanical breakdown. Lenders often require both while you have a car loan.",
@@ -44,6 +49,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "policy-limits",
     title: "Policy Limits",
+    reviewQuestion: "What are policy limits?",
     short: "The maximum your insurer may pay for a covered loss.",
     detail:
       "Limits are the caps on what an insurer will pay for covered claims. They can be per person, per accident, per item, or per policy term. Once limits are exhausted, you may be responsible for remaining costs. Umbrella policies exist partly because underlying limits can be used up in a single severe claim.",
@@ -55,6 +61,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "premiums",
     title: "Premiums",
+    reviewQuestion: "What are premiums?",
     short: "The price you pay to keep coverage in force.",
     detail:
       "Premium is the cost to maintain your policy — usually billed monthly, semi-annually, or annually. Insurers price risk using location, age, driving record, claims history, credit (where allowed), coverage types, deductibles, and vehicle or property characteristics. A lower premium isn't always better if it means stripped coverage or deductibles you can't afford.",
@@ -66,6 +73,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "exclusions",
     title: "Exclusions",
+    reviewQuestion: "What are exclusions?",
     short: "What a policy typically does not cover.",
     detail:
       "Exclusions are specific situations, perils, or property types your policy won't cover. Common examples include intentional acts, wear and tear, flood and earthquake (often separate policies), business use of personal vehicles, and certain dog breeds. Endorsements can sometimes buy back limited coverage for excluded items.",
@@ -77,6 +85,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "claims",
     title: "Claims",
+    reviewQuestion: "What is a claim?",
     short: "How you request payment for a covered loss.",
     detail:
       "A claim is your formal notice to the insurer that a loss occurred. The carrier assigns an adjuster, investigates facts, reviews policy language, and determines whether the loss is covered and how much to pay. You'll document damage, cooperate with interviews, and pay your deductible when applicable. Filing small claims can sometimes affect future premiums.",
@@ -88,6 +97,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "underwriting",
     title: "Underwriting",
+    reviewQuestion: "What is underwriting?",
     short: "How insurers evaluate risk before offering coverage.",
     detail:
       "Underwriting is the insurer's process of deciding whether to offer coverage, at what price, and with which conditions. They use applications, motor vehicle reports, property inspections, claims databases (like CLUE), and proprietary models. Misrepresentations on an application can void coverage later.",
@@ -99,6 +109,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "rcv-vs-acv",
     title: "Replacement Cost vs ACV",
+    reviewQuestion: "What is replacement cost vs. ACV?",
     short: "How property value may be calculated at claim time.",
     detail:
       "Replacement cost value (RCV) generally pays to repair or replace damaged property with similar new materials, minus deductible — sometimes paying depreciated amount first and holding back depreciation until repairs are completed. Actual cash value (ACV) pays replacement cost minus depreciation, which can be much lower on older items.",
@@ -110,6 +121,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "bundling",
     title: "Bundling",
+    reviewQuestion: "What is bundling?",
     short: "Combining policies with one carrier.",
     detail:
       "Bundling means placing multiple policies (e.g., auto + home) with the same insurer. Benefits may include one billing account, one agent relationship, and multi-policy discounts. It doesn't guarantee the lowest total price — specialty risks or poor loss history on one line can affect both policies.",
@@ -121,6 +133,7 @@ export const INSURANCE_CONCEPTS: InsuranceConcept[] = [
   {
     id: "umbrella",
     title: "Umbrella Policies",
+    reviewQuestion: "What is an umbrella policy?",
     short: "Extra liability above your primary policies.",
     detail:
       "Personal umbrella liability provides additional limits after your auto, home, or renters liability is exhausted. Typical policies start at $1 million and require minimum underlying limits (e.g., $250k/$500k auto). Coverage may extend to certain lawsuits, libel/slander, and worldwide incidents — subject to exclusions.",

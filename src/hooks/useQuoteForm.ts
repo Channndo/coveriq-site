@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { WEB_APP_URL } from "../lib/constants";
 import { lineRequiresVehicleCount } from "../lib/insuranceLines";
 
 export interface QuoteFormData {
@@ -30,6 +29,7 @@ export function useQuoteForm(initialInsuranceType = "") {
     insuranceType: initialInsuranceType,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [consent, setConsent] = useState(false);
 
   const vehicleRequired = lineRequiresVehicleCount(data.insuranceType);
 
@@ -57,13 +57,14 @@ export function useQuoteForm(initialInsuranceType = "") {
       "insuranceType",
     ];
     let filled = base.filter((k) => String(data[k]).trim()).length;
-    let total = base.length;
+    let total = base.length + 1;
     if (vehicleRequired) {
       total += 1;
       if (data.vehicleCount) filled += 1;
     }
+    if (consent) filled += 1;
     return Math.round((filled / total) * 100);
-  }, [data, vehicleRequired]);
+  }, [data, vehicleRequired, consent]);
 
   const formatPhone = (raw: string) => {
     let value = raw.replace(/[^0-9]/g, "");
@@ -76,6 +77,12 @@ export function useQuoteForm(initialInsuranceType = "") {
   };
 
   const submit = async (): Promise<{ ok: boolean; error?: string }> => {
+    if (!consent) {
+      return {
+        ok: false,
+        error: "Please confirm you agree to be contacted about your quote request.",
+      };
+    }
     if (vehicleRequired && !data.vehicleCount) {
       return { ok: false, error: "Please select the number of vehicles." };
     }
@@ -99,14 +106,26 @@ export function useQuoteForm(initialInsuranceType = "") {
 
     setSubmitting(true);
     try {
-      await fetch(WEB_APP_URL, {
+      const res = await fetch("/api/quote", {
         method: "POST",
-        mode: "no-cors",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(payload),
       });
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      if (!res.ok || json.ok === false) {
+        return {
+          ok: false,
+          error:
+            json.error ||
+            "We could not confirm your request was received. Please try again or call us.",
+        };
+      }
       return { ok: true };
     } catch {
-      return { ok: true };
+      return {
+        ok: false,
+        error: "Network error — please check your connection and try again.",
+      };
     } finally {
       setSubmitting(false);
     }
@@ -118,6 +137,8 @@ export function useQuoteForm(initialInsuranceType = "") {
     vehicleRequired,
     progress: progress(),
     submitting,
+    consent,
+    setConsent,
     formatPhone,
     submit,
   };

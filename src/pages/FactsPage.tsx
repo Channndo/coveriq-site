@@ -7,7 +7,8 @@ import { TechBackground } from "../components/ui/TechBackground";
 import { FactsTextbookHero } from "../components/facts/FactsTextbookHero";
 import { FactsTableOfContents } from "../components/facts/FactsTableOfContents";
 import { FactsChapterArticle } from "../components/facts/FactsChapterArticle";
-import { FactsQuizPromo } from "../components/facts/FactsQuizPromo";
+import { FactsQuizList } from "../components/facts/FactsQuizList";
+import { FactsStickyProgress } from "../components/facts/FactsStickyProgress";
 import { useTextbookScrollSpy } from "../components/facts/useTextbookScrollSpy";
 import { FactsMobileChapterSelect } from "../components/facts/FactsMobileChapterSelect";
 
@@ -37,6 +38,7 @@ export function FactsPage() {
   return (
     <div className="min-h-screen bg-[#030712]">
       <TechBackground showGrid={false} />
+      <FactsStickyProgress readProgress={readProgress} activeChapterId={activeChapterId} />
 
       <div className="section-padding relative mx-auto max-w-7xl">
         <Link
@@ -68,7 +70,7 @@ export function FactsPage() {
               />
             ))}
 
-            <FactsQuizPromo />
+            <FactsQuizList />
 
             <Disclaimer className="mt-12" />
             <p className="mt-4 text-xs leading-relaxed text-slate-600">{GLOBAL_DISCLAIMER}</p>

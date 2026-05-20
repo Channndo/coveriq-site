@@ -97,16 +97,21 @@ export function recordQuizAttempt(
   score: number,
   total: number
 ): void {
-  if (!isPassingScore(score, total)) return;
   const data = readEducationProgress(email);
   const record: QuizAttemptRecord = { score, total, at: new Date().toISOString() };
   if (size === 10) data.exam10 = record;
-  if (size === 20) data.quiz20 = record;
-  if (size === 50) data.quiz50 = record;
+  if (size === 20 && isPassingScore(score, total)) data.quiz20 = record;
+  if (size === 50 && isPassingScore(score, total)) data.quiz50 = record;
   writeEducationProgress(email, data);
 }
 
 export function hasCompletedChapterExam(email: string): boolean {
+  const exam = readEducationProgress(email).exam10;
+  if (!exam) return false;
+  return isPassingScore(exam.score, exam.total);
+}
+
+export function hasAttemptedChapterExam(email: string): boolean {
   return Boolean(readEducationProgress(email).exam10);
 }
 
@@ -118,8 +123,18 @@ export function isEducationPathComplete(user: ConsumerUser | null): boolean {
   return hasCompletedChapterExam(user.email);
 }
 
+/** 20- and 50-question quizzes unlock after passing the 10-question exam. */
 export function isAdvancedQuizUnlocked(user: ConsumerUser | null): boolean {
-  return isEducationPathComplete(user);
+  if (!user?.email) return false;
+  return hasCompletedChapterExam(user.email);
+}
+
+export function advancedQuizLockReason(user: ConsumerUser | null): string {
+  if (!user?.email) {
+    return "Sign in and pass the 10-question chapter exam (70%+) to unlock.";
+  }
+  if (hasCompletedChapterExam(user.email)) return "";
+  return "Pass the 10-question chapter exam (70% or higher) to unlock.";
 }
 
 export function educationProgressPercent(user: ConsumerUser | null): number {
@@ -137,6 +152,7 @@ export function educationProgressSummary(user: ConsumerUser | null): {
   quickChecksPassed: number;
   quickChecksTotal: number;
   chapterExamDone: boolean;
+  chapterExamAttempted: boolean;
   advancedUnlocked: boolean;
   quiz20Done: boolean;
   quiz50Done: boolean;
@@ -149,6 +165,7 @@ export function educationProgressSummary(user: ConsumerUser | null): {
     quickChecksPassed: email ? countPassedQuickChecks(email) : 0,
     quickChecksTotal: TEXTBOOK_CHAPTER_COUNT,
     chapterExamDone: email ? hasCompletedChapterExam(email) : false,
+    chapterExamAttempted: email ? hasAttemptedChapterExam(email) : false,
     advancedUnlocked: isAdvancedQuizUnlocked(user),
     quiz20Done: Boolean(progress.quiz20),
     quiz50Done: Boolean(progress.quiz50),

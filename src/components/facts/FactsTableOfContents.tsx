@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { INSURANCE_TEXTBOOK } from "../../lib/insuranceTextbook";
 import { CHAPTER_META } from "../../lib/factsTextbookMeta";
+import { useConsumerAuth } from "../../context/ConsumerAuthContext";
+import { educationProgressSummary, isChapterQuickCheckPassed } from "../../lib/educationProgress";
 
 interface FactsTableOfContentsProps {
   activeChapterId: string;
@@ -13,6 +15,9 @@ export function FactsTableOfContents({
   activeSectionId,
   readProgress,
 }: FactsTableOfContentsProps) {
+  const { user } = useConsumerAuth();
+  const learning = educationProgressSummary(user);
+
   return (
     <nav
       aria-label="Table of contents"
@@ -37,6 +42,28 @@ export function FactsTableOfContents({
           <p className="mt-1.5 font-mono text-[10px] text-slate-600">
             {Math.round(readProgress)}% through guide
           </p>
+          {user && (
+            <div className="mt-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
+                Learning track
+              </p>
+              <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.06]">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 transition-all duration-300"
+                  style={{ width: `${learning.percent}%` }}
+                  role="progressbar"
+                  aria-valuenow={learning.percent}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label="Learning progress"
+                />
+              </div>
+              <p className="mt-1.5 font-mono text-[10px] text-slate-600">
+                {learning.percent}% · checks {learning.quickChecksPassed}/{learning.quickChecksTotal}
+                {learning.chapterExamDone ? " · exam ✓" : ""}
+              </p>
+            </div>
+          )}
         </div>
 
         <ol className="mt-2 space-y-1 overflow-y-auto pr-1 lg:flex-1">
@@ -57,7 +84,14 @@ export function FactsTableOfContents({
                     Ch. {ch.number}
                     {meta ? ` · ${meta.readMinutes}m` : ""}
                   </span>
-                  <span className="mt-0.5 block text-sm leading-snug">{ch.title}</span>
+                  <span className="mt-0.5 flex items-center gap-1.5 text-sm leading-snug">
+                    {ch.title}
+                    {user && isChapterQuickCheckPassed(user.email, ch.number) && (
+                      <span className="text-emerald-500/80" title="Quick check passed">
+                        ✓
+                      </span>
+                    )}
+                  </span>
                 </a>
                 {isChapterActive && (
                   <ul className="mb-2 ml-3 mt-0.5 space-y-0.5 border-l border-white/[0.06] pl-3">

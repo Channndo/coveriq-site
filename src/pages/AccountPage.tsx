@@ -7,7 +7,7 @@ import { EducationProgressCard } from "../components/account/EducationProgressCa
 import { StudyInsightsCard } from "../components/account/StudyInsightsCard";
 import { useConsumerAuth } from "../context/ConsumerAuthContext";
 import { readConsumerSession } from "../lib/consumerSession";
-import { educationProgressSummary } from "../lib/educationProgress";
+import { FactsQuizList } from "../components/facts/FactsQuizList";
 
 export function AccountPage() {
   const { user, isAdmin, signOut } = useConsumerAuth();
@@ -19,7 +19,6 @@ export function AccountPage() {
   }
 
   const session = readConsumerSession() ?? user;
-  const summary = educationProgressSummary(session);
 
   return (
     <AuthShell
@@ -68,38 +67,10 @@ export function AccountPage() {
 
         <StudyInsightsCard user={session} />
 
-        <section className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
           <h2 className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Quizzes</h2>
-          <p className="mt-2 text-xs leading-relaxed text-slate-500">
-            Complete onboarding, all chapter quick checks, and the 10-question exam once to unlock
-            the 20- and 50-question exams.
-          </p>
-          <ul className="mt-4 space-y-2">
-            <QuizRow
-              label="10-question chapter exam"
-              detail="One question per chapter"
-              href="/facts/quiz?count=10"
-              unlocked
-              done={summary.chapterExamDone}
-            />
-            <QuizRow
-              label="20-question comprehensive quiz"
-              detail="Broader review from the question bank"
-              href="/facts/quiz?count=20"
-              unlocked={summary.advancedUnlocked}
-              done={summary.quiz20Done}
-              lockReason="Finish all chapter quick checks and pass the 10-question exam first."
-            />
-            <QuizRow
-              label="50-question mastery quiz"
-              detail="Full-length practice from the bank"
-              href="/facts/quiz?count=50"
-              unlocked={summary.advancedUnlocked}
-              done={summary.quiz50Done}
-              lockReason="Finish all chapter quick checks and pass the 10-question exam first."
-            />
-          </ul>
-        </section>
+          <FactsQuizList compact />
+        </div>
 
         <motion.div className="flex flex-col gap-2 pt-2">
           {!session.onboardingComplete ? (
@@ -127,50 +98,3 @@ export function AccountPage() {
   );
 }
 
-function QuizRow({
-  label,
-  detail,
-  href,
-  unlocked,
-  done,
-  lockReason,
-}: {
-  label: string;
-  detail: string;
-  href: string;
-  unlocked: boolean;
-  done?: boolean;
-  lockReason?: string;
-}) {
-  if (!unlocked) {
-    return (
-      <li className="rounded-lg border border-white/5 bg-slate-900/40 px-4 py-3 opacity-70">
-        <p className="text-sm font-medium text-slate-400">{label}</p>
-        <p className="mt-0.5 text-xs text-slate-600">{detail}</p>
-        <p className="mt-2 text-xs text-amber-200/70">{lockReason}</p>
-      </li>
-    );
-  }
-
-  return (
-    <li className="rounded-lg border border-cyan-500/20 bg-cyan-500/5 px-4 py-3">
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="text-sm font-medium text-slate-200">{label}</p>
-          <p className="mt-0.5 text-xs text-slate-500">{detail}</p>
-        </div>
-        {done && (
-          <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider text-emerald-400">
-            Passed
-          </span>
-        )}
-      </div>
-      <Link
-        to={href}
-        className="mt-3 inline-block text-xs font-semibold text-cyan-300 hover:text-cyan-200"
-      >
-        {done ? "Retake quiz →" : "Start quiz →"}
-      </Link>
-    </li>
-  );
-}

@@ -9,8 +9,8 @@ import { GLOBAL_DISCLAIMER } from "../lib/constants";
 import { TechBackground } from "../components/ui/TechBackground";
 import { useConsumerAuth } from "../context/ConsumerAuthContext";
 import {
+  advancedQuizLockReason,
   isAdvancedQuizUnlocked,
-  isPassingScore,
   recordQuizAttempt,
   recordQuizQuestionStats,
   type QuizSize,
@@ -93,9 +93,7 @@ export function FactsQuizPage() {
       if (!immediateFeedback) {
         recordQuizQuestionStats(user.email, result.results);
       }
-      if (isPassingScore(result.score, result.total)) {
-        recordQuizAttempt(user.email, questionCount, result.score, result.total);
-      }
+      recordQuizAttempt(user.email, questionCount, result.score, result.total);
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -163,10 +161,7 @@ export function FactsQuizPage() {
                 </>
               ) : (
                 <>
-                  <p className="text-sm text-slate-300">
-                    Complete account setup, pass all 10 chapter quick checks, and pass the 10-question
-                    exam once to unlock this quiz.
-                  </p>
+                  <p className="text-sm text-slate-300">{advancedQuizLockReason(user)}</p>
                   <Link to="/account" className="inline-block text-sm font-semibold text-cyan-300 hover:text-cyan-200">
                     View your progress →
                   </Link>

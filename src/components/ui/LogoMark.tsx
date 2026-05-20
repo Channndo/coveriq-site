@@ -1,15 +1,5 @@
-/** White head mark on transparent background */
-const LOGO_SRC = "/coveriq-logo.svg?v=6";
+import { CoverIqLogoSvg } from "./CoverIqLogoSvg";
 
 export function LogoMark({ className = "" }: { className?: string }) {
-  return (
-    <img
-      src={LOGO_SRC}
-      alt="CoverIQ"
-      width={40}
-      height={40}
-      className={`h-10 w-10 shrink-0 object-contain ${className}`}
-      decoding="async"
-    />
-  );
+  return <CoverIqLogoSvg className={`h-10 w-10 shrink-0 ${className}`.trim()} />;
 }

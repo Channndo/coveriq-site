@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { QuizQuestion } from "../lib/factsQuizTypes";
 import { QUIZ_SESSION_LENGTH } from "../lib/factsQuizTypes";
 import { pickQuizSession, gradeSession } from "../lib/factsQuizUtils";
+import { QuizAnswerFieldset } from "../components/facts/QuizAnswerFieldset";
 import { Disclaimer } from "../components/ui/Disclaimer";
 import { GLOBAL_DISCLAIMER } from "../lib/constants";
 import { TechBackground } from "../components/ui/TechBackground";
@@ -36,6 +37,7 @@ export function FactsQuizPage() {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [graded, setGraded] = useState<ReturnType<typeof gradeSession> | null>(null);
 
   useEffect(() => {
@@ -51,6 +53,8 @@ export function FactsQuizPage() {
   }, [advancedLocked, phase]);
 
   const current = questions[index];
+  const immediateFeedback = questionCount === 10;
+  const currentRevealed = current ? Boolean(revealed[current.id]) : false;
   const answeredCount = useMemo(
     () => questions.filter((q) => answers[q.id] !== undefined).length,
     [questions, answers]
@@ -61,6 +65,7 @@ export function FactsQuizPage() {
     setQuestions(pickQuizSession(questionCount));
     setIndex(0);
     setAnswers({});
+    setRevealed({});
     setGraded(null);
     setPhase("quiz");
   }, [questionCount]);
@@ -70,12 +75,25 @@ export function FactsQuizPage() {
     setAnswers((prev) => ({ ...prev, [current.id]: optionIndex }));
   };
 
+  const revealCurrent = () => {
+    if (!current || answers[current.id] === undefined) return;
+    setRevealed((prev) => ({ ...prev, [current.id]: true }));
+    if (user?.email) {
+      const picked = answers[current.id];
+      recordQuizQuestionStats(user.email, [
+        { question: current, correct: picked === current.correctIndex },
+      ]);
+    }
+  };
+
   const submitQuiz = () => {
     const result = gradeSession(questions, answers);
     setGraded(result);
     setPhase("results");
     if (user?.email) {
-      recordQuizQuestionStats(user.email, result.results);
+      if (!immediateFeedback) {
+        recordQuizQuestionStats(user.email, result.results);
+      }
       if (isPassingScore(result.score, result.total)) {
         recordQuizAttempt(user.email, questionCount, result.score, result.total);
       }
@@ -88,6 +106,7 @@ export function FactsQuizPage() {
     setQuestions([]);
     setIndex(0);
     setAnswers({});
+    setRevealed({});
     setGraded(null);
   };
 
@@ -168,7 +187,11 @@ export function FactsQuizPage() {
               <div className="textbook-callout text-sm leading-relaxed text-slate-400">
                 <ul className="list-disc space-y-2 pl-5">
                   <li>{questionCount} questions drawn from the vetted bank.</li>
-                  <li>Answer every question, then review your score and explanations.</li>
+                  {immediateFeedback ? (
+                    <li>Submit each answer to see if you&apos;re right before moving on.</li>
+                  ) : (
+                    <li>No feedback until the end — review your full score when you finish.</li>
+                  )}
                   <li>Passing score is 70% or higher (saved to your account on this device).</li>
                 </ul>
               </div>
@@ -209,31 +232,16 @@ export function FactsQuizPage() {
                 {current.question}
               </h2>
 
-              <fieldset className="mt-8 space-y-3">
-                <legend className="sr-only">Choose an answer</legend>
-                {current.options.map((label, i) => {
-                  const selected = answers[current.id] === i;
-                  return (
-                    <label
-                      key={label}
-                      className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3.5 text-[15px] leading-snug transition ${
-                        selected
-                          ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-100"
-                          : "border-white/10 bg-slate-900/40 text-slate-300 hover:border-white/20 hover:bg-slate-900/70"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name={current.id}
-                        checked={selected}
-                        onChange={() => selectAnswer(i)}
-                        className="mt-1 shrink-0 accent-cyan-500"
-                      />
-                      <span>{label}</span>
-                    </label>
-                  );
-                })}
-              </fieldset>
+              <div className="mt-8">
+                <QuizAnswerFieldset
+                  question={current}
+                  selected={answers[current.id]}
+                  revealed={immediateFeedback ? currentRevealed : false}
+                  feedbackMode={immediateFeedback ? "immediate" : "deferred"}
+                  onSelect={selectAnswer}
+                  size="md"
+                />
+              </div>
 
               <motion.div
                 initial={{ opacity: 0 }}
@@ -248,7 +256,32 @@ export function FactsQuizPage() {
                 >
                   Previous
                 </button>
-                {index < questions.length - 1 ? (
+                {immediateFeedback ? (
+                  !currentRevealed ? (
+                    <button
+                      type="button"
+                      disabled={answers[current.id] === undefined}
+                      onClick={revealCurrent}
+                      className="rounded-xl bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Submit answer
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (index < questions.length - 1) {
+                          setIndex((i) => i + 1);
+                        } else {
+                          submitQuiz();
+                        }
+                      }}
+                      className="rounded-xl bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
+                    >
+                      {index < questions.length - 1 ? "Next question" : "See results"}
+                    </button>
+                  )
+                ) : index < questions.length - 1 ? (
                   <button
                     type="button"
                     disabled={answers[current.id] === undefined}

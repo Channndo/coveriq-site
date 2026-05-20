@@ -5,6 +5,7 @@ import { CHAPTER_QUICK_CHECK_LENGTH } from "../../lib/factsQuizTypes";
 import { gradeSession, pickChapterQuickCheck } from "../../lib/factsQuizUtils";
 import { markChapterQuickCheckPassed, recordQuizQuestionStats } from "../../lib/educationProgress";
 import { readConsumerSession } from "../../lib/consumerSession";
+import { QuizAnswerFieldset } from "./QuizAnswerFieldset";
 
 type Phase = "idle" | "quiz" | "results";
 
@@ -19,32 +20,50 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [graded, setGraded] = useState<ReturnType<typeof gradeSession> | null>(null);
 
   const current = questions[index];
-  const allAnswered =
-    questions.length > 0 && questions.every((q) => answers[q.id] !== undefined);
+  const currentRevealed = current ? Boolean(revealed[current.id]) : false;
 
   const start = useCallback(() => {
     setQuestions(pickChapterQuickCheck(chapterNumber));
     setIndex(0);
     setAnswers({});
+    setRevealed({});
     setGraded(null);
     setPhase("quiz");
     setOpen(true);
   }, [chapterNumber]);
 
-  const submit = () => {
+  const revealCurrent = () => {
+    if (!current || answers[current.id] === undefined) return;
+    setRevealed((prev) => ({ ...prev, [current.id]: true }));
+    const session = readConsumerSession();
+    if (session?.email) {
+      const picked = answers[current.id];
+      recordQuizQuestionStats(session.email, [
+        { question: current, correct: picked === current.correctIndex },
+      ]);
+    }
+  };
+
+  const finishQuiz = () => {
     const result = gradeSession(questions, answers);
     setGraded(result);
     setPhase("results");
     const session = readConsumerSession();
-    if (session?.email) {
-      recordQuizQuestionStats(session.email, result.results);
-      if (result.score === result.total) {
-        markChapterQuickCheckPassed(session.email, chapterNumber);
-      }
+    if (session?.email && result.score === result.total) {
+      markChapterQuickCheckPassed(session.email, chapterNumber);
     }
+  };
+
+  const goNext = () => {
+    if (index < questions.length - 1) {
+      setIndex((i) => i + 1);
+      return;
+    }
+    finishQuiz();
   };
 
   const retry = () => {
@@ -57,6 +76,7 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
     setQuestions([]);
     setIndex(0);
     setAnswers({});
+    setRevealed({});
     setGraded(null);
   };
 
@@ -116,33 +136,17 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
                 <p className="font-display mt-3 text-lg font-semibold leading-snug text-white">
                   {current.question}
                 </p>
-                <fieldset className="mt-5 space-y-2.5">
-                  <legend className="sr-only">Choose an answer</legend>
-                  {current.options.map((label, i) => {
-                    const selected = answers[current.id] === i;
-                    return (
-                      <label
-                        key={label}
-                        className={`flex cursor-pointer items-start gap-3 rounded-lg border px-3.5 py-3 text-sm leading-snug transition ${
-                          selected
-                            ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-100"
-                            : "border-white/10 bg-slate-900/40 text-slate-300 hover:border-white/20"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name={current.id}
-                          checked={selected}
-                          onChange={() =>
-                            setAnswers((prev) => ({ ...prev, [current.id]: i }))
-                          }
-                          className="mt-0.5 shrink-0 accent-cyan-500"
-                        />
-                        <span>{label}</span>
-                      </label>
-                    );
-                  })}
-                </fieldset>
+                <div className="mt-5">
+                  <QuizAnswerFieldset
+                    question={current}
+                    selected={answers[current.id]}
+                    revealed={currentRevealed}
+                    feedbackMode="immediate"
+                    onSelect={(i) =>
+                      setAnswers((prev) => ({ ...prev, [current.id]: i }))
+                    }
+                  />
+                </div>
                 <div className="mt-6 flex flex-wrap gap-2">
                   <button
                     type="button"
@@ -152,23 +156,22 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
                   >
                     Previous
                   </button>
-                  {index < questions.length - 1 ? (
+                  {!currentRevealed ? (
                     <button
                       type="button"
                       disabled={answers[current.id] === undefined}
-                      onClick={() => setIndex((i) => i + 1)}
+                      onClick={revealCurrent}
                       className="rounded-lg bg-cyan-500 px-4 py-2 text-xs font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:opacity-40"
                     >
-                      Next
+                      Submit answer
                     </button>
                   ) : (
                     <button
                       type="button"
-                      disabled={!allAnswered}
-                      onClick={submit}
-                      className="rounded-lg bg-cyan-500 px-4 py-2 text-xs font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:opacity-40"
+                      onClick={goNext}
+                      className="rounded-lg bg-cyan-500 px-4 py-2 text-xs font-semibold text-slate-950 transition hover:bg-cyan-400"
                     >
-                      Check answers
+                      {index < questions.length - 1 ? "Next question" : "See summary"}
                     </button>
                   )}
                 </div>
@@ -189,35 +192,8 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
                 <p className="mt-2 text-sm text-slate-400">
                   {graded.score === graded.total
                     ? "Nice — you're ready for the next chapter."
-                    : "Review the explanations below, then continue reading."}
+                    : "Review the explanations above, then continue reading."}
                 </p>
-                <ul className="mt-5 space-y-4">
-                  {graded.results.map((r) => (
-                    <li
-                      key={r.question.id}
-                      className={`rounded-lg border px-4 py-3 text-sm ${
-                        r.correct
-                          ? "border-emerald-500/25 bg-emerald-500/5"
-                          : "border-white/10 bg-slate-900/50"
-                      }`}
-                    >
-                      <p className="font-medium text-slate-200">{r.question.question}</p>
-                      {!r.correct && (
-                        <>
-                          <p className="mt-2 text-emerald-400/90">
-                            Correct: {r.question.options[r.question.correctIndex]}
-                          </p>
-                          {r.picked !== undefined && (
-                            <p className="mt-1 text-rose-400/80">
-                              You chose: {r.question.options[r.picked]}
-                            </p>
-                          )}
-                        </>
-                      )}
-                      <p className="mt-2 leading-relaxed text-slate-500">{r.question.explanation}</p>
-                    </li>
-                  ))}
-                </ul>
                 <div className="mt-5 flex flex-wrap gap-2">
                   <button
                     type="button"

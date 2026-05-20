@@ -29,6 +29,7 @@ import {
   syntrixMe,
   syntrixRegister,
 } from "../lib/syntrixAuthApi";
+import { hydrateEducationProgress, clearEducationProgressCache } from "../lib/educationProgress";
 import { submitUserAccount, submitUserOnboarding } from "../lib/userAccounts";
 
 export interface SecurityLoginChallenge {
@@ -77,22 +78,25 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
     const cached = readConsumerSession();
     if (!token) {
       clearConsumerSession();
+      clearEducationProgressCache();
       setReady(true);
       return;
     }
     if (cached) setUser(cached);
     void syntrixMe(token)
-      .then((me) => {
+      .then(async (me) => {
         const profile = mapSyntrixUserToProfile(me, cached ?? undefined);
         const withRole = {
           ...profile,
           role: resolveAccountRole(profile.email, profile.phone),
         };
+        await hydrateEducationProgress(withRole.email, token);
         applySession(token, withRole);
         setUser(withRole);
       })
       .catch(() => {
         clearConsumerSession();
+        clearEducationProgressCache();
         setUser(null);
       })
       .finally(() => setReady(true));
@@ -155,6 +159,7 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
         role: resolveAccountRole(email, phone),
         onboardingComplete: false,
       });
+      await hydrateEducationProgress(profile.email, result.accessToken);
       applySession(result.accessToken, profile);
       setUser(profile);
 
@@ -304,6 +309,7 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(() => {
+    clearEducationProgressCache();
     clearConsumerSession();
     setUser(null);
   }, []);

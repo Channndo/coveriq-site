@@ -13,19 +13,19 @@ export const CELEBRATION_COPY: Record<
     badge: "Reading complete",
     title: "You finished the Facts textbook",
     subtitle:
-      "You read through the full guide. Your progress is saved — pick up anytime or move on to the chapter quick checks and exams.",
+      "You read through the full guide. Your progress is saved to your account — pick up anytime or move on to the chapter quick checks and exams.",
   },
   exam10: {
     badge: "Chapter exam passed",
     title: "Congratulations — you passed the 10-question exam",
     subtitle:
-      "You scored 70% or higher on the chapter exam. This completion stays on your account. The 20- and 50-question practice exams are now unlocked.",
+      "You scored 70% or higher on the chapter exam. This completion is saved to your account. The 20- and 50-question practice exams are now unlocked.",
   },
   course: {
     badge: "Course complete",
     title: "Congratulations — you completed the Facts course",
     subtitle:
-      "You passed every chapter quick check and the 10-question exam. Your course completion is saved on this device.",
+      "You passed every chapter quick check and the 10-question exam. Your course completion is saved to your account.",
   },
   quiz20: {
     badge: "20-question quiz passed",

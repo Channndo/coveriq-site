@@ -2,7 +2,12 @@ import { chapterForQuizQuestion } from "./factsQuizUtils";
 import type { QuizQuestion } from "./factsQuizTypes";
 import { TEXTBOOK_CHAPTER_COUNT } from "./factsQuizTypes";
 import type { ConsumerUser } from "./consumerSession";
+import { getAccessToken } from "./consumerSession";
 import type { CelebrationMilestone } from "./educationCelebrations";
+import {
+  fetchAccountEducationProgress,
+  saveAccountEducationProgress,
+} from "./educationProgressApi";
 
 export interface ChapterStat {
   correct: number;
@@ -37,29 +42,141 @@ function storageKey(email: string): string {
   return `${STORAGE_PREFIX}:${email.trim().toLowerCase()}`;
 }
 
-export function readEducationProgress(email: string): EducationProgressData {
+function emptyProgress(): EducationProgressData {
+  return { chapterQuickChecks: {}, chapterStats: {}, celebrationsSeen: {} };
+}
+
+function normalizeProgress(raw: EducationProgressData | null | undefined): EducationProgressData {
+  if (!raw) return emptyProgress();
+  return {
+    chapterQuickChecks: raw.chapterQuickChecks ?? {},
+    chapterStats: raw.chapterStats ?? {},
+    exam10: raw.exam10,
+    quiz20: raw.quiz20,
+    quiz50: raw.quiz50,
+    maxReadPercent: raw.maxReadPercent,
+    readingComplete: raw.readingComplete,
+    readingCompletedAt: raw.readingCompletedAt,
+    celebrationsSeen: raw.celebrationsSeen ?? {},
+  };
+}
+
+function readLocalProgress(email: string): EducationProgressData {
   try {
     const raw = localStorage.getItem(storageKey(email));
-    if (!raw) return { chapterQuickChecks: {}, chapterStats: {} };
-    const parsed = JSON.parse(raw) as EducationProgressData;
-    return {
-      chapterQuickChecks: parsed.chapterQuickChecks ?? {},
-      chapterStats: parsed.chapterStats ?? {},
-      exam10: parsed.exam10,
-      quiz20: parsed.quiz20,
-      quiz50: parsed.quiz50,
-      maxReadPercent: parsed.maxReadPercent,
-      readingComplete: parsed.readingComplete,
-      readingCompletedAt: parsed.readingCompletedAt,
-      celebrationsSeen: parsed.celebrationsSeen ?? {},
-    };
+    if (!raw) return emptyProgress();
+    return normalizeProgress(JSON.parse(raw) as EducationProgressData);
   } catch {
-    return { chapterQuickChecks: {}, chapterStats: {} };
+    return emptyProgress();
   }
 }
 
+const PASS_RATIO = 0.7;
+
+export function isPassingScore(score: number, total: number): boolean {
+  if (total <= 0) return false;
+  return score >= Math.ceil(total * PASS_RATIO);
+}
+
+let accountCache: EducationProgressData | null = null;
+let accountCacheEmail: string | null = null;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+function mergeQuizRecord(
+  a: QuizAttemptRecord | undefined,
+  b: QuizAttemptRecord | undefined
+): QuizAttemptRecord | undefined {
+  if (!a) return b;
+  if (!b) return a;
+  const aPass = isPassingScore(a.score, a.total);
+  const bPass = isPassingScore(b.score, b.total);
+  if (aPass && !bPass) return a;
+  if (bPass && !aPass) return b;
+  return new Date(b.at) > new Date(a.at) ? b : a;
+}
+
+/** Merge local and remote progress — never drops a pass or completed chapter. */
+export function mergeEducationProgress(
+  local: EducationProgressData,
+  remote: EducationProgressData | null
+): EducationProgressData {
+  if (!remote) return normalizeProgress(local);
+  const merged: EducationProgressData = {
+    chapterQuickChecks: { ...remote.chapterQuickChecks },
+    chapterStats: { ...(remote.chapterStats ?? {}) },
+    celebrationsSeen: { ...(remote.celebrationsSeen ?? {}) },
+    maxReadPercent: Math.max(remote.maxReadPercent ?? 0, local.maxReadPercent ?? 0),
+    readingComplete: Boolean(remote.readingComplete || local.readingComplete),
+    readingCompletedAt: remote.readingCompletedAt || local.readingCompletedAt,
+    exam10: mergeQuizRecord(remote.exam10, local.exam10),
+    quiz20: mergeQuizRecord(remote.quiz20, local.quiz20),
+    quiz50: mergeQuizRecord(remote.quiz50, local.quiz50),
+  };
+  for (const [k, v] of Object.entries(local.chapterQuickChecks)) {
+    if (v) merged.chapterQuickChecks[k] = true;
+  }
+  for (const [k, v] of Object.entries(remote.chapterQuickChecks)) {
+    if (v) merged.chapterQuickChecks[k] = true;
+  }
+  const stats = { ...(merged.chapterStats ?? {}) };
+  for (const [ch, stat] of Object.entries(local.chapterStats ?? {})) {
+    const existing = stats[ch] ?? { correct: 0, incorrect: 0 };
+    stats[ch] = {
+      correct: existing.correct + stat.correct,
+      incorrect: existing.incorrect + stat.incorrect,
+    };
+  }
+  merged.chapterStats = stats;
+  for (const [k, v] of Object.entries(local.celebrationsSeen ?? {})) {
+    if (v) merged.celebrationsSeen![k as CelebrationMilestone] = true;
+  }
+  return merged;
+}
+
+export function readEducationProgress(email: string): EducationProgressData {
+  const key = email.trim().toLowerCase();
+  if (accountCacheEmail === key && accountCache) {
+    return normalizeProgress(accountCache);
+  }
+  return readLocalProgress(key);
+}
+
 function writeEducationProgress(email: string, data: EducationProgressData): void {
-  localStorage.setItem(storageKey(email), JSON.stringify(data));
+  const key = email.trim().toLowerCase();
+  const normalized = normalizeProgress(data);
+  accountCache = normalized;
+  accountCacheEmail = key;
+  localStorage.setItem(storageKey(key), JSON.stringify(normalized));
+
+  const token = getAccessToken();
+  if (!token) return;
+
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    void saveAccountEducationProgress(token, normalized);
+  }, 600);
+}
+
+/** Load account progress from server after sign-in; merges with this device. */
+export async function hydrateEducationProgress(
+  email: string,
+  accessToken: string
+): Promise<void> {
+  const key = email.trim().toLowerCase();
+  const local = readLocalProgress(key);
+  const remote = await fetchAccountEducationProgress(accessToken);
+  const merged = mergeEducationProgress(local, remote);
+  accountCache = merged;
+  accountCacheEmail = key;
+  localStorage.setItem(storageKey(key), JSON.stringify(merged));
+  await saveAccountEducationProgress(accessToken, merged);
+}
+
+export function clearEducationProgressCache(): void {
+  accountCache = null;
+  accountCacheEmail = null;
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = null;
 }
 
 function shouldReplaceQuizRecord(
@@ -105,13 +222,6 @@ export function isChapterQuickCheckPassed(email: string, chapterNumber: number):
 export function countPassedQuickChecks(email: string): number {
   const checks = readEducationProgress(email).chapterQuickChecks;
   return Object.keys(checks).filter((k) => checks[k]).length;
-}
-
-const PASS_RATIO = 0.7;
-
-export function isPassingScore(score: number, total: number): boolean {
-  if (total <= 0) return false;
-  return score >= Math.ceil(total * PASS_RATIO);
 }
 
 export function recordQuizAttempt(

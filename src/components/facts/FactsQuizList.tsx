@@ -60,7 +60,7 @@ export function FactsQuizList({ compact }: FactsQuizListProps) {
           <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
             Sign in
           </Link>{" "}
-          to save quiz progress and unlock advanced exams.
+          to save quiz progress to your account and unlock advanced exams.
         </p>
       )}
     </section>

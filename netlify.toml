@@ -115,6 +115,13 @@
   status = 200
   force = true
 
+# Facts education progress (Syntrix auth + Apps Script storage)
+[[redirects]]
+  from = "/api/education-progress"
+  to = "/.netlify/functions/education-progress"
+  status = 200
+  force = true
+
 # Syntrix consumer auth (same-origin — browser cannot call api.syntrix.solutions directly)
 [[redirects]]
   from = "/api/auth/*"

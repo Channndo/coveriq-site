@@ -97,3 +97,13 @@ Redeploy **coveriq-site** after changing env vars.
 **Consumer signup / login (Syntrix):** Do **not** set `VITE_SYNTRIX_API_URL` to `https://api.syntrix.solutions` on Netlify. Production uses the same-origin proxy (`/api/auth/*` in `netlify.toml`). Delete that env var if present, then **clear cache and deploy**.
 
 **Signup Gmail notifications (Apps Script):** Set `USER_ACCOUNTS_WEB_APP_URL` on Netlify to your deployed `coveriq-user-accounts` `/exec` URL. Test it in a browser — must return `{"ok":true,...}`. If you get “Page Not Found”, redeploy the script (Deploy → Manage deployments → edit URL). Site posts signups to `/api/user-account` → Netlify function → Apps Script → `MailApp` to addresses in `EMAIL_RECIPIENTS` inside `Code.gs`.
+
+**Facts education progress (account sync):** Signed-in learners sync progress via `/api/education-progress` (Netlify) → Syntrix `/api/auth/me` (validates session) → Google Apps Script sheet `Education Progress`.
+
+1. Generate a long random secret (e.g. `openssl rand -hex 32`).
+2. In Apps Script → Project settings → Script properties, add `EDUCATION_PROGRESS_SECRET` = that value.
+3. Redeploy the `coveriq-user-accounts` web app (same `/exec` URL as signups).
+4. In Netlify → **coveriq-site** env, set `EDUCATION_PROGRESS_SECRET` to the same value. `USER_ACCOUNTS_WEB_APP_URL` must already be set.
+5. Redeploy the site.
+
+Progress merges on login (server + this device). Passes and completions are never downgraded when retaking quizzes.

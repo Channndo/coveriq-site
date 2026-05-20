@@ -76,6 +76,12 @@ const HEADERS = [
 function doPost(e) {
   try {
     checkBurstRateLimit_();
+    if (e && e.postData && e.postData.contents) {
+      var raw = JSON.parse(e.postData.contents);
+      if (raw.action === 'educationProgressGet' || raw.action === 'educationProgressSave') {
+        return jsonResponse_(handleEducationProgress_(raw));
+      }
+    }
     const payload = parsePayload_(e);
     validatePayload_(payload);
     checkRateLimit_(payload.email);
@@ -540,6 +546,104 @@ function formatPhoneDisplay_(digits) {
 
 function isValidEmail_(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/** Education progress — synced from Netlify (Syntrix-authenticated users). */
+var PROGRESS_SHEET_NAME = 'Education Progress';
+var PROGRESS_HEADERS = ['Email', 'Progress JSON', 'Updated At'];
+var PROGRESS_SECRET_PROP = 'EDUCATION_PROGRESS_SECRET';
+
+function getProgressSecret_() {
+  return PropertiesService.getScriptProperties().getProperty(PROGRESS_SECRET_PROP) || '';
+}
+
+function handleEducationProgress_(data) {
+  var secret = String(data.serverSecret || '');
+  var expected = getProgressSecret_();
+  if (!expected || secret !== expected) {
+    throw new Error('Unauthorized.');
+  }
+
+  var email = String(data.email || '')
+    .trim()
+    .toLowerCase();
+  if (!email || !isValidEmail_(email)) {
+    throw new Error('Valid email is required.');
+  }
+
+  if (data.action === 'educationProgressGet') {
+    return {
+      ok: true,
+      progress: getEducationProgressForEmail_(email)
+    };
+  }
+
+  if (data.action === 'educationProgressSave') {
+    var json = String(data.progressJson || '');
+    if (json.length > 30000) {
+      throw new Error('Progress payload too large.');
+    }
+    saveEducationProgressForEmail_(email, json);
+    return { ok: true };
+  }
+
+  throw new Error('Unknown education progress action.');
+}
+
+function getProgressSheet_() {
+  var ss = getSpreadsheet_();
+  var sheet = ss.getSheetByName(PROGRESS_SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(PROGRESS_SHEET_NAME);
+    sheet.getRange(1, 1, 1, PROGRESS_HEADERS.length).setValues([PROGRESS_HEADERS]);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function getEducationProgressForEmail_(email) {
+  var sheet = getProgressSheet_();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return null;
+
+  var emails = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+  for (var i = 0; i < emails.length; i++) {
+    if (String(emails[i][0] || '').toLowerCase() === email) {
+      var json = sheet.getRange(i + 2, 2).getValue();
+      if (!json) return null;
+      try {
+        return JSON.parse(String(json));
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+  return null;
+}
+
+function saveEducationProgressForEmail_(email, progressJson) {
+  var sheet = getProgressSheet_();
+  var lastRow = sheet.getLastRow();
+  var rowIndex = -1;
+
+  if (lastRow >= 2) {
+    var emails = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (var i = 0; i < emails.length; i++) {
+      if (String(emails[i][0] || '').toLowerCase() === email) {
+        rowIndex = i + 2;
+        break;
+      }
+    }
+  }
+
+  var now = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd'T'HH:mm:ss");
+
+  if (rowIndex > 0) {
+    sheet.getRange(rowIndex, 2).setValue(progressJson);
+    sheet.getRange(rowIndex, 3).setValue(now);
+  } else {
+    sheet.appendRow([email, progressJson, now]);
+  }
 }
 
 function jsonResponse_(obj) {

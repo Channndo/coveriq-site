@@ -11,8 +11,8 @@ export function FAQ() {
       <div className="mx-auto max-w-3xl">
         <SectionHeading
           eyebrow="Support"
-          title="Common Questions"
-          description="Everything you need to know about CoverIQ."
+          title="Frequently Asked Questions"
+          description="Common questions about insurance coverage, claims, and how CoverIQ fits in."
           light
         />
         <div className="space-y-2">
@@ -39,7 +39,7 @@ export function FAQ() {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
-                    <p className="border-t border-white/5 px-5 py-4 text-sm text-slate-500 leading-relaxed">
+                    <p className="border-t border-white/5 px-5 py-4 text-sm leading-relaxed text-slate-400">
                       {item.answer}
                     </p>
                   </motion.div>

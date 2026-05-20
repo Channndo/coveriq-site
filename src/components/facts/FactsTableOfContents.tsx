@@ -1,0 +1,105 @@
+import { Link } from "react-router-dom";
+import { INSURANCE_TEXTBOOK } from "../../lib/insuranceTextbook";
+import { CHAPTER_META } from "../../lib/factsTextbookMeta";
+
+interface FactsTableOfContentsProps {
+  activeChapterId: string;
+  activeSectionId: string | null;
+  readProgress: number;
+}
+
+export function FactsTableOfContents({
+  activeChapterId,
+  activeSectionId,
+  readProgress,
+}: FactsTableOfContentsProps) {
+  return (
+    <nav
+      aria-label="Table of contents"
+      className="lg:sticky lg:top-24 lg:flex lg:max-h-[calc(100vh-7rem)] lg:w-72 lg:shrink-0 lg:flex-col"
+    >
+      <div className="rounded-2xl border border-white/[0.08] bg-slate-950/80 p-5 backdrop-blur-sm lg:overflow-hidden lg:flex lg:flex-col">
+        <div className="mb-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
+            Table of contents
+          </p>
+          <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.06]">
+            <div
+              className="textbook-reading-bar"
+              style={{ width: `${readProgress}%` }}
+              role="progressbar"
+              aria-valuenow={Math.round(readProgress)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Reading progress"
+            />
+          </div>
+          <p className="mt-1.5 font-mono text-[10px] text-slate-600">
+            {Math.round(readProgress)}% through guide
+          </p>
+        </div>
+
+        <ol className="mt-2 space-y-1 overflow-y-auto pr-1 lg:flex-1">
+          {INSURANCE_TEXTBOOK.map((ch) => {
+            const isChapterActive = activeChapterId === ch.id;
+            const meta = CHAPTER_META[ch.id];
+            return (
+              <li key={ch.id}>
+                <a
+                  href={`#${ch.id}`}
+                  className={`block rounded-lg px-2.5 py-2 transition ${
+                    isChapterActive
+                      ? "textbook-toc-active -ml-px"
+                      : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-300"
+                  }`}
+                >
+                  <span className="font-mono text-[10px] text-cyan-500/70">
+                    Ch. {ch.number}
+                    {meta ? ` · ${meta.readMinutes}m` : ""}
+                  </span>
+                  <span className="mt-0.5 block text-sm leading-snug">{ch.title}</span>
+                </a>
+                {isChapterActive && (
+                  <ul className="mb-2 ml-3 mt-0.5 space-y-0.5 border-l border-white/[0.06] pl-3">
+                    {ch.sections.map((sec) => {
+                      const sectionLabel = sec.title.replace(/^\d+\.\d+\s*/, "");
+                      const isSectionActive = activeSectionId === sec.id;
+                      return (
+                        <li key={sec.id}>
+                          <a
+                            href={`#${sec.id}`}
+                            className={`block rounded py-1 pl-1 text-xs leading-snug transition ${
+                              isSectionActive
+                                ? "font-medium text-cyan-300"
+                                : "text-slate-600 hover:text-slate-400"
+                            }`}
+                          >
+                            {sectionLabel}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+
+        <div className="mt-5 hidden border-t border-white/[0.06] pt-4 text-xs leading-relaxed text-slate-500 lg:block">
+          <p>
+            Jump between chapters or sections. For definitions, see the{" "}
+            <Link to="/glossary" className="text-cyan-400 hover:text-cyan-300">
+              glossary
+            </Link>
+            ; for quick answers, the{" "}
+            <Link to="/#faq" className="text-cyan-400 hover:text-cyan-300">
+              FAQ
+            </Link>
+            .
+          </p>
+        </div>
+      </div>
+    </nav>
+  );
+}

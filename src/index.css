@@ -13,6 +13,7 @@
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Syne", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-textbook: "Lora", Georgia, "Times New Roman", serif;
 }
 
 * {
@@ -181,4 +182,102 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 4px;
+}
+
+/* Facts textbook reading experience */
+.font-textbook {
+  font-family: var(--font-textbook);
+}
+
+.textbook-page {
+  @apply relative overflow-hidden rounded-2xl border border-amber-100/[0.08] bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-[#070b14];
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 32px 64px -24px rgba(0, 0, 0, 0.65),
+    0 0 80px -40px rgba(20, 184, 166, 0.08);
+}
+
+.textbook-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 27px,
+    rgba(148, 163, 184, 0.02) 27px,
+    rgba(148, 163, 184, 0.02) 28px
+  );
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+}
+
+.textbook-chapter-num {
+  font-family: var(--font-display);
+  @apply text-[5.5rem] font-bold leading-none tracking-tighter text-cyan-500/[0.12] sm:text-[7rem];
+}
+
+.textbook-dropcap::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 3.25rem;
+  line-height: 0.85;
+  padding-right: 0.5rem;
+  padding-top: 0.15rem;
+  font-weight: 700;
+  color: rgb(34 211 238 / 0.9);
+}
+
+.textbook-section-rule {
+  @apply h-px w-16 bg-gradient-to-r from-cyan-500/60 to-transparent;
+}
+
+.textbook-prose {
+  @apply text-[16px] leading-[1.85] text-slate-300;
+  font-family: var(--font-textbook);
+}
+
+.textbook-prose-muted {
+  @apply text-[15px] leading-[1.8] text-slate-400;
+  font-family: var(--font-textbook);
+}
+
+.textbook-callout {
+  @apply rounded-xl border-l-4 border-cyan-500/50 bg-cyan-500/[0.06] px-5 py-4;
+}
+
+.textbook-objectives li::marker {
+  color: rgb(34 211 238 / 0.7);
+}
+
+.textbook-law-table caption {
+  @apply mb-3 text-left font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500;
+}
+
+.textbook-timeline {
+  @apply relative ml-2 border-l border-cyan-500/20 pl-6;
+}
+
+.textbook-timeline-item {
+  @apply relative pb-5 last:pb-0;
+}
+
+.textbook-timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -1.6rem;
+  top: 0.45rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgb(34 211 238 / 0.85);
+  box-shadow: 0 0 0 3px rgb(34 211 238 / 0.15);
+}
+
+.textbook-toc-active {
+  @apply border-l-2 border-cyan-400 bg-cyan-500/10 pl-[10px] text-cyan-200;
+}
+
+.textbook-reading-bar {
+  @apply h-0.5 rounded-full bg-cyan-500 transition-all duration-300;
 }

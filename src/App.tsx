@@ -8,6 +8,7 @@ import { HomePage } from "./pages/HomePage";
 import { ThankYouPage } from "./pages/ThankYouPage";
 import { GlossaryPage } from "./pages/GlossaryPage";
 import { FactsPage } from "./pages/FactsPage";
+import { FactsQuizPage } from "./pages/FactsQuizPage";
 import { AgentPage } from "./pages/AgentPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SignupPage } from "./pages/SignupPage";
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/thank-you" element={<ThankYouPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
           <Route path="/facts" element={<FactsPage />} />
+          <Route path="/facts/quiz" element={<FactsQuizPage />} />
           <Route path="/agent" element={<AgentPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />

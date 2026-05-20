@@ -402,6 +402,9 @@ function getNotificationRecipients_() {
  * View → Executions should show success or the exact MailApp error.
  */
 function testSendEmail() {
+  const owner = Session.getEffectiveUser().getEmail();
+  Logger.log('Sending to EMAIL_RECIPIENTS: ' + getNotificationRecipients_().join(', '));
+  Logger.log('Owner copy goes to: ' + (owner || '(unknown — run as Me)'));
   const result = sendAccountNotification_(
     'CIQ-ACC-TEST',
     Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'),
@@ -428,7 +431,11 @@ function testSendEmail() {
     }
   );
   Logger.log(JSON.stringify(result));
-  return result;
+  return {
+    recipients: getNotificationRecipients_(),
+    ownerEmail: owner || '',
+    result: result
+  };
 }
 
 function sendAccountNotification_(accountId, dateStr, timeStr, p) {

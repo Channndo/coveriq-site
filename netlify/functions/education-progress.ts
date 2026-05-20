@@ -3,7 +3,7 @@ const SYNTIX_API =
 
 const USER_ACCOUNTS_WEB_APP_URL =
   process.env.USER_ACCOUNTS_WEB_APP_URL ||
-  "https://script.google.com/macros/s/AKfycbzr7vs2ocU-qN0ak8GensegM_CHoS9LludHePMaNVPG-5P3q46eqhC2TBPwsJasOzir/exec";
+  "https://script.google.com/macros/s/AKfycbxFw9mZWuvZKcubUSQYSNIh89xa_u1dGWSk0lQaFHHAP2B7GH6poxGLsVmWljJBifTO/exec";
 
 const SERVER_SECRET =
   process.env.EDUCATION_PROGRESS_SECRET ||

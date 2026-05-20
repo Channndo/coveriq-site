@@ -10,8 +10,9 @@ export function FactsQuizPromo() {
           </p>
           <h2 className="font-display mt-2 text-2xl font-bold text-white">10-question chapter exam</h2>
           <p className="textbook-prose-muted mt-3">
-            After reading all ten chapters, take a short exam with one question per chapter — drawn
-            from a larger vetted bank on general U.S. insurance concepts (not state exam prep).
+            Each chapter ends with an optional 2-question quick check. After all ten chapters, take
+            the full review — one question per chapter from the same vetted bank (general U.S.
+            concepts, not state exam prep).
           </p>
         </div>
         <Link

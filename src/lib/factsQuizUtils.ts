@@ -1,6 +1,10 @@
 import type { QuizQuestion } from "./factsQuizTypes";
 import { FACTS_QUIZ_BANK } from "./factsQuizBank";
-import { QUIZ_SESSION_LENGTH, TEXTBOOK_CHAPTER_COUNT } from "./factsQuizTypes";
+import {
+  CHAPTER_QUICK_CHECK_LENGTH,
+  QUIZ_SESSION_LENGTH,
+  TEXTBOOK_CHAPTER_COUNT,
+} from "./factsQuizTypes";
 
 /** Maps question ids (q01–q75) to textbook chapters 1–10. */
 export function chapterForQuizQuestion(id: string): number {
@@ -17,6 +21,20 @@ export function shuffleQuestions<T>(items: T[]): T[] {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+/** Questions for a chapter's optional 2-question quick check. */
+export function questionsForChapter(chapterNumber: number): QuizQuestion[] {
+  return FACTS_QUIZ_BANK.filter((q) => chapterForQuizQuestion(q.id) === chapterNumber);
+}
+
+export function pickChapterQuickCheck(
+  chapterNumber: number,
+  count = CHAPTER_QUICK_CHECK_LENGTH
+): QuizQuestion[] {
+  const pool = questionsForChapter(chapterNumber);
+  if (pool.length <= count) return shuffleQuestions([...pool]);
+  return shuffleQuestions(pool).slice(0, count);
 }
 
 /** Picks one random question per chapter, then shuffles — aligns with 10-chapter textbook. */

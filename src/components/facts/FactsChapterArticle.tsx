@@ -1,5 +1,6 @@
 import type { TextbookChapter } from "../../lib/insuranceTextbook";
 import { CHAPTER_META, toRoman } from "../../lib/factsTextbookMeta";
+import { ChapterQuickCheck } from "./ChapterQuickCheck";
 import { FactsSectionContent } from "./FactsSectionContent";
 
 interface FactsChapterArticleProps {
@@ -60,6 +61,8 @@ export function FactsChapterArticle({ chapter, prev, next }: FactsChapterArticle
           <FactsSectionContent key={section.id} section={section} leadDropCap={i === 0} />
         ))}
       </div>
+
+      <ChapterQuickCheck chapterNumber={chapter.number} chapterTitle={chapter.title} />
 
       {/* Chapter navigation */}
       <footer className="mt-14 flex flex-col gap-4 border-t border-white/[0.08] pt-8 sm:flex-row sm:items-center sm:justify-between">

@@ -143,16 +143,26 @@ export function SignupPage() {
           value={street}
           onChange={(e) => setStreet(e.target.value)}
         />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-6 gap-2">
           <input
             type="text"
             required
-            className="input-tech col-span-2"
+            name="city"
+            autoComplete="address-level2"
+            className="input-tech col-span-3"
             placeholder="City"
             value={city}
             onChange={(e) => setCity(e.target.value)}
           />
-          <select required className={selectClass} value={state} onChange={(e) => setState(e.target.value)}>
+          <select
+            required
+            name="state"
+            autoComplete="address-level1"
+            aria-label="State"
+            className={`${selectClass} col-span-1`}
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+          >
             <option value="">ST</option>
             {US_STATES.map((s) => (
               <option key={s} value={s}>
@@ -160,24 +170,34 @@ export function SignupPage() {
               </option>
             ))}
           </select>
+          <input
+            type="text"
+            required
+            name="postal-code"
+            autoComplete="postal-code"
+            inputMode="numeric"
+            maxLength={10}
+            className="input-tech col-span-2"
+            placeholder="ZIP"
+            value={zip}
+            onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 10))}
+          />
         </div>
-        <input
-          type="text"
-          required
-          maxLength={10}
-          className="input-tech w-full"
-          placeholder="ZIP code"
-          value={zip}
-          onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 10))}
-        />
-        <input
-          type="text"
-          required
-          className="input-tech w-full"
-          placeholder="Current insurance provider (e.g. Allstate, Progressive)"
-          value={currentInsuranceProvider}
-          onChange={(e) => setCurrentInsuranceProvider(e.target.value)}
-        />
+        <label className="block pt-1">
+          <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+            Current insurance provider
+          </span>
+          <input
+            type="text"
+            required
+            name="insurance_carrier"
+            autoComplete="off"
+            className="input-tech mt-1 w-full"
+            placeholder="e.g. Allstate, Progressive, none"
+            value={currentInsuranceProvider}
+            onChange={(e) => setCurrentInsuranceProvider(e.target.value)}
+          />
+        </label>
 
         <p className="pt-2 font-mono text-[10px] uppercase tracking-wider text-slate-500">Security questions</p>
         <select

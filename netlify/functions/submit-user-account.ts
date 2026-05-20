@@ -65,7 +65,21 @@ export const handler = async (event: {
       });
     }
 
-    return json(200, { ok: true, accountId: data.accountId });
+    const emailSent = data.emailSent === true;
+    const emailError = data.emailError || "";
+    if (!emailSent) {
+      console.warn(
+        "[submit-user-account] sheet row ok but email not sent",
+        emailError || "(deploy Apps Script with GmailApp + run testSendEmail)"
+      );
+    }
+
+    return json(200, {
+      ok: true,
+      accountId: data.accountId,
+      emailSent,
+      emailError: emailError || undefined,
+    });
   } catch (err) {
     console.error("[submit-user-account]", err);
     return json(502, {

@@ -117,11 +117,17 @@ function doPost(e) {
       payload.clientTimestamp
     ]);
 
+    var emailResult = { emailSent: false, emailError: '' };
     if (CONFIG.SEND_EMAIL_NOTIFICATIONS) {
-      sendAccountNotification_(accountId, dateStr, timeStr, payload);
+      emailResult = sendAccountNotification_(accountId, dateStr, timeStr, payload);
     }
 
-    return jsonResponse_({ ok: true, accountId: accountId });
+    return jsonResponse_({
+      ok: true,
+      accountId: accountId,
+      emailSent: emailResult.emailSent,
+      emailError: emailResult.emailError || undefined
+    });
   } catch (err) {
     const message = err && err.message ? err.message : 'Something went wrong.';
     return jsonResponse_({ ok: false, error: message });
@@ -381,11 +387,45 @@ function getNotificationRecipients_() {
   });
 }
 
+/**
+ * Run from the Apps Script editor (not the web URL) to test MailApp and re-authorize if needed.
+ * View → Executions should show success or the exact MailApp error.
+ */
+function testSendEmail() {
+  const result = sendAccountNotification_(
+    'CIQ-ACC-TEST',
+    Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'),
+    Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'h:mm:ss a'),
+    {
+      firstName: 'Email',
+      lastName: 'Test',
+      email: 'test@cover-iq.com',
+      phone: '5555550100',
+      street: '123 Test St',
+      city: 'Austin',
+      state: 'TX',
+      zip: '78701',
+      currentInsurance: 'Test',
+      accountType: 'consumer',
+      status: 'active',
+      action: 'signup',
+      source: 'apps-script-editor',
+      pageUrl: '',
+      utmSource: '',
+      utmMedium: '',
+      utmCampaign: '',
+      notes: 'Manual test from testSendEmail() — ignore'
+    }
+  );
+  Logger.log(JSON.stringify(result));
+  return result;
+}
+
 function sendAccountNotification_(accountId, dateStr, timeStr, p) {
   const recipients = getNotificationRecipients_();
   if (!recipients.length) {
     Logger.log('No EMAIL_RECIPIENTS configured — skipping email.');
-    return;
+    return { emailSent: false, emailError: 'No EMAIL_RECIPIENTS configured.' };
   }
 
   const subject =
@@ -440,7 +480,44 @@ function sendAccountNotification_(accountId, dateStr, timeStr, p) {
 
   body.push('', '—', 'CoverIQ user accounts (separate from quote leads sheet)');
 
-  MailApp.sendEmail(recipients.join(','), subject, body.join('\n'));
+  const plainBody = body.join('\n');
+  const errors = [];
+
+  for (var i = 0; i < recipients.length; i++) {
+    const to = recipients[i];
+    try {
+      GmailApp.sendEmail(to, subject, plainBody, { name: 'CoverIQ Signups' });
+      Logger.log('GmailApp sent to: ' + to);
+    } catch (gmailErr) {
+      try {
+        MailApp.sendEmail(to, subject, plainBody);
+        Logger.log('MailApp sent to: ' + to);
+      } catch (mailErr) {
+        const msg =
+          (mailErr && mailErr.message) ||
+          (gmailErr && gmailErr.message) ||
+          String(mailErr || gmailErr);
+        Logger.log('Email failed for ' + to + ': ' + msg);
+        errors.push(to + ': ' + msg);
+      }
+    }
+  }
+
+  // Backup copy to the Google account that owns/deploys this script
+  try {
+    const owner = Session.getEffectiveUser().getEmail();
+    if (owner) {
+      GmailApp.sendEmail(owner, '[Copy] ' + subject, plainBody, { name: 'CoverIQ Signups' });
+      Logger.log('Owner copy sent to: ' + owner);
+    }
+  } catch (ownerErr) {
+    Logger.log('Owner copy skipped: ' + (ownerErr && ownerErr.message ? ownerErr.message : ownerErr));
+  }
+
+  if (errors.length) {
+    return { emailSent: false, emailError: errors.join(' | ') };
+  }
+  return { emailSent: true, emailError: '' };
 }
 
 function trim_(value, maxLen) {

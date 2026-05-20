@@ -96,7 +96,12 @@ async function postAccount(payload: Record<string, string>): Promise<{ ok: boole
       body: JSON.stringify(payload),
     });
 
-    const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    const data = (await res.json().catch(() => ({}))) as {
+      ok?: boolean;
+      error?: string;
+      emailSent?: boolean;
+      emailError?: string;
+    };
 
     if (!res.ok || data.ok === false) {
       console.error("[userAccounts] post failed", res.status, data);
@@ -104,6 +109,10 @@ async function postAccount(payload: Record<string, string>): Promise<{ ok: boole
         ok: false,
         error: data.error || "Could not record signup notification.",
       };
+    }
+
+    if (data.emailSent === false) {
+      console.warn("[userAccounts] sheet ok, email failed:", data.emailError);
     }
 
     return { ok: true };

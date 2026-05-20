@@ -61,12 +61,18 @@ export function FactsStickyProgress({ activeChapterId }: FactsStickyProgressProp
           <p className="mt-2 text-xs leading-snug text-slate-300">
             {user ? (
               <>
+                {summary.readingComplete ? (
+                  <span className="text-emerald-300/90">Reading complete · </span>
+                ) : null}
                 Quick checks{" "}
                 <span className="font-semibold tabular-nums text-slate-100">
                   {summary.quickChecksPassed}/{summary.quickChecksTotal}
                 </span>
                 {summary.chapterExamDone ? (
                   <span className="text-emerald-300/90"> · Exam passed</span>
+                ) : null}
+                {summary.courseComplete ? (
+                  <span className="text-emerald-300/90"> · Course complete</span>
                 ) : null}
               </>
             ) : (

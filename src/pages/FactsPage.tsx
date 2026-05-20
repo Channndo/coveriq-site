@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { INSURANCE_TEXTBOOK } from "../lib/insuranceTextbook";
 import { Disclaimer } from "../components/ui/Disclaimer";
 import { GLOBAL_DISCLAIMER } from "../lib/constants";
@@ -11,10 +11,19 @@ import { FactsQuizList } from "../components/facts/FactsQuizList";
 import { FactsStickyProgress } from "../components/facts/FactsStickyProgress";
 import { useTextbookScrollSpy } from "../components/facts/useTextbookScrollSpy";
 import { FactsMobileChapterSelect } from "../components/facts/FactsMobileChapterSelect";
+import { useConsumerAuth } from "../context/ConsumerAuthContext";
+import { celebrationPath } from "../lib/educationCelebrations";
+import {
+  celebrationAfterReading,
+  updateReadingProgress,
+} from "../lib/educationProgress";
 
 export function FactsPage() {
   const location = useLocation();
-  const { activeChapterId, activeSectionId } = useTextbookScrollSpy();
+  const navigate = useNavigate();
+  const { user } = useConsumerAuth();
+  const { activeChapterId, activeSectionId, readProgress } = useTextbookScrollSpy();
+  const readingCelebrationQueued = useRef(false);
 
   useEffect(() => {
     document.title = "Insurance Facts & History | CoverIQ";
@@ -34,6 +43,18 @@ export function FactsPage() {
       }, 80);
     }
   }, [location.hash]);
+
+  useEffect(() => {
+    if (!user?.email) return;
+    const newlyComplete = updateReadingProgress(user.email, readProgress);
+    if (newlyComplete && !readingCelebrationQueued.current) {
+      const milestone = celebrationAfterReading(user.email);
+      if (milestone) {
+        readingCelebrationQueued.current = true;
+        navigate(celebrationPath(milestone));
+      }
+    }
+  }, [readProgress, user?.email, navigate]);
 
   return (
     <div className="min-h-screen bg-[#030712]">

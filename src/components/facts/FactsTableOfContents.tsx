@@ -50,12 +50,18 @@ export function FactsTableOfContents({
                 />
               </div>
               <p className="mt-1.5 text-xs text-slate-300">
+                {learning.readingComplete ? (
+                  <span className="text-emerald-300/90">Reading done · </span>
+                ) : null}
                 Checks{" "}
                 <span className="font-semibold tabular-nums text-slate-100">
                   {learning.quickChecksPassed}/{learning.quickChecksTotal}
                 </span>
                 {learning.chapterExamDone ? (
                   <span className="text-emerald-300/90"> · exam passed</span>
+                ) : null}
+                {learning.courseComplete ? (
+                  <span className="text-emerald-300/90"> · course done</span>
                 ) : null}
               </p>
             </div>

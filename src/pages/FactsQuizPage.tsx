@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import type { QuizQuestion } from "../lib/factsQuizTypes";
 import { QUIZ_SESSION_LENGTH } from "../lib/factsQuizTypes";
@@ -8,9 +8,14 @@ import { QuizAnswerFieldset } from "../components/facts/QuizAnswerFieldset";
 import { GLOBAL_DISCLAIMER } from "../lib/constants";
 import { TechBackground } from "../components/ui/TechBackground";
 import { useConsumerAuth } from "../context/ConsumerAuthContext";
+import { celebrationPath } from "../lib/educationCelebrations";
 import {
   advancedQuizLockReason,
+  celebrationAfterQuiz,
+  hasCompletedChapterExam,
   isAdvancedQuizUnlocked,
+  isPassingScore,
+  readEducationProgress,
   recordQuizAttempt,
   recordQuizQuestionStats,
   type QuizSize,
@@ -26,6 +31,7 @@ function parseQuestionCount(raw: string | null): QuizSize {
 }
 
 export function FactsQuizPage() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useConsumerAuth();
   const questionCount = parseQuestionCount(searchParams.get("count"));
@@ -87,14 +93,24 @@ export function FactsQuizPage() {
 
   const submitQuiz = () => {
     const result = gradeSession(questions, answers);
-    setGraded(result);
-    setPhase("results");
     if (user?.email) {
       if (!immediateFeedback) {
         recordQuizQuestionStats(user.email, result.results);
       }
       recordQuizAttempt(user.email, questionCount, result.score, result.total);
+      const milestone = celebrationAfterQuiz(
+        user.email,
+        questionCount,
+        result.score,
+        result.total
+      );
+      if (milestone) {
+        navigate(celebrationPath(milestone), { replace: true });
+        return;
+      }
     }
+    setGraded(result);
+    setPhase("results");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -178,6 +194,21 @@ export function FactsQuizPage() {
               exit={{ opacity: 0, y: -8 }}
               className="mt-10 space-y-6"
             >
+              {user?.email && questionCount === 10 && hasCompletedChapterExam(user.email) && (
+                <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200/90">
+                  You already passed this exam. Retaking is optional — your pass stays saved.
+                </div>
+              )}
+              {user?.email && questionCount === 20 && readEducationProgress(user.email).quiz20 && (
+                <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200/90">
+                  You already passed the 20-question quiz. Your pass stays saved.
+                </div>
+              )}
+              {user?.email && questionCount === 50 && readEducationProgress(user.email).quiz50 && (
+                <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200/90">
+                  You already passed the 50-question quiz. Your pass stays saved.
+                </div>
+              )}
               <div className="textbook-callout text-sm leading-relaxed text-slate-400">
                 <ul className="list-disc space-y-2 pl-5">
                   <li>{questionCount} questions drawn from the vetted bank.</li>
@@ -317,11 +348,15 @@ export function FactsQuizPage() {
                   <span className="text-2xl font-normal text-slate-500"> / {graded.total}</span>
                 </p>
                 <p className="mt-3 text-sm text-slate-400">
-                  {graded.score === graded.total
-                    ? "Perfect — you nailed every question in this round."
-                    : graded.score >= graded.total * 0.8
-                      ? "Strong work. Review the missed items below."
-                      : "Keep studying the Facts chapters and try another random set."}
+                  {isPassingScore(graded.score, graded.total) ? (
+                    "Passed — this completion is saved on your account."
+                  ) : graded.score === graded.total ? (
+                    "Perfect — you nailed every question in this round."
+                  ) : graded.score >= graded.total * 0.8 ? (
+                    "Strong work. Review the missed items below."
+                  ) : (
+                    "Keep studying the Facts chapters and try another random set."
+                  )}
                 </p>
               </motion.div>
 

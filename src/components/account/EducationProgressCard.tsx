@@ -46,6 +46,10 @@ export function EducationProgressCard({ user }: EducationProgressCardProps) {
           Account setup {summary.onboardingDone ? "complete" : "— finish onboarding"}
         </li>
         <li className="flex items-center gap-2 text-slate-300">
+          <StatusDot done={summary.readingComplete} />
+          Textbook reading {summary.readingComplete ? "complete" : "in progress"}
+        </li>
+        <li className="flex items-center gap-2 text-slate-300">
           <StatusDot done={summary.quickChecksPassed === summary.quickChecksTotal} />
           Chapter quick checks {summary.quickChecksPassed}/{summary.quickChecksTotal}
         </li>
@@ -53,6 +57,12 @@ export function EducationProgressCard({ user }: EducationProgressCardProps) {
           <StatusDot done={summary.chapterExamDone} />
           10-question chapter exam {summary.chapterExamDone ? "passed" : "not yet"}
         </li>
+        {summary.courseComplete && (
+          <li className="flex items-center gap-2 text-emerald-300/90">
+            <StatusDot done />
+            Facts course complete
+          </li>
+        )}
       </ul>
 
       <div className="mt-5 max-h-48 space-y-1 overflow-y-auto pr-1">

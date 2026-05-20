@@ -1,9 +1,16 @@
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import type { QuizQuestion } from "../../lib/factsQuizTypes";
 import { CHAPTER_QUICK_CHECK_LENGTH } from "../../lib/factsQuizTypes";
 import { gradeSession, pickChapterQuickCheck } from "../../lib/factsQuizUtils";
-import { markChapterQuickCheckPassed, recordQuizQuestionStats } from "../../lib/educationProgress";
+import { celebrationPath } from "../../lib/educationCelebrations";
+import {
+  celebrationAfterQuickCheck,
+  isChapterQuickCheckPassed,
+  markChapterQuickCheckPassed,
+  recordQuizQuestionStats,
+} from "../../lib/educationProgress";
 import { readConsumerSession } from "../../lib/consumerSession";
 import { QuizAnswerFieldset } from "./QuizAnswerFieldset";
 
@@ -15,6 +22,11 @@ interface ChapterQuickCheckProps {
 }
 
 export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickCheckProps) {
+  const navigate = useNavigate();
+  const session = readConsumerSession();
+  const email = session?.email ?? "";
+  const alreadyPassed = email ? isChapterQuickCheckPassed(email, chapterNumber) : false;
+
   const [open, setOpen] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -39,10 +51,9 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
   const revealCurrent = () => {
     if (!current || answers[current.id] === undefined) return;
     setRevealed((prev) => ({ ...prev, [current.id]: true }));
-    const session = readConsumerSession();
-    if (session?.email) {
+    if (email) {
       const picked = answers[current.id];
-      recordQuizQuestionStats(session.email, [
+      recordQuizQuestionStats(email, [
         { question: current, correct: picked === current.correctIndex },
       ]);
     }
@@ -52,9 +63,13 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
     const result = gradeSession(questions, answers);
     setGraded(result);
     setPhase("results");
-    const session = readConsumerSession();
-    if (session?.email && result.score === result.total) {
-      markChapterQuickCheckPassed(session.email, chapterNumber);
+    if (email && result.score === result.total) {
+      markChapterQuickCheckPassed(email, chapterNumber);
+      const milestone = celebrationAfterQuickCheck(email);
+      if (milestone) {
+        navigate(celebrationPath(milestone));
+        return;
+      }
     }
   };
 
@@ -86,7 +101,11 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
         <button
           type="button"
           onClick={start}
-          className="flex w-full items-center justify-between gap-4 rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-5 py-4 text-left transition hover:border-cyan-500/35 hover:bg-cyan-500/10"
+          className={`flex w-full items-center justify-between gap-4 rounded-xl border px-5 py-4 text-left transition ${
+            alreadyPassed
+              ? "border-emerald-500/25 bg-emerald-500/5 hover:border-emerald-500/40"
+              : "border-cyan-500/20 bg-cyan-500/5 hover:border-cyan-500/35 hover:bg-cyan-500/10"
+          }`}
         >
           <div>
             <p
@@ -96,11 +115,17 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
               Quick check · ~2 min
             </p>
             <p className="mt-1 text-sm text-slate-300">
-              {CHAPTER_QUICK_CHECK_LENGTH} questions on this chapter before you move on
+              {alreadyPassed
+                ? "Passed — completion saved. Retake anytime for practice."
+                : `${CHAPTER_QUICK_CHECK_LENGTH} questions on this chapter before you move on`}
             </p>
           </div>
-          <span className="shrink-0 rounded-lg bg-cyan-500/15 px-3 py-1.5 text-xs font-semibold text-cyan-300">
-            Start
+          <span
+            className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold ${
+              alreadyPassed ? "bg-emerald-500/15 text-emerald-300" : "bg-cyan-500/15 text-cyan-300"
+            }`}
+          >
+            {alreadyPassed ? "Passed ✓" : "Start"}
           </span>
         </button>
       ) : (

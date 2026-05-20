@@ -10,6 +10,7 @@ import { ThankYouPage } from "./pages/ThankYouPage";
 import { GlossaryPage } from "./pages/GlossaryPage";
 import { FactsPage } from "./pages/FactsPage";
 import { FactsQuizPage } from "./pages/FactsQuizPage";
+import { FactsCelebrationPage } from "./pages/FactsCelebrationPage";
 import { AgentPage } from "./pages/AgentPage";
 import { LoginPage } from "./pages/LoginPage";
 import { AccountPage } from "./pages/AccountPage";
@@ -42,7 +43,8 @@ export default function App() {
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
     location.pathname === "/onboarding" ||
-    location.pathname === "/account";
+    location.pathname === "/account" ||
+    location.pathname.startsWith("/facts/celebration");
 
   return (
     <ConsumerAuthProvider>
@@ -55,6 +57,7 @@ export default function App() {
           <Route path="/glossary" element={<GlossaryPage />} />
           <Route path="/facts" element={<FactsPage />} />
           <Route path="/facts/quiz" element={<FactsQuizPage />} />
+          <Route path="/facts/celebration/:milestone" element={<FactsCelebrationPage />} />
           <Route path="/agent" element={<AgentPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/account" element={<AccountPage />} />

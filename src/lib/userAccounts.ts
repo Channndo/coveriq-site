@@ -32,6 +32,11 @@ export interface UserOnboardingPayload {
   onboarding: Record<string, string | string[]>;
 }
 
+function accountApiUrl(): string {
+  if (import.meta.env.PROD) return "/api/user-account";
+  return USER_ACCOUNTS_WEB_APP_URL || "/api/user-account";
+}
+
 function basePayload(
   data: UserAccountSignupPayload | (UserOnboardingPayload & Partial<UserAccountSignupPayload>)
 ): Record<string, string> {
@@ -79,18 +84,32 @@ function basePayload(
 }
 
 async function postAccount(payload: Record<string, string>): Promise<{ ok: boolean; error?: string }> {
-  if (!USER_ACCOUNTS_WEB_APP_URL) {
+  const url = accountApiUrl();
+  if (!url) {
     return { ok: false, error: "User accounts endpoint is not configured." };
   }
+
   try {
-    await fetch(USER_ACCOUNTS_WEB_APP_URL, {
+    const res = await fetch(url, {
       method: "POST",
-      mode: "no-cors",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(payload),
     });
+
+    const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+
+    if (!res.ok || data.ok === false) {
+      console.error("[userAccounts] post failed", res.status, data);
+      return {
+        ok: false,
+        error: data.error || "Could not record signup notification.",
+      };
+    }
+
     return { ok: true };
-  } catch {
-    return { ok: true };
+  } catch (err) {
+    console.error("[userAccounts] post error", err);
+    return { ok: false, error: "Could not reach account notification service." };
   }
 }
 

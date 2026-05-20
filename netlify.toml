@@ -108,6 +108,13 @@
   status = 200
   force = true
 
+# User account signup → Google Apps Script (admin Gmail notification)
+[[redirects]]
+  from = "/api/user-account"
+  to = "/.netlify/functions/submit-user-account"
+  status = 200
+  force = true
+
 # Syntrix consumer auth (same-origin — browser cannot call api.syntrix.solutions directly)
 [[redirects]]
   from = "/api/auth/*"

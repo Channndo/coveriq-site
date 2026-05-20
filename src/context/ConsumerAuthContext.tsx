@@ -158,7 +158,7 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
       applySession(result.accessToken, profile);
       setUser(profile);
 
-      void submitUserAccount({
+      const sheetNotify = await submitUserAccount({
         firstName: profile.firstName,
         lastName: profile.lastName,
         email: profile.email,
@@ -177,6 +177,10 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
         status: "active",
         notes: profile.role === "admin" ? "site admin · MIRA access" : "MIRA access · Syntrix",
       });
+
+      if (!sheetNotify.ok) {
+        console.error("[signup] Apps Script notification failed:", sheetNotify.error);
+      }
 
       return { ok: true };
     } catch (err) {

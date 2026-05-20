@@ -7,13 +7,11 @@ import { educationProgressSummary, isChapterQuickCheckPassed } from "../../lib/e
 interface FactsTableOfContentsProps {
   activeChapterId: string;
   activeSectionId: string | null;
-  readProgress: number;
 }
 
 export function FactsTableOfContents({
   activeChapterId,
   activeSectionId,
-  readProgress,
 }: FactsTableOfContentsProps) {
   const { user } = useConsumerAuth();
   const learning = educationProgressSummary(user);
@@ -28,22 +26,8 @@ export function FactsTableOfContents({
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
             Table of contents
           </p>
-          <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.06]">
-            <div
-              className="textbook-reading-bar"
-              style={{ width: `${readProgress}%` }}
-              role="progressbar"
-              aria-valuenow={Math.round(readProgress)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label="Reading progress"
-            />
-          </div>
-          <p className="mt-1.5 font-mono text-[10px] text-slate-600">
-            {Math.round(readProgress)}% through guide
-          </p>
-          {user && (
-            <div className="mt-4">
+          {user ? (
+            <div className="mt-3">
               <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
                 Learning track
               </p>
@@ -63,6 +47,13 @@ export function FactsTableOfContents({
                 {learning.chapterExamDone ? " · exam ✓" : ""}
               </p>
             </div>
+          ) : (
+            <p className="mt-3 text-[10px] leading-relaxed text-slate-600">
+              <Link to="/login" className="text-cyan-400 hover:text-cyan-300">
+                Sign in
+              </Link>{" "}
+              to track quick checks and exam progress.
+            </p>
           )}
         </div>
 

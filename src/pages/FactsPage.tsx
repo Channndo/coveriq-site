@@ -14,7 +14,7 @@ import { FactsMobileChapterSelect } from "../components/facts/FactsMobileChapter
 
 export function FactsPage() {
   const location = useLocation();
-  const { activeChapterId, activeSectionId, readProgress } = useTextbookScrollSpy();
+  const { activeChapterId, activeSectionId } = useTextbookScrollSpy();
 
   useEffect(() => {
     document.title = "Insurance Facts & History | CoverIQ";
@@ -38,7 +38,7 @@ export function FactsPage() {
   return (
     <div className="min-h-screen bg-[#030712]">
       <TechBackground showGrid={false} />
-      <FactsStickyProgress readProgress={readProgress} activeChapterId={activeChapterId} />
+      <FactsStickyProgress activeChapterId={activeChapterId} />
 
       <div className="section-padding relative mx-auto max-w-7xl">
         <Link
@@ -56,7 +56,6 @@ export function FactsPage() {
           <FactsTableOfContents
             activeChapterId={activeChapterId}
             activeSectionId={activeSectionId}
-            readProgress={readProgress}
           />
 
           <div className="min-w-0 flex-1 max-w-3xl">

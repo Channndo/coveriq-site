@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { hashToSectionId, scrollToSectionId } from "./lib/scrollToSection";
 import { ConsumerAuthProvider } from "./context/ConsumerAuthContext";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
@@ -17,10 +18,17 @@ import { MiraWidget } from "./components/mira/MiraWidget";
 import { SyntrixGuard } from "./components/layout/SyntrixGuard";
 
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    const sectionId = hashToSectionId(hash);
+    if (pathname === "/" && sectionId) {
+      const timer = window.setTimeout(() => scrollToSectionId(sectionId), 50);
+      return () => window.clearTimeout(timer);
+    }
+    if (!hash) {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
   return null;
 }
 

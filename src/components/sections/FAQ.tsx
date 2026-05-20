@@ -10,7 +10,7 @@ export function FAQ() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="section-dark section-padding">
+    <section id="faq" className="section-dark section-padding scroll-mt-28">
       <div className="mx-auto max-w-4xl">
         <SectionHeading
           eyebrow="Support & education"

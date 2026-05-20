@@ -14,7 +14,7 @@ export function QuoteSection({ selectedType }: QuoteSectionProps) {
     : "Understanding your coverage needs before you buy helps you ask better questions with a licensed agent.";
 
   return (
-    <section id="quote" className="section-padding relative overflow-hidden border-t border-cyan-500/10">
+    <section id="quote" className="section-padding relative overflow-hidden border-t border-cyan-500/10 scroll-mt-28">
       <TechBackground />
       <div className="relative mx-auto max-w-7xl">
         <SectionHeading

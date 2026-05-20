@@ -23,7 +23,7 @@ const FEATURES = [
 
 export function AiGuidance() {
   return (
-    <section id="ai-guidance" className="section-padding relative overflow-hidden border-y border-cyan-500/10 bg-gradient-to-b from-cyan-950/20 via-[#030712] to-[#030712]">
+    <section id="ai-guidance" className="section-padding relative overflow-hidden border-y border-cyan-500/10 bg-gradient-to-b from-cyan-950/20 via-[#030712] to-[#030712] scroll-mt-28">
       <TechBackground />
       <div className="relative mx-auto max-w-7xl">
         <SectionHeading

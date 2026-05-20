@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useConsumerAuth } from "../../context/ConsumerAuthContext";
+import { NavHashLink } from "./NavHashLink";
 import { LogoMark } from "../ui/LogoMark";
 
 const NAV = [
@@ -50,13 +51,13 @@ export function Header() {
                 {item.label}
               </Link>
             ) : (
-              <a
+              <NavHashLink
                 key={item.href}
-                href={item.href}
+                hash={item.href}
                 className="rounded-lg px-3 py-2 text-sm text-slate-400 transition hover:bg-white/5 hover:text-cyan-300"
               >
                 {item.label}
-              </a>
+              </NavHashLink>
             )
           )}
           <Link
@@ -70,9 +71,9 @@ export function Header() {
               </span>
             )}
           </Link>
-          <a href="#quote" className="btn-primary ml-2 !py-2.5 !px-5 text-sm">
+          <NavHashLink hash="#quote" className="btn-primary ml-2 !py-2.5 !px-5 text-sm">
             Get Quote
-          </a>
+          </NavHashLink>
         </nav>
 
         <button
@@ -111,14 +112,14 @@ export function Header() {
                     {item.label}
                   </Link>
                 ) : (
-                  <a
+                  <NavHashLink
                     key={item.href}
-                    href={item.href}
+                    hash={item.href}
                     className="rounded-lg px-3 py-2.5 text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-300"
-                    onClick={() => setOpen(false)}
+                    onNavigate={() => setOpen(false)}
                   >
                     {item.label}
-                  </a>
+                  </NavHashLink>
                 )
               )}
               <Link
@@ -128,9 +129,13 @@ export function Header() {
               >
                 Login
               </Link>
-              <a href="#quote" className="btn-primary mt-2 text-center" onClick={() => setOpen(false)}>
+              <NavHashLink
+                hash="#quote"
+                className="btn-primary mt-2 text-center"
+                onNavigate={() => setOpen(false)}
+              >
                 Get Quote
-              </a>
+              </NavHashLink>
             </div>
           </motion.nav>
         )}

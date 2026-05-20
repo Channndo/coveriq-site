@@ -26,7 +26,7 @@ export function CoverageHub({ onGetQuote }: CoverageHubProps) {
     tab === "all" ? INSURANCE_LINES : INSURANCE_LINES.filter((l) => l.category === tab);
 
   return (
-    <section id="coverage" className="section-dark section-padding relative overflow-hidden">
+    <section id="coverage" className="section-dark section-padding relative overflow-hidden scroll-mt-28">
       <TechBackground showGrid={false} />
       <div className="relative mx-auto max-w-7xl">
         <SectionHeading

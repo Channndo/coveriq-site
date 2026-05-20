@@ -10,7 +10,7 @@ export function HowInsuranceWorks() {
   const current = INSURANCE_CONCEPTS.find((c) => c.id === active)!;
 
   return (
-    <section id="how-it-works" className="section-dark section-padding relative overflow-hidden">
+    <section id="how-it-works" className="section-dark section-padding relative overflow-hidden scroll-mt-28">
       <TechBackground showGrid={false} />
       <div className="relative mx-auto max-w-7xl">
         <SectionHeading

@@ -12,6 +12,7 @@ export const ROMAN_NUMERALS = [
   "VIII",
   "IX",
   "X",
+  "XI",
 ] as const;
 
 export const CHAPTER_META: Record<
@@ -59,11 +60,20 @@ export const CHAPTER_META: Record<
     ],
   },
   lines: {
-    readMinutes: 8,
+    readMinutes: 7,
     objectives: [
-      "Differentiate property-casualty, life, health, and commercial lines",
-      "Match common products to the risks they address",
+      "Differentiate property-casualty and commercial lines at a high level",
       "Understand climate, catastrophe, and insurtech trends",
+      "Know where to read the dedicated life and health chapter",
+    ],
+  },
+  "life-and-health": {
+    readMinutes: 24,
+    objectives: [
+      "Compare term, whole, universal life, and basic annuity concepts",
+      "Understand health plan costs, networks, and employer vs. marketplace coverage",
+      "Explain Medicare parts, Advantage, Medigap, and Medicaid basics",
+      "Recognize HIPAA, disability income, and supplemental health products",
     ],
   },
   "claims-process": {

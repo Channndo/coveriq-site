@@ -911,4 +911,364 @@ export const FACTS_QUIZ_BANK: QuizQuestion[] = [
     1,
     "Flood requires NFIP or private flood policy in most cases; earthquake and other perils need endorsements or separate coverage."
   ),
+  q(
+    "q76",
+    "Universal life insurance is characterized by:",
+    [
+      "Flexible premiums and adjustable death benefits within contract limits",
+      "Coverage that expires with no death benefit after exactly one year always",
+      "Mandatory enrollment at age 65 through Social Security",
+      "Unlimited flood coverage on mortgaged homes",
+    ],
+    0,
+    "Universal life blends permanent protection with flexible funding; credited interest and costs affect cash value over time."
+  ),
+  q(
+    "q77",
+    "A primary purpose of naming a life insurance beneficiary is to:",
+    [
+      "Eliminate the need for any premium payments",
+      "Direct who receives the death benefit when the insured dies",
+      "Guarantee approval for all future health claims",
+      "Replace Medicare Part D drug coverage",
+    ],
+    1,
+    "Beneficiary designations control policy proceeds; keep them current after major life events."
+  ),
+  q(
+    "q78",
+    "Replacing an existing life policy with a new one may:",
+    [
+      "Restart contestability periods and trigger surrender charges on the old contract",
+      "Automatically double the death benefit with no underwriting",
+      "Convert homeowners flood coverage to term life",
+      "Eliminate state insurance department oversight",
+    ],
+    0,
+    "Replacement regulations require disclosure because new policies can cost more and reduce benefits in early years."
+  ),
+  q(
+    "q79",
+    "An immediate annuity generally:",
+    [
+      "Converts a lump-sum premium into a stream of income payments starting soon after purchase",
+      "Covers auto collision damage for fleet vehicles",
+      "Provides unlimited long-term nursing home care under Medicare",
+      "Replaces workers' compensation in every state",
+    ],
+    0,
+    "Immediate annuities are often used for retirement income; payout options and insurer strength matter."
+  ),
+  q(
+    "q80",
+    "On most health plans, a deductible is:",
+    [
+      "The amount you pay out of pocket before the plan begins sharing covered costs",
+      "A flat fee paid at each doctor visit regardless of other costs",
+      "The insurer's profit margin on reinsurance treaties",
+      "A federal tax on life insurance death benefits",
+    ],
+    0,
+    "Deductibles are annual thresholds; copays and coinsurance apply after the deductible is met on many plans."
+  ),
+  q(
+    "q81",
+    "An HMO health plan typically:",
+    [
+      "Requires use of a primary care physician and referrals for many specialist visits",
+      "Pays the same for all out-of-network care as in-network care",
+      "Covers only prescription drugs with no medical services",
+      "Is identical to surplus lines property insurance",
+    ],
+    0,
+    "HMOs emphasize coordinated in-network care; out-of-network services are often not covered except emergencies."
+  ),
+  q(
+    "q82",
+    "ACA marketplace metal tiers (Bronze through Platinum) mainly indicate:",
+    [
+      "How premium and out-of-pocket costs are split between you and the plan",
+      "The insurer's stock ticker symbol",
+      "Whether flood is included on homeowners policies",
+      "Social Security retirement age",
+    ],
+    0,
+    "Bronze plans have lower premiums and higher member cost-sharing; Platinum is the opposite pattern."
+  ),
+  q(
+    "q83",
+    "Medigap (Medicare supplement) policies are designed to:",
+    [
+      "Help pay cost-sharing for people enrolled in Original Medicare",
+      "Replace Part A hospital insurance entirely",
+      "Sell only to employers under ERISA without state oversight",
+      "Provide auto liability coverage in no-fault states",
+    ],
+    0,
+    "Medigap fills gaps like deductibles and coinsurance for Original Medicare; you cannot pair Medigap with Medicare Advantage."
+  ),
+  q(
+    "q84",
+    "Medicare Advantage (Part C) plans are offered by:",
+    [
+      "Private insurers that contract with Medicare to deliver Part A and B benefits",
+      "County property tax assessors only",
+      "Surplus lines brokers for earthquake risks",
+      "The National Flood Insurance Program exclusively",
+    ],
+    0,
+    "Medicare Advantage bundles Medicare benefits through approved private plans, often with Part D and extra benefits."
+  ),
+  q(
+    "q85",
+    "Long-term custodial nursing home care is generally:",
+    [
+      "Not covered by standard Medicare; Medicaid may pay after eligibility rules are met",
+      "Fully paid by Medicare Part B for unlimited years",
+      "Included in every auto liability policy",
+      "Funded only through workers' compensation",
+    ],
+    0,
+    "Medicare covers limited skilled nursing after hospitalization; extended custodial care often relies on Medicaid or private funds."
+  ),
+  q(
+    "q86",
+    "Short-term disability insurance usually:",
+    [
+      "Replaces a portion of income for a limited period after a brief waiting period",
+      "Covers flood damage to commercial buildings under TRIA",
+      "Eliminates all life insurance contestability rules",
+      "Replaces Medigap for Medicare beneficiaries",
+    ],
+    0,
+    "STD bridges income for weeks or months; LTD may pay for years if disability continues."
+  ),
+  q(
+    "q87",
+    "An 'own occupation' definition of disability generally means:",
+    [
+      "Benefits may be paid if you cannot perform the duties of your own job",
+      "Benefits are paid only if you can perform any job in the economy",
+      "The policy covers only property theft, not illness",
+      "Medicare Part D pays all prescriptions with no copay",
+    ],
+    0,
+    "Own-occupation definitions are broader than any-occupation definitions and usually cost more."
+  ),
+  q(
+    "q88",
+    "Critical illness insurance typically:",
+    [
+      "Pays a lump sum if diagnosed with specified serious conditions listed in the policy",
+      "Replaces comprehensive major medical coverage for all services",
+      "Covers unlimited nursing home stays under Original Medicare",
+      "Eliminates HIPAA privacy requirements",
+    ],
+    0,
+    "Critical illness is supplemental; it does not replace ACA-compliant health insurance for ongoing care."
+  ),
+  q(
+    "q89",
+    "Coinsurance on a health policy usually means:",
+    [
+      "You pay a percentage of allowed charges after the deductible is met",
+      "The insurer pays 100% of all medical bills with no limit",
+      "A flat dollar amount per prescription only",
+      "The premium paid to reinsurers for catastrophe treaties",
+    ],
+    0,
+    "Example: 20% coinsurance means you pay 20% of the allowed amount and the plan pays 80%, subject to out-of-pocket maximums."
+  ),
+  q(
+    "q90",
+    "A health plan out-of-pocket maximum (on ACA-compliant plans) caps:",
+    [
+      "Your total spending on covered essential health benefits in a plan year",
+      "The insurer's stock price during open enrollment",
+      "All property damage from hurricanes nationwide",
+      "Social Security payroll tax rates",
+    ],
+    0,
+    "After you reach the OOP max, the plan pays 100% of covered essential benefits for the rest of the year."
+  ),
+  q(
+    "q91",
+    "Variable universal life insurance cash value is linked to:",
+    [
+      "Separate investment accounts chosen by the policyholder, with market risk",
+      "Federal Medicare reimbursement schedules only",
+      "NFIP flood zone maps exclusively",
+      "Workers' compensation experience modifiers",
+    ],
+    0,
+    "VUL policyholders bear investment risk; fees and guarantees are limited to contract language."
+  ),
+  q(
+    "q92",
+    "Participating whole life policies may pay:",
+    [
+      "Dividends when the insurer's experience is favorable — not guaranteed",
+      "Unlimited flood coverage on all coastal homes automatically",
+      "Federal crop subsidies for every policyholder",
+      "Social Security retirement benefits at age 62 automatically",
+    ],
+    0,
+    "Dividends can reduce premium, buy paid-up additions, or be taken as cash — read dividend options in the contract."
+  ),
+  q(
+    "q93",
+    "ERISA primarily governs:",
+    [
+      "Many employer-sponsored health and welfare benefit plans at the federal level",
+      "Every personal auto policy sold at retail",
+      "State homeowners rate filings exclusively",
+      "Medicare Part A hospital deductibles only",
+    ],
+    0,
+    "Self-funded employer health plans are a key ERISA area; fully insured group business also interacts with state regulation."
+  ),
+  q(
+    "q94",
+    "Mental health parity laws generally require:",
+    [
+      "Comparable limits on mental health and substance use benefits vs. medical/surgical benefits",
+      "Elimination of all health insurance premiums nationwide",
+      "Coverage of intentional property damage by the insured",
+      "Replacement of Medicaid with private auto policies",
+    ],
+    0,
+    "Parity rules address quantitative and non-quantitative treatment limits on behavioral health benefits."
+  ),
+  q(
+    "q95",
+    "A PPO health plan compared with a strict HMO usually offers:",
+    [
+      "More flexibility to see out-of-network providers at higher cost",
+      "No premiums and no cost-sharing ever",
+      "Only dental cleanings with no medical coverage",
+      "Mandatory flood insurance on all vehicles",
+    ],
+    0,
+    "PPOs use networks but often pay partial benefits out of network; HMOs are more restrictive."
+  ),
+  q(
+    "q96",
+    "Health care sharing ministries differ from insurance because they:",
+    [
+      "Are not licensed insurance contracts with the same regulatory protections",
+      "Are required for all Medicare beneficiaries",
+      "Guarantee payment of every medical bill without limits",
+      "Replace state insurance department licensing for all carriers",
+    ],
+    0,
+    "Sharing arrangements are member agreements, not regulated insurance products in the same way as major medical policies."
+  ),
+  q(
+    "q97",
+    "Creditable coverage for Medicare Part D matters because:",
+    [
+      "Lack of creditable drug coverage when first eligible can trigger late enrollment penalties",
+      "It eliminates all Medicare Part B premiums permanently",
+      "It converts term life to whole life automatically",
+      "It mandates flood insurance in every state",
+    ],
+    0,
+    "If you delay Part D without other creditable prescription coverage, penalties may apply when you enroll later."
+  ),
+  q(
+    "q98",
+    "Dual eligibles are people who qualify for:",
+    [
+      "Both Medicare and Medicaid, with coordination rules for premiums and cost-sharing",
+      "Only surplus lines auto coverage in every state",
+      "Unlimited life insurance without insurable interest",
+      "Workers' compensation for off-the-job injuries only",
+    ],
+    0,
+    "Dual eligibles often have most costs covered, but plan choices and provider access still require attention."
+  ),
+  q(
+    "q99",
+    "Hospital indemnity insurance pays:",
+    [
+      "Fixed cash amounts per day of hospitalization rather than full medical bills",
+      "The entire cost of every surgery with no limits",
+      "Social Security disability benefits automatically",
+      "All flood damage under homeowners policies",
+    ],
+    0,
+    "Indemnity plans supplement cash flow; they do not replace comprehensive health insurance."
+  ),
+  q(
+    "q100",
+    "Life insurance contestability periods (often two years) allow insurers to:",
+    [
+      "Review application accuracy and contest misrepresentations on new policies",
+      "Deny all property claims for hail damage automatically",
+      "Set federal Medicare reimbursement rates",
+      "Eliminate COBRA continuation rights",
+    ],
+    0,
+    "Material misstatements discovered during contestability can affect claim payment; after the period, rules tighten."
+  ),
+  q(
+    "q101",
+    "An accelerated death benefit rider may:",
+    [
+      "Pay part of the death benefit early if the insured is terminally ill",
+      "Convert auto liability to universal life without underwriting",
+      "Guarantee Medicaid nursing home coverage for all Americans",
+      "Replace the ACA essential health benefits package",
+    ],
+    0,
+    "Accelerated benefits reduce the remaining death benefit; conditions and discounts vary by contract."
+  ),
+  q(
+    "q102",
+    "Open enrollment for individual ACA marketplace coverage typically occurs:",
+    [
+      "Each fall for coverage effective the following January 1, with special enrollment for qualifying events",
+      "Only on the day you turn 65 with no exceptions",
+      "Whenever you file a homeowners claim",
+      "After every auto accident regardless of date",
+    ],
+    0,
+    "Outside open enrollment, you need a qualifying life event (marriage, birth, loss of coverage, etc.) for a special enrollment period."
+  ),
+  q(
+    "q103",
+    "High-deductible health plans (HDHPs) are often paired with:",
+    [
+      "Health savings accounts (HSAs) when IRS eligibility rules are met",
+      "Mandatory flood policies from NFIP on every home",
+      "Surplus lines brokers for all personal auto",
+      "Medicare Part A only with no Part B",
+    ],
+    0,
+    "HSAs offer tax-advantaged savings for qualified medical expenses when paired with qualifying HDHPs."
+  ),
+  q(
+    "q104",
+    "Dental insurance plans often include:",
+    [
+      "Annual maximum benefits and waiting periods for major services",
+      "Unlimited coverage for all medical hospital stays",
+      "Replacement of Medicare Part D for seniors",
+      "Automatic long-term disability to age 67",
+    ],
+    0,
+    "Dental is supplemental; annual caps and networks limit what the plan pays."
+  ),
+  q(
+    "q105",
+    "Life and health insurance claims differ from typical P&C claims because:",
+    [
+      "Health claims involve benefits, networks, and utilization review; life claims pay death benefits to beneficiaries",
+      "Life policies always rebuild damaged homes at replacement cost",
+      "Health insurers never use prior authorization",
+      "P&C policies always last for the insured's entire lifetime",
+    ],
+    0,
+    "Health is ongoing service financing; life is mortality-based with beneficiary proceeds — different processes than property adjusters."
+  ),
 ];

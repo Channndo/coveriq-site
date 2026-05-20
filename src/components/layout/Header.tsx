@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useConsumerAuth } from "../../context/ConsumerAuthContext";
@@ -19,6 +19,7 @@ export function Header() {
   const { user, isAdmin } = useConsumerAuth();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -26,8 +27,24 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const syncHeight = () => {
+      document.documentElement.style.setProperty(
+        "--coveriq-header-height",
+        `${el.offsetHeight}px`
+      );
+    };
+    syncHeight();
+    const observer = new ResizeObserver(syncHeight);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [open, scrolled]);
+
   return (
     <header
+      ref={headerRef}
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
           ? "border-b border-white/5 bg-[#030712]/80 backdrop-blur-2xl shadow-lg shadow-black/20"

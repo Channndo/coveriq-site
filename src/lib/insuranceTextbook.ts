@@ -4,12 +4,20 @@ export interface TextbookLaw {
   summary: string;
 }
 
+/** External references for learners who want to verify or go deeper. */
+export interface TextbookCitation {
+  source: string;
+  url?: string;
+  note?: string;
+}
+
 export interface TextbookSection {
   id: string;
   title: string;
   paragraphs: string[];
   laws?: TextbookLaw[];
   bulletPoints?: string[];
+  citations?: TextbookCitation[];
 }
 
 export interface TextbookChapter {
@@ -26,7 +34,7 @@ export const TEXTBOOK_INTRO = {
   paragraphs: [
     "Insurance is not a single product or company — it is a system societies built to survive unpredictable loss. When thousands of households and businesses each pay a relatively small amount into a pool, the pool can pay the few who suffer large losses. That idea has shaped commerce, homeownership, driving, healthcare, and employment for centuries.",
     "This guide explains where insurance came from, why it became essential to modern life, how the United States regulates it, which laws and acts apply, and what rules insurers must follow. It is written for learners — consumers, students, and future producers — not as legal advice. Every state has its own statutes; federal law intersects mainly in health, benefits, flood, terrorism, and privacy.",
-    "Use the table of contents to jump between ten chapters. Read straight through for the full narrative, or return to specific sections when you want a refresher before talking with an agent or using MIRA. This is general education — not state licensing exam preparation.",
+    "Use the table of contents to jump between eleven chapters — including a dedicated life and health chapter with cited sources. Read straight through for the full narrative, or return to specific sections when you want a refresher before talking with an agent or using MIRA. This is general education — not state licensing exam preparation.",
   ],
 };
 
@@ -239,6 +247,33 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
             summary: "Created FIO to monitor insurance nationally; does not replace state DOIs.",
           },
         ],
+        citations: [
+          {
+            source: "Congress.gov — McCarran-Ferguson Act overview",
+            url: "https://www.congress.gov/bill/79th-congress/house-bill/3269",
+            note: "Legislative history",
+          },
+          {
+            source: "FEMA — National Flood Insurance Program",
+            url: "https://www.floodsmart.gov",
+            note: "NFIP consumer site",
+          },
+          {
+            source: "U.S. Department of Labor — ERISA",
+            url: "https://www.dol.gov/general/topic/health-plans/erisa",
+            note: "Employer plan rules",
+          },
+          {
+            source: "HHS — HIPAA",
+            url: "https://www.hhs.gov/hipaa/index.html",
+            note: "Privacy and security rules",
+          },
+          {
+            source: "U.S. Treasury — Federal Insurance Office",
+            url: "https://home.treasury.gov/policy-issues/financial-markets-financial-institutions-and-fiscal-service/federal-insurance-office",
+            note: "Dodd-Frank Title V",
+          },
+        ],
       },
     ],
   },
@@ -320,10 +355,22 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
         ],
       },
       {
-        id: "life-health",
-        title: "6.2 Life and health",
+        id: "life-health-pointer",
+        title: "6.2 Life and health (see Chapter VII)",
         paragraphs: [
-          "Life insurance pays beneficiaries at death (term, whole, universal). Health insurance covers medical expenses (employer group, individual, Medicare, Medicaid). Disability income replaces wages when you cannot work.",
+          "Life and health insurance use different contracts, regulators, and federal statutes than most property-casualty lines. Chapter VII has seventeen sections on term and permanent life, annuities, health plan costs and networks, employer and ACA coverage, Medicare and Medicaid, disability, and supplemental products — each with cited sources where helpful.",
+        ],
+        citations: [
+          {
+            source: "NAIC — Life insurance consumer resources",
+            url: "https://content.naic.org/consumer/life-insurance",
+            note: "Overview of life products and consumer tips",
+          },
+          {
+            source: "NAIC — Health insurance resources",
+            url: "https://content.naic.org/consumer/health-insurance",
+            note: "Health coverage basics and complaints",
+          },
         ],
       },
       {
@@ -339,18 +386,353 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
         paragraphs: [
           "Hurricanes, wildfires, and hail drive reinsurance costs and insurer withdrawals from high-risk areas. State wind pools and FAIR plans provide last-resort coverage. Telematics prices auto by driving behavior; AI assists claims triage and fraud detection. Regulators scrutinize algorithms for bias and transparency.",
         ],
+        citations: [
+          {
+            source: "FEMA — National Flood Insurance Program",
+            url: "https://www.floodsmart.gov",
+            note: "Flood coverage outside standard homeowners policies",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "life-and-health",
+    number: 7,
+    title: "Life and health insurance",
+    subtitle: "Life products, health coverage, public programs, and how they differ from property-casualty",
+    sections: [
+      {
+        id: "lh-overview",
+        title: "7.1 Life and health lines — overview",
+        paragraphs: [
+          "Life and health insurance address human risks: death, illness, injury, and medical expenses. They share state insurance regulation but involve more federal law than most auto or homeowners policies — especially for employer benefits, Medicare, Medicaid, and the Affordable Care Act (ACA).",
+          "Life insurance pays beneficiaries when the insured dies (subject to policy terms). Health insurance helps pay for medical services through networks, cost-sharing, and plan rules. Disability income replaces wages when you cannot work. Supplemental products (dental, vision, critical illness) fill gaps but are not substitutes for comprehensive major medical coverage.",
+        ],
+        bulletPoints: [
+          "Life: mortality risk, beneficiaries, and sometimes living benefits or cash value",
+          "Health: medical services, formularies, prior authorization, and provider networks",
+          "Public programs (Medicare, Medicaid) overlap with private coverage for many Americans",
+          "This chapter is general education — not licensing exam prep or personal tax/legal advice",
+        ],
+        citations: [
+          {
+            source: "NAIC — Life insurance",
+            url: "https://content.naic.org/consumer/life-insurance",
+          },
+          {
+            source: "NAIC — Health insurance",
+            url: "https://content.naic.org/consumer/health-insurance",
+          },
+        ],
+      },
+      {
+        id: "term-life",
+        title: "7.2 Term life insurance",
+        paragraphs: [
+          "Term life provides a death benefit for a set period — commonly 10, 20, or 30 years — with no cash value. If the insured dies during the term, beneficiaries receive the face amount (minus any loans or unpaid premium). If the term ends while the insured is living, coverage stops unless renewed or converted per policy terms.",
+          "Term is often used for income replacement while raising children, covering a mortgage, or funding business buy-sell needs. Premiums are lower than permanent insurance at the same face amount because the insurer expects fewer deaths during a limited term and there is no savings component.",
+        ],
+        bulletPoints: [
+          "Level term keeps the same premium for the term period; annual renewable term can increase each year",
+          "Conversion options may let you switch to permanent coverage without a new medical exam — deadlines apply",
+          "Return-of-premium term costs more but refunds premiums if you outlive the term (read conditions)",
+        ],
+        citations: [
+          {
+            source: "FTC — Life insurance",
+            url: "https://consumer.ftc.gov/articles/life-insurance",
+          },
+        ],
+      },
+      {
+        id: "permanent-life",
+        title: "7.3 Whole life and universal life",
+        paragraphs: [
+          "Whole life is permanent insurance with a fixed death benefit and premiums that typically do not increase with age. It may build cash value that grows on a schedule defined in the contract; loans and surrenders access that value but reduce the death benefit if not repaid.",
+          "Universal life (UL) offers flexible premiums and adjustable death benefits within limits. Interest-credited UL depends on insurer-declared rates. Variable universal life (VUL) ties cash value to separate investment accounts — market risk falls on the policyholder. Illustrations show hypothetical values; guarantees are limited to what the contract states.",
+        ],
+        bulletPoints: [
+          "Participating whole life may pay dividends — not guaranteed",
+          "Surrender charges often apply in early policy years on permanent contracts",
+          "Compare fees, guarantees, and non-guaranteed elements before buying VUL or indexed products",
+        ],
+        citations: [
+          {
+            source: "NAIC — Life insurance buyer's guide (PDF)",
+            url: "https://content.naic.org/sites/default/files/publication-lig-zb.pdf",
+          },
+        ],
+      },
+      {
+        id: "life-policy-admin",
+        title: "7.4 Beneficiaries, riders, and replacements",
+        paragraphs: [
+          "You name beneficiaries to receive life proceeds — primary and contingent. Review designations after marriage, divorce, births, and deaths. Proceeds usually pass outside probate but may be taxable in rare estate situations; consult a professional for complex estates.",
+          "Riders add benefits: waiver of premium if disabled, accelerated death benefit for terminal illness, child term riders, or accidental death. Each rider has a cost and conditions.",
+          "Replacing one life policy with another can restart contestability periods and trigger surrender charges. State replacement regulations require disclosure and signed statements explaining why a change is in the consumer's interest.",
+        ],
+        bulletPoints: [
+          "Contestability (often two years) lets insurers review application accuracy after issue",
+          "Suicide exclusions may apply for a limited period after policy issue",
+          "Group life through employers may not be portable when employment ends",
+        ],
+      },
+      {
+        id: "life-regulation",
+        title: "7.5 Life insurance regulation",
+        paragraphs: [
+          "State insurance departments license life insurers and producers, approve policy forms, and examine financial condition. The NAIC promotes consistent replacement, illustration, and annuity suitability standards. There is no federal charter for ordinary retail life insurance comparable to national banks.",
+          "Federal tax rules affect how policyholders and beneficiaries are taxed on cash value, withdrawals, and death benefits under current law. Tax law changes; this guide does not provide tax advice.",
+        ],
+        citations: [
+          {
+            source: "NAIC — Life insurance and annuities (industry)",
+            url: "https://content.naic.org/industry/life-insurance-and-annuities",
+          },
+        ],
+      },
+      {
+        id: "annuities",
+        title: "7.6 Annuities — basics",
+        paragraphs: [
+          "Annuities are insurance contracts that pay income over time — often used for retirement. Accumulation annuities grow funds tax-deferred until withdrawal. Immediate annuities convert a lump sum into a stream of payments starting soon after purchase.",
+          "Fixed annuities credit a declared rate; indexed annuities link returns to a market index with caps and floors; variable annuities invest in subaccounts similar to mutual funds. Surrender charges, mortality and expense fees, and rider costs vary widely. Free-look periods let buyers cancel within a set number of days after delivery in many states.",
+        ],
+        bulletPoints: [
+          "Annuities are long-term contracts — early withdrawals may trigger taxes and penalties",
+          "Suitability rules require producers to match products to client needs and risk tolerance",
+          "Guarantees apply only to the insurer's financial strength and stated contract terms",
+        ],
+        citations: [
+          {
+            source: "NAIC — Annuities consumer information",
+            url: "https://content.naic.org/consumer/annuities",
+          },
+          {
+            source: "SEC — Variable annuities investor bulletin",
+            url: "https://www.sec.gov/investor/pubs/varannty.htm",
+          },
+        ],
+      },
+      {
+        id: "health-cost-sharing",
+        title: "7.7 Health plan costs and cost-sharing",
+        paragraphs: [
+          "Health plans use a stack of cost-sharing: premium (monthly bill), deductible (what you pay before the plan pays much), copayment (flat fee per visit or drug), coinsurance (your percentage of allowed charges), and out-of-pocket maximum (cap on your spending for covered essential benefits in a year, ACA plans).",
+          "Allowed amounts are what the plan will pay toward a negotiated rate — balance billing can occur if you use out-of-network providers. Always check whether a service is covered and whether prior authorization is required before non-emergency care.",
+        ],
+        bulletPoints: [
+          "High-deductible health plans (HDHPs) pair with health savings accounts (HSAs) when IRS rules are met",
+          "Preventive care is often covered at no cost on ACA-compliant plans",
+          "Formulary tiers affect prescription copays — generic tiers cost less than brand or specialty",
+        ],
+        citations: [
+          {
+            source: "Healthcare.gov — Out-of-pocket costs",
+            url: "https://www.healthcare.gov/glossary/out-of-pocket-costs/",
+          },
+        ],
+      },
+      {
+        id: "health-networks",
+        title: "7.8 Provider networks and plan types",
+        paragraphs: [
+          "Managed care plans contract with networks of doctors, hospitals, and pharmacies. HMOs usually require a primary care physician and referrals for specialists. PPOs offer more flexibility to see out-of-network providers at higher cost. EPOs cover in-network care only except emergencies. POS plans blend HMO and PPO features.",
+          "Narrow networks can lower premiums but limit provider choice. Verify that your doctors, hospitals, and medications are in-network before enrolling — especially during annual open enrollment.",
+        ],
+        bulletPoints: [
+          "Out-of-network care can mean higher bills and surprise balance billing in some situations",
+          "Emergency care must be covered as in-network on ACA plans regardless of hospital network status",
+          "Telehealth benefits expanded after 2020 but vary by plan",
+        ],
+      },
+      {
+        id: "employer-health",
+        title: "7.9 Employer group health and COBRA",
+        paragraphs: [
+          "Most working-age Americans get health coverage through employers. Employers often subsidize premiums; employees share costs through payroll deduction. Self-funded plans (common at large employers) are governed by ERISA federally; fully insured group plans are also subject to state insurance rules.",
+          "When employment ends, COBRA may let you continue the group plan for 18–36 months in qualifying events by paying the full premium plus a small administrative fee. State continuation laws sometimes extend rights for small employers not subject to federal COBRA.",
+        ],
+        laws: [
+          {
+            name: "ERISA",
+            year: "1974",
+            summary: "Federal standards for many employer health and welfare benefit plans.",
+          },
+          {
+            name: "COBRA",
+            year: "1985",
+            summary: "Temporary continuation of group health after job loss and certain other events.",
+          },
+        ],
+        citations: [
+          {
+            source: "U.S. Department of Labor — COBRA",
+            url: "https://www.dol.gov/general/topic/health-plans/cobra",
+          },
+        ],
+      },
+      {
+        id: "aca-marketplace",
+        title: "7.10 ACA marketplace and essential health benefits",
+        paragraphs: [
+          "The Affordable Care Act reformed individual and small-group markets: no pre-existing condition exclusions, no annual or lifetime dollar limits on essential health benefits, medical loss ratio rebates if insurers spend too little on care, and premium tax credits for eligible marketplace enrollees based on household income.",
+          "Metal tiers (Bronze, Silver, Gold, Platinum) indicate how costs are split — Bronze has lower premiums and higher out-of-pocket costs; Platinum is the reverse. Open enrollment runs each fall for coverage starting January 1; special enrollment periods apply after marriage, birth, loss of other coverage, and other qualifying events.",
+          "Short-term limited-duration and some sharing-ministry arrangements are not full substitutes for comprehensive ACA-compliant major medical coverage.",
+        ],
+        laws: [
+          {
+            name: "Affordable Care Act (ACA)",
+            year: "2010",
+            summary: "Market reforms, essential benefits, subsidies, and Medicaid expansion option.",
+          },
+        ],
+        citations: [
+          {
+            source: "Healthcare.gov — Plan types",
+            url: "https://www.healthcare.gov/choose-a-plan/plan-types/",
+          },
+        ],
+      },
+      {
+        id: "hipaa-privacy",
+        title: "7.11 HIPAA and health privacy",
+        paragraphs: [
+          "HIPAA requires health plans, most healthcare providers, and clearinghouses to safeguard protected health information (PHI). Patients receive privacy notices explaining uses and disclosures. Minimum necessary rules limit how much information is shared internally.",
+          "Security rules require administrative, physical, and technical safeguards for electronic PHI. Breach notification rules require reporting to individuals and HHS when unsecured PHI is compromised. Business associates (vendors) must sign agreements and follow HIPAA too.",
+          "Mental health parity laws (federal and state) require comparable treatment limits for mental health and substance use disorder benefits versus medical/surgical benefits in many plans.",
+        ],
+        laws: [
+          {
+            name: "HIPAA",
+            year: "1996",
+            summary: "Privacy, security, and portability rules for covered entities.",
+          },
+        ],
+        citations: [
+          {
+            source: "HHS — HIPAA",
+            url: "https://www.hhs.gov/hipaa/index.html",
+          },
+        ],
+      },
+      {
+        id: "medicare-parts",
+        title: "7.12 Medicare — Original Medicare and Parts A–D",
+        paragraphs: [
+          "Medicare is federal health insurance for people 65 and older, certain younger disabled individuals, and those with end-stage renal disease. Part A (hospital insurance) covers inpatient care, skilled nursing after a hospital stay, hospice, and limited home health — often premium-free if you paid Medicare taxes long enough.",
+          "Part B (medical insurance) covers doctor visits, outpatient care, preventive services, and durable medical equipment — monthly premiums and an annual deductible apply, plus coinsurance. Part D covers outpatient prescription drugs through private plans approved by Medicare.",
+          "Enrollment windows matter: initial enrollment around age 65, annual open enrollment for Part D and Advantage, and general enrollment for Part B if you delayed. Late enrollment penalties can apply for Part B and Part D if you lack other creditable coverage.",
+        ],
+        citations: [
+          {
+            source: "Medicare.gov — What's Medicare?",
+            url: "https://www.medicare.gov/what-medicare-covers/your-medicare-coverage-choices",
+          },
+        ],
+      },
+      {
+        id: "medicare-advantage-medigap",
+        title: "7.13 Medicare Advantage and Medigap",
+        paragraphs: [
+          "Medicare Advantage (Part C) is offered by private insurers that contract with Medicare to provide Part A and Part B benefits — often with Part D included. Plans may add dental, vision, or fitness benefits but use network rules and prior authorization. You still pay the Part B premium in most cases.",
+          "Medigap (Medicare supplement) policies help pay deductibles, coinsurance, and copays for people in Original Medicare — standardized plans (A, B, C, D, F, G, K, L, M, N) vary by letter; not all letters are sold to new enrollees in every state. You cannot use Medigap with Medicare Advantage — choose one path during enrollment planning.",
+        ],
+        bulletPoints: [
+          "Compare total costs: premiums, copays, drug coverage, and network access",
+          "Star ratings on Medicare.gov summarize plan quality and member experience",
+          "Creditable coverage rules affect Part D late penalties when you delay enrollment",
+        ],
+        citations: [
+          {
+            source: "Medicare.gov — Medigap",
+            url: "https://www.medicare.gov/health-drug-plans/medigap",
+          },
+        ],
+      },
+      {
+        id: "medicaid-ltc",
+        title: "7.14 Medicaid and long-term care",
+        paragraphs: [
+          "Medicaid is a joint federal-state program for low-income children, parents, pregnant women, seniors, and people with disabilities. Eligibility and benefits differ by state. Expansion under the ACA raised income limits for adults in participating states.",
+          "Medicaid is the largest payer of long-term nursing home care in the U.S. Medicare generally does not cover extended custodial nursing home stays. Planning for long-term care may involve Medicaid eligibility rules (look-back periods for asset transfers), private long-term care insurance, or self-funding — each has tradeoffs.",
+          "Dual eligibles receive both Medicare and Medicaid; Medicare pays first for Medicare-covered services; Medicaid may pay premiums and cost-sharing.",
+        ],
+        citations: [
+          {
+            source: "Medicaid.gov",
+            url: "https://www.medicaid.gov",
+          },
+          {
+            source: "Medicare.gov — Long-term care",
+            url: "https://www.medicare.gov/coverage/long-term-care",
+          },
+        ],
+      },
+      {
+        id: "disability-income",
+        title: "7.15 Disability income insurance",
+        paragraphs: [
+          "Short-term disability (STD) often replaces a portion of income for weeks to months after a waiting period. Long-term disability (LTD) may pay for years or to retirement age if you remain disabled. Employer plans are common; individual policies fill gaps for self-employed workers.",
+          "Definitions matter: 'own occupation' pays if you cannot perform your job; 'any occupation' is stricter. Elimination periods (waiting before benefits start) and benefit periods (how long benefits last) drive premium. Offsets may reduce benefits if Social Security Disability or workers' comp also pays.",
+        ],
+        citations: [
+          {
+            source: "NAIC — Disability insurance",
+            url: "https://content.naic.org/consumer/disability-insurance",
+          },
+          {
+            source: "Social Security Administration — Disability benefits",
+            url: "https://www.ssa.gov/disability",
+          },
+        ],
+      },
+      {
+        id: "supplemental-health",
+        title: "7.16 Supplemental and limited-benefit products",
+        paragraphs: [
+          "Dental and vision plans cover routine care and some major services — often with annual maximums and waiting periods. Critical illness policies pay a lump sum if you are diagnosed with specified conditions (heart attack, stroke, cancer, etc.) — they do not replace comprehensive health insurance.",
+          "Hospital indemnity plans pay fixed amounts per day of hospitalization. Accident policies cover injury from accidents. These products can help with cash flow but leave gaps for ongoing chronic care and prescriptions unless paired with major medical coverage.",
+          "Health care sharing ministries are not insurance — members share expenses under religious or ethical agreements without the same regulatory protections as licensed insurers.",
+        ],
+        bulletPoints: [
+          "Read exclusions, waiting periods, and maximum benefits on supplemental policies",
+          "Verify whether premiums are affordable relative to the limited benefits paid",
+          "Licensed agents must explain differences between major medical and limited-benefit plans",
+        ],
+        citations: [
+          {
+            source: "NAIC — Supplemental health insurance",
+            url: "https://content.naic.org/consumer/health-insurance",
+          },
+        ],
+      },
+      {
+        id: "lh-vs-pc",
+        title: "7.17 How life and health differ from property-casualty",
+        paragraphs: [
+          "Property-casualty policies typically renew annually and indemnify physical damage or legal liability. Life policies may last decades; health policies revolve around networks, utilization management, and federal program rules. Claims on health policies are service reimbursements or provider payments, not rebuilding a house or fixing a car.",
+          "Consumers should keep summary of benefits and coverage (SBC) documents for health, evidence of coverage for Medicare plans, and policy illustrations plus contracts for life products. File complaints with your state insurance department or, for employer plans, DOL or HHS as appropriate.",
+        ],
+        citations: [
+          {
+            source: "NAIC — File a complaint",
+            url: "https://content.naic.org/consumer/insurance-topics/file-a-complaint",
+          },
+        ],
       },
     ],
   },
   {
     id: "claims-process",
-    number: 7,
+    number: 8,
     title: "The claims process: from loss to settlement",
     subtitle: "What happens after something goes wrong",
     sections: [
       {
         id: "first-steps",
-        title: "7.1 Duties after a loss",
+        title: "8.1 Duties after a loss",
         paragraphs: [
           "When a loss occurs, policyholders have contractual duties: notify the insurer promptly, protect property from further damage (reasonable emergency repairs), cooperate with investigation, and document everything. Failure to give prompt notice can give the insurer grounds to deny a claim — though states often require the insurer to prove actual prejudice from delay.",
           "For auto accidents, exchange information, photograph damage, obtain police reports when appropriate, and seek medical care if injured. For property losses, inventory damaged items, keep receipts for temporary repairs, and do not discard evidence until the adjuster instructs you.",
@@ -364,7 +746,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "adjusters",
-        title: "7.2 Adjusters, investigations, and estimates",
+        title: "8.2 Adjusters, investigations, and estimates",
         paragraphs: [
           "The insurer assigns a claims adjuster — staff, independent, or public (if you hire one at your expense). Adjusters inspect damage, review policy language, interview witnesses, and estimate repair cost. They determine whether the loss is covered, whether limits and deductibles apply, and whether depreciation reduces payment.",
           "Supplemental claims may arise when hidden damage appears after initial repairs. Disputes often center on scope of damage, cause of loss (wear and tear vs. covered peril), and whether estimates use aftermarket or OEM parts.",
@@ -372,7 +754,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "denials-appeals",
-        title: "7.3 Denials, appeals, and disputes",
+        title: "8.3 Denials, appeals, and disputes",
         paragraphs: [
           "If a claim is denied, the insurer must explain the reason in writing, citing policy provisions. You may request internal appeal, file a complaint with your state insurance department, or consult an attorney. Some states allow bad-faith lawsuits when insurers unreasonably deny covered claims.",
           "Appraisal clauses in property policies can resolve valuation disputes without full litigation. Arbitration may be required for certain auto physical damage disagreements under policy terms.",
@@ -382,13 +764,13 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
   },
   {
     id: "reinsurance",
-    number: 8,
+    number: 9,
     title: "Reinsurance and catastrophic risk",
     subtitle: "How insurers protect themselves — and why it affects your premium",
     sections: [
       {
         id: "what-is-reinsurance",
-        title: "8.1 What reinsurance is",
+        title: "9.1 What reinsurance is",
         paragraphs: [
           "Reinsurance is insurance for insurance companies. A primary insurer transfers part of its risk to a reinsurer in exchange for premium. When a large hurricane hits, no single carrier wants all exposure concentrated in one state — reinsurance spreads catastrophic loss globally.",
           "Treaty reinsurance covers a block of policies automatically; facultative reinsurance covers a single large risk (e.g., a stadium or refinery) negotiated case by case.",
@@ -396,7 +778,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "why-it-matters",
-        title: "8.2 Why consumers should care",
+        title: "9.2 Why consumers should care",
         paragraphs: [
           "When reinsurance costs rise after global disasters (hurricanes, earthquakes, wildfires), primary insurers raise rates or reduce capacity in high-risk areas. Some carriers exit states entirely. State residual markets (wind pools, FAIR plans) grow when private market withdraws.",
           "Reinsurance does not change your policy contract directly — your claim is still paid by your insurer — but it influences whether coverage is available at all in your ZIP code.",
@@ -412,13 +794,13 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
   },
   {
     id: "government-programs",
-    number: 9,
+    number: 10,
     title: "Government insurance and social programs",
     subtitle: "When the private market stops and public programs begin",
     sections: [
       {
         id: "social-security",
-        title: "9.1 Social Security and disability",
+        title: "10.1 Social Security and disability",
         paragraphs: [
           "Social Security (1935) provides retirement, survivor, and disability benefits funded by payroll taxes — social insurance, not private underwriting. Supplemental Security Income (SSI) aids low-income disabled and elderly individuals separately.",
           "These programs differ from private life and disability policies but shape how families plan for income replacement.",
@@ -426,27 +808,27 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "medicare-medicaid",
-        title: "9.2 Medicare and Medicaid",
+        title: "10.2 Medicare, Medicaid, and private plans",
         paragraphs: [
-          "Medicare (1965) covers seniors 65+ and certain disabled individuals — Part A hospital, Part B medical, Part C Medicare Advantage plans, Part D prescription drugs. Medicaid is state-federal coverage for low-income populations with benefits varying by state.",
-          "Private insurers administer many Medicare Advantage and Part D plans under federal contracts. Medicaid expansion under the ACA extended eligibility in participating states.",
+          "Medicare and Medicaid are covered in depth in Chapter VII (Life and health insurance). Here the key point is that public programs sit alongside private insurers — many Medicare Advantage and Part D plans are administered by insurance companies under federal contract.",
+          "Medicaid expansion under the ACA extended eligibility in participating states; benefits still vary by state.",
         ],
-        laws: [
+        citations: [
           {
-            name: "Medicare (Title XVIII, Social Security Act)",
-            year: "1965",
-            summary: "Federal health coverage for seniors and qualifying disabled persons.",
+            source: "Medicare.gov",
+            url: "https://www.medicare.gov",
+            note: "Official Medicare information",
           },
           {
-            name: "Medicaid (Title XIX)",
-            year: "1965",
-            summary: "Joint federal-state program for low-income and medically needy populations.",
+            source: "Medicaid.gov",
+            url: "https://www.medicaid.gov",
+            note: "Federal Medicaid policy",
           },
         ],
       },
       {
         id: "other-programs",
-        title: "9.3 NFIP, crop, and residual markets",
+        title: "10.3 NFIP, crop, and residual markets",
         paragraphs: [
           "The National Flood Insurance Program sells flood policies where private market declined. Federal crop insurance supports agriculture. State FAIR plans and wind pools offer basic property coverage when standard carriers will not write policies.",
           "Terrorism Risk Insurance Act creates a federal backstop for certified terrorism losses on commercial policies, with insurers required to offer terrorism coverage in many cases.",
@@ -461,13 +843,13 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
   },
   {
     id: "policy-contract",
-    number: 10,
+    number: 11,
     title: "Reading your policy, resources, and disclaimer",
     subtitle: "Declarations, exclusions, and where to learn more",
     sections: [
       {
         id: "parts",
-        title: "10.1 Parts of an insurance policy",
+        title: "11.1 Parts of an insurance policy",
         paragraphs: [
           "A policy is a legal contract. The declarations page summarizes who is insured, what is insured, limits, deductibles, premium, and policy period. The insuring agreement states what the insurer promises to pay. Exclusions list what is not covered. Conditions describe duties of insured and insurer (notice, cooperation, cancellation). Endorsements modify the base form.",
           "ISO (Insurance Services Office) and AAIS publish standard forms used by many carriers — but carriers may file modifications. Always read your specific policy, not a generic sample online.",
@@ -475,7 +857,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "key-clauses",
-        title: "10.2 Clauses that often surprise policyholders",
+        title: "11.2 Clauses that often surprise policyholders",
         paragraphs: [
           "Co-insurance clauses penalize underinsurance on commercial property. Actual cash value vs. replacement cost affects claim payment on older property. Ordinance or law coverage pays extra to meet current building codes when rebuilding. Other insurance clauses coordinate when multiple policies apply.",
           "Cancellation and nonrenewal notices must follow state statutes. Mortgage clauses name lenders as loss payees. Subrogation lets your insurer recover from at-fault parties after paying you.",
@@ -489,7 +871,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
       },
       {
         id: "resources-list",
-        title: "10.3 Where to learn more",
+        title: "11.3 Where to learn more",
         paragraphs: [
           "National Association of Insurance Commissioners (NAIC.org) — model laws, consumer guides, complaint filing. Your state Department of Insurance website — licensing verification, bulletins, rate filings. Federal Insurance Office (Treasury) — national reports.",
         ],
@@ -499,10 +881,32 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
           "Healthcare.gov — ACA marketplace and Medicaid information",
           "FloodSmart.gov — NFIP flood insurance",
         ],
+        citations: [
+          {
+            source: "NAIC — Consumer insurance resources",
+            url: "https://content.naic.org/consumer",
+            note: "Central hub for consumer guides",
+          },
+          {
+            source: "NAIC — State insurance departments",
+            url: "https://content.naic.org/state-insurance-departments",
+            note: "Find your state regulator",
+          },
+          {
+            source: "U.S. Treasury — Federal Insurance Office",
+            url: "https://home.treasury.gov/policy-issues/financial-markets-financial-institutions-and-fiscal-service/federal-insurance-office",
+            note: "National insurance market monitoring",
+          },
+          {
+            source: "Healthcare.gov",
+            url: "https://www.healthcare.gov",
+            note: "ACA enrollment and plan information",
+          },
+        ],
       },
       {
         id: "disclaimer",
-        title: "10.4 Educational disclaimer",
+        title: "11.4 Educational disclaimer",
         paragraphs: [
           "This textbook-style overview is published by CoverIQ for general education. It is not legal advice, not a substitute for your policy contract, and not exhaustive of every law in every jurisdiction. Statutes change; court decisions interpret them. Consult a licensed insurance professional and your state insurance department for matters affecting you.",
         ],

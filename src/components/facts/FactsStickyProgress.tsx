@@ -25,43 +25,52 @@ export function FactsStickyProgress({ activeChapterId }: FactsStickyProgressProp
 
   return (
     <div
-      className="fixed left-0 right-0 top-[3.75rem] z-40 border-b border-white/10 bg-[#030712]/95 px-4 py-2 shadow-lg shadow-black/30 backdrop-blur-md"
+      className="fixed left-0 right-0 z-40 overflow-visible border-b border-white/10 bg-[#030712]/98 px-4 py-3.5 shadow-lg shadow-black/30 backdrop-blur-md"
+      style={{ top: "var(--coveriq-header-height, 5.5rem)" }}
       role="region"
       aria-label="Learning progress"
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-4">
+      <div className="mx-auto flex max-w-7xl items-start gap-4">
         {activeChapter && (
-          <p className="hidden min-w-0 shrink truncate text-xs text-slate-500 sm:block sm:max-w-[40%]">
+          <p className="hidden min-w-0 shrink truncate text-xs leading-snug text-slate-500 sm:block sm:max-w-[38%] sm:pt-1">
             Ch. {activeChapter.number} — {activeChapter.title}
           </p>
         )}
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between gap-3">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+          <div className="flex items-center justify-between gap-3 pb-1">
+            <span className="font-mono text-xs uppercase leading-normal tracking-wide text-slate-300">
               Learning progress
             </span>
-            <span className="font-mono text-[10px] text-violet-300/90">
+            <span className="shrink-0 rounded-md bg-white/10 px-2.5 py-1 font-mono text-xs font-semibold leading-none tabular-nums text-cyan-100">
               {user ? `${summary.percent}%` : "—"}
             </span>
           </div>
-          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.08]">
+          <div
+            className="h-2 overflow-hidden rounded-full bg-white/15"
+            role="progressbar"
+            aria-valuenow={user ? summary.percent : 0}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={user ? `Learning progress ${summary.percent} percent` : "Learning progress"}
+          >
             <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 transition-all duration-300"
+              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 transition-all duration-300"
               style={{ width: `${user ? summary.percent : 0}%` }}
-              role="progressbar"
-              aria-valuenow={user ? summary.percent : 0}
-              aria-valuemin={0}
-              aria-valuemax={100}
             />
           </div>
-          <p className="mt-1 text-[10px] text-slate-600">
+          <p className="mt-2 text-xs leading-snug text-slate-300">
             {user ? (
               <>
-                Quick checks {summary.quickChecksPassed}/{summary.quickChecksTotal}
-                {summary.chapterExamDone ? " · Exam passed" : ""}
+                Quick checks{" "}
+                <span className="font-semibold tabular-nums text-slate-100">
+                  {summary.quickChecksPassed}/{summary.quickChecksTotal}
+                </span>
+                {summary.chapterExamDone ? (
+                  <span className="text-emerald-300/90"> · Exam passed</span>
+                ) : null}
               </>
             ) : (
-              <Link to="/login" className="text-cyan-400 hover:text-cyan-300">
+              <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
                 Sign in to track learning
               </Link>
             )}

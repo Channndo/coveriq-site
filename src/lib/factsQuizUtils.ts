@@ -6,11 +6,33 @@ import {
   TEXTBOOK_CHAPTER_COUNT,
 } from "./factsQuizTypes";
 
-/** Maps question ids (q01–q75) to textbook chapters 1–10. */
+/** Life & health chapter (VII) — includes legacy q55–q61 and dedicated bank ids q76+. */
+const LIFE_HEALTH_QUESTION_IDS = new Set([
+  "q55",
+  "q56",
+  "q57",
+  "q58",
+  "q59",
+  "q60",
+  "q61",
+]);
+
+const LIFE_HEALTH_ID_MAX = 105;
+
+/**
+ * Maps question ids to textbook chapters 1–11.
+ * Life & health uses an explicit id list plus q76–q105; other ids keep legacy
+ * bands with chapters 7–10 shifted to 8–11 after chapter VII was inserted.
+ */
 export function chapterForQuizQuestion(id: string): number {
   const n = parseInt(id.replace(/\D/g, ""), 10);
   if (!Number.isFinite(n) || n < 1) return 1;
-  return Math.min(TEXTBOOK_CHAPTER_COUNT, Math.max(1, Math.ceil(n / 7.5)));
+  if (LIFE_HEALTH_QUESTION_IDS.has(id) || (n >= 76 && n <= LIFE_HEALTH_ID_MAX)) {
+    return 7;
+  }
+  const legacyChapter = Math.min(10, Math.max(1, Math.ceil(n / 7.5)));
+  if (legacyChapter >= 7) return legacyChapter + 1;
+  return legacyChapter;
 }
 
 /** Fisher–Yates shuffle (copy array first). */
@@ -37,7 +59,7 @@ export function pickChapterQuickCheck(
   return shuffleQuestions(pool).slice(0, count);
 }
 
-/** Picks one random question per chapter, then shuffles — aligns with 10-chapter textbook. */
+/** Picks one random question per chapter, then shuffles — used when count equals chapter count. */
 export function pickQuizSession(count = QUIZ_SESSION_LENGTH): QuizQuestion[] {
   if (count === TEXTBOOK_CHAPTER_COUNT) {
     const byChapter = new Map<number, QuizQuestion[]>();

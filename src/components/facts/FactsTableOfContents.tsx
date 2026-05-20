@@ -28,23 +28,35 @@ export function FactsTableOfContents({
           </p>
           {user ? (
             <div className="mt-3">
-              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
-                Learning track
-              </p>
-              <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.06]">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-400">
+                  Learning track
+                </p>
+                <span className="rounded-md bg-white/10 px-1.5 py-0.5 font-mono text-xs font-semibold tabular-nums text-cyan-100">
+                  {learning.percent}%
+                </span>
+              </div>
+              <div
+                className="mt-2 h-2 overflow-hidden rounded-full bg-white/15"
+                role="progressbar"
+                aria-valuenow={learning.percent}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`Learning progress ${learning.percent} percent`}
+              >
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 transition-all duration-300"
+                  className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 transition-all duration-300"
                   style={{ width: `${learning.percent}%` }}
-                  role="progressbar"
-                  aria-valuenow={learning.percent}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label="Learning progress"
                 />
               </div>
-              <p className="mt-1.5 font-mono text-[10px] text-slate-600">
-                {learning.percent}% · checks {learning.quickChecksPassed}/{learning.quickChecksTotal}
-                {learning.chapterExamDone ? " · exam ✓" : ""}
+              <p className="mt-1.5 text-xs text-slate-300">
+                Checks{" "}
+                <span className="font-semibold tabular-nums text-slate-100">
+                  {learning.quickChecksPassed}/{learning.quickChecksTotal}
+                </span>
+                {learning.chapterExamDone ? (
+                  <span className="text-emerald-300/90"> · exam passed</span>
+                ) : null}
               </p>
             </div>
           ) : (

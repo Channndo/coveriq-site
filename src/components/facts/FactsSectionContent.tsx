@@ -113,6 +113,39 @@ export function FactsSectionContent({
           </table>
         </div>
       )}
+
+      {section.citations && section.citations.length > 0 && (
+        <div className="mt-8 textbook-callout border-cyan-500/15">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-500/80">
+            Sources & further reading
+          </p>
+          <ul className="mt-4 space-y-3 text-[15px] leading-relaxed text-slate-300">
+            {section.citations.map((cite) => (
+              <li key={`${cite.source}-${cite.url ?? "no-url"}`}>
+                {cite.url ? (
+                  <a
+                    href={cite.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-cyan-400/95 underline decoration-cyan-500/30 underline-offset-2 transition hover:text-cyan-300"
+                  >
+                    {cite.source}
+                  </a>
+                ) : (
+                  <span className="font-medium text-slate-200">{cite.source}</span>
+                )}
+                {cite.note ? (
+                  <span className="text-slate-500"> — {cite.note}</span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs leading-relaxed text-slate-500">
+            External links are for general education. CoverIQ does not control third-party sites; verify
+            current information with your state insurance department or a licensed professional.
+          </p>
+        </div>
+      )}
     </section>
   );
 }

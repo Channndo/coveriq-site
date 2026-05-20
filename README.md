@@ -93,3 +93,5 @@ VITE_EXCHANGE_REGISTER_URL=https://agents.cover-iq.com/register
 ```
 
 Redeploy **coveriq-site** after changing env vars.
+
+**Consumer signup / login (Syntrix):** Do **not** set `VITE_SYNTRIX_API_URL` to `https://api.syntrix.solutions` on Netlify. That value is baked into the JS bundle and causes browser CORS errors (“Failed to fetch”). Production uses the same-origin proxy (`/api/auth/*` in `netlify.toml`). Delete that env var if present, then trigger a **clear cache and deploy**.

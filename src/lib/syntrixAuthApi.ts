@@ -5,8 +5,12 @@
  */
 
 export function syntrixApiBase(): string {
+  // Production always uses same-origin /api/auth/* proxy (Netlify → Syntrix).
+  // Direct api.syntrix.solutions calls fail in the browser (no ACAO for cover-iq.com).
+  if (import.meta.env.PROD) return "";
+
   const env = import.meta.env.VITE_SYNTRIX_API_URL as string | undefined;
-  if (env !== undefined && env !== "") return env.replace(/\/$/, "");
+  if (env?.trim()) return env.replace(/\/$/, "");
   return "";
 }
 
@@ -144,7 +148,7 @@ export async function syntrixLogin(email: string, password: string): Promise<Syn
 }
 
 export async function syntrixLoginSecurity(body: Record<string, unknown>): Promise<SyntrixAuthResult> {
-  const res = await fetch(`${syntrixApiBase()}/api/auth/password/login/security`, {
+  const res = await syntrixFetch("/api/auth/password/login/security", {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(body),

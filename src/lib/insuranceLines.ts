@@ -1,3 +1,5 @@
+import { COVERAGE_DEEP_DIVE } from "./coverageDeepDive";
+
 export type InsuranceCategory =
   | "personal"
   | "specialty"
@@ -14,12 +16,14 @@ export interface InsuranceLine {
   summary: string;
   protects: string;
   misconception: string;
+  example: string;
+  withoutCoverage: string;
   addOns: string[];
   requiresVehicleCount?: boolean;
 }
 
 /** Parity with Chandler Hill Agency funnel + commercial lines */
-export const INSURANCE_LINES: InsuranceLine[] = [
+const RAW_INSURANCE_LINES: Omit<InsuranceLine, "example" | "withoutCoverage">[] = [
   {
     id: "auto",
     formValue: "auto",
@@ -352,6 +356,14 @@ export const INSURANCE_LINES: InsuranceLine[] = [
     addOns: ["Wellness riders", "Dental", "Alternative therapy"],
   },
 ];
+
+export const INSURANCE_LINES: InsuranceLine[] = RAW_INSURANCE_LINES.map((line) => {
+  const dive = COVERAGE_DEEP_DIVE[line.id];
+  if (!dive) {
+    throw new Error(`Missing coverage deep dive for: ${line.id}`);
+  }
+  return { ...line, ...dive };
+});
 
 export function lineRequiresVehicleCount(formValue: string): boolean {
   const v = formValue.toLowerCase();

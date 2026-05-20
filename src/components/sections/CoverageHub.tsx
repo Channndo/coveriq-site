@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { INSURANCE_LINES, type InsuranceCategory } from "../../lib/insuranceLines";
+import { motion } from "framer-motion";
+import { INSURANCE_LINES, type InsuranceCategory, type InsuranceLine } from "../../lib/insuranceLines";
 import { SectionHeading } from "../ui/SectionHeading";
 import { Disclaimer } from "../ui/Disclaimer";
 import { TechBackground } from "../ui/TechBackground";
+import { CoverageDetailModal } from "../ui/CoverageDetailModal";
 
 const TABS: { id: InsuranceCategory | "all"; label: string }[] = [
   { id: "all", label: "All" },
@@ -19,7 +20,7 @@ interface CoverageHubProps {
 
 export function CoverageHub({ onGetQuote }: CoverageHubProps) {
   const [tab, setTab] = useState<InsuranceCategory | "all">("all");
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [detailLine, setDetailLine] = useState<InsuranceLine | null>(null);
 
   const filtered =
     tab === "all" ? INSURANCE_LINES : INSURANCE_LINES.filter((l) => l.category === tab);
@@ -74,28 +75,11 @@ export function CoverageHub({ onGetQuote }: CoverageHubProps) {
               <p className="mt-2 flex-1 text-sm text-slate-400 leading-relaxed">{line.summary}</p>
               <button
                 type="button"
-                onClick={() => setExpanded(expanded === line.id ? null : line.id)}
+                onClick={() => setDetailLine(line)}
                 className="mt-3 text-left font-mono text-xs text-cyan-400 hover:text-cyan-300"
               >
-                {expanded === line.id ? "− collapse" : "+ learn more"}
+                + learn more
               </button>
-              <AnimatePresence>
-                {expanded === line.id && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="mt-3 space-y-2 overflow-hidden border-t border-white/5 pt-3 text-xs text-slate-500"
-                  >
-                    <p>
-                      <strong className="text-slate-400">Protects:</strong> {line.protects}
-                    </p>
-                    <p>
-                      <strong className="text-slate-400">Myth:</strong> {line.misconception}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
               <div className="mt-5 flex gap-2">
                 <button
                   type="button"
@@ -111,6 +95,14 @@ export function CoverageHub({ onGetQuote }: CoverageHubProps) {
 
         <Disclaimer className="mt-12 text-center text-slate-600" />
       </div>
+
+      {detailLine && (
+        <CoverageDetailModal
+          line={detailLine}
+          onClose={() => setDetailLine(null)}
+          onGetQuote={onGetQuote}
+        />
+      )}
     </section>
   );
 }

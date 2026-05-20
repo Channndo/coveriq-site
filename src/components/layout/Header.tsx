@@ -9,6 +9,7 @@ const NAV = [
   { label: "How It Works", href: "#how-it-works" },
   { label: "AI", href: "#ai-guidance" },
   { label: "Exchange", href: "/agent" },
+  { label: "Facts", href: "/facts" },
   { label: "FAQ", href: "#faq" },
   { label: "Glossary", href: "/glossary" },
 ];

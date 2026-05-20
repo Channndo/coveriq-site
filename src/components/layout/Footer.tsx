@@ -40,6 +40,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-slate-400">
               <li><a href="#coverage" className="hover:text-cyan-400">Coverage Hub</a></li>
               <li><a href="#how-it-works" className="hover:text-cyan-400">How It Works</a></li>
+              <li><Link to="/facts" className="hover:text-cyan-400">Insurance Facts</Link></li>
               <li><a href="#faq" className="hover:text-cyan-400">FAQ</a></li>
               <li><Link to="/glossary" className="hover:text-cyan-400">Glossary</Link></li>
               <li><Link to="/agent" className="hover:text-cyan-400">CoverIQ Exchange</Link></li>

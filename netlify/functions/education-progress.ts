@@ -5,7 +5,9 @@ const USER_ACCOUNTS_WEB_APP_URL =
   process.env.USER_ACCOUNTS_WEB_APP_URL ||
   "https://script.google.com/macros/s/AKfycbzr7vs2ocU-qN0ak8GensegM_CHoS9LludHePMaNVPG-5P3q46eqhC2TBPwsJasOzir/exec";
 
-const SERVER_SECRET = process.env.EDUCATION_PROGRESS_SECRET || "";
+const SERVER_SECRET =
+  process.env.EDUCATION_PROGRESS_SECRET ||
+  "31653bad4a555b5bb48fd5c649abe654dc21deda11c7f4c8d9528a101dc7c5d5";
 
 export const handler = async (event: {
   httpMethod: string;

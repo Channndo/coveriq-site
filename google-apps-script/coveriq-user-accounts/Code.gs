@@ -19,6 +19,10 @@ const CONFIG = {
   EMAIL_RECIPIENTS: ['chandler@cover-iq.com', 'chandler.hill.24@gmail.com'],
   SEND_EMAIL_NOTIFICATIONS: true,
 
+  /** Must match Netlify EDUCATION_PROGRESS_SECRET (coveriq-site). */
+  EDUCATION_PROGRESS_SECRET:
+    '31653bad4a555b5bb48fd5c649abe654dc21deda11c7f4c8d9528a101dc7c5d5',
+
   RATE_LIMIT_SECONDS: 180,
   MAX_LEN: {
     firstName: 80,
@@ -554,7 +558,11 @@ var PROGRESS_HEADERS = ['Email', 'Progress JSON', 'Updated At'];
 var PROGRESS_SECRET_PROP = 'EDUCATION_PROGRESS_SECRET';
 
 function getProgressSecret_() {
-  return PropertiesService.getScriptProperties().getProperty(PROGRESS_SECRET_PROP) || '';
+  return (
+    PropertiesService.getScriptProperties().getProperty(PROGRESS_SECRET_PROP) ||
+    CONFIG.EDUCATION_PROGRESS_SECRET ||
+    ''
+  );
 }
 
 function handleEducationProgress_(data) {

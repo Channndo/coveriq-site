@@ -31,9 +31,9 @@ export function SignupPage() {
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
   const [currentInsuranceProvider, setCurrentInsuranceProvider] = useState("");
-  const [securityQuestion1, setSecurityQuestion1] = useState<string>(SECURITY_QUESTIONS[0]);
+  const [securityQuestion1Id, setSecurityQuestion1Id] = useState<number>(SECURITY_QUESTIONS[0].id);
   const [securityAnswer1, setSecurityAnswer1] = useState("");
-  const [securityQuestion2, setSecurityQuestion2] = useState<string>(SECURITY_QUESTIONS[1]);
+  const [securityQuestion2Id, setSecurityQuestion2Id] = useState<number>(SECURITY_QUESTIONS[1].id);
   const [securityAnswer2, setSecurityAnswer2] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -57,9 +57,9 @@ export function SignupPage() {
       state,
       zip,
       currentInsuranceProvider,
-      securityQuestion1,
+      securityQuestion1Id,
       securityAnswer1,
-      securityQuestion2,
+      securityQuestion2Id,
       securityAnswer2,
     });
     setSubmitting(false);
@@ -180,10 +180,14 @@ export function SignupPage() {
         />
 
         <p className="pt-2 font-mono text-[10px] uppercase tracking-wider text-slate-500">Security questions</p>
-        <select className={selectClass} value={securityQuestion1} onChange={(e) => setSecurityQuestion1(e.target.value)}>
+        <select
+          className={selectClass}
+          value={securityQuestion1Id}
+          onChange={(e) => setSecurityQuestion1Id(Number(e.target.value))}
+        >
           {SECURITY_QUESTIONS.map((q) => (
-            <option key={q} value={q}>
-              {q}
+            <option key={q.id} value={q.id}>
+              {q.text}
             </option>
           ))}
         </select>
@@ -195,10 +199,14 @@ export function SignupPage() {
           value={securityAnswer1}
           onChange={(e) => setSecurityAnswer1(e.target.value)}
         />
-        <select className={selectClass} value={securityQuestion2} onChange={(e) => setSecurityQuestion2(e.target.value)}>
-          {SECURITY_QUESTIONS.filter((q) => q !== securityQuestion1).map((q) => (
-            <option key={q} value={q}>
-              {q}
+        <select
+          className={selectClass}
+          value={securityQuestion2Id}
+          onChange={(e) => setSecurityQuestion2Id(Number(e.target.value))}
+        >
+          {SECURITY_QUESTIONS.filter((q) => q.id !== securityQuestion1Id).map((q) => (
+            <option key={q.id} value={q.id}>
+              {q.text}
             </option>
           ))}
         </select>

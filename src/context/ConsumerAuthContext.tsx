@@ -20,6 +20,7 @@ import {
   type ConsumerUser,
 } from "../lib/consumerSession";
 import { validateConsumerPassword } from "../lib/passwordRules";
+import { securityQuestionText } from "../lib/securityQuestions";
 import {
   buildRegisterPayload,
   SyntrixAuthError,
@@ -33,6 +34,7 @@ import { submitUserAccount, submitUserOnboarding } from "../lib/userAccounts";
 export interface SecurityLoginChallenge {
   email: string;
   password: string;
+  challengeToken: string;
   securityQuestion1: string;
   securityQuestion2: string;
 }
@@ -115,8 +117,19 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
     if (!data.currentInsuranceProvider.trim()) {
       return { ok: false, error: "Please enter your current insurance provider." };
     }
-    if (!data.securityQuestion1 || !data.securityAnswer1 || !data.securityQuestion2 || !data.securityAnswer2) {
+    if (
+      !data.securityQuestion1Id ||
+      !data.securityAnswer1.trim() ||
+      !data.securityQuestion2Id ||
+      !data.securityAnswer2.trim()
+    ) {
       return { ok: false, error: "Please complete both security questions." };
+    }
+    if (data.securityQuestion1Id === data.securityQuestion2Id) {
+      return { ok: false, error: "Please choose two different security questions." };
+    }
+    if (data.securityAnswer1.trim().length < 2 || data.securityAnswer2.trim().length < 2) {
+      return { ok: false, error: "Security answers must be at least 2 characters." };
     }
     const passwordError = validateConsumerPassword(data.password);
     if (passwordError) {
@@ -136,8 +149,8 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
         state: data.state,
         zip: data.zip,
         currentInsuranceProvider: data.currentInsuranceProvider,
-        securityQuestion1: data.securityQuestion1,
-        securityQuestion2: data.securityQuestion2,
+        securityQuestion1: securityQuestionText(data.securityQuestion1Id),
+        securityQuestion2: securityQuestionText(data.securityQuestion2Id),
         createdAt: new Date().toISOString(),
         role: resolveAccountRole(email, phone),
         onboardingComplete: false,
@@ -155,9 +168,9 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
         state: profile.state,
         zip: profile.zip,
         currentInsuranceProvider: profile.currentInsuranceProvider,
-        securityQuestion1: data.securityQuestion1,
+        securityQuestion1: securityQuestionText(data.securityQuestion1Id),
         securityAnswer1: "[redacted]",
-        securityQuestion2: data.securityQuestion2,
+        securityQuestion2: securityQuestionText(data.securityQuestion2Id),
         securityAnswer2: "[redacted]",
         accountType: "consumer",
         action: "signup",
@@ -214,17 +227,23 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
     try {
       const result = await syntrixLogin(emailNorm, password);
       if (result.requiresSecurity) {
-        const cached = readConsumerSession();
+        const q1 = result.securityQuestions?.[0];
+        const q2 = result.securityQuestions?.[1];
+        if (!result.challengeToken || !q1 || !q2) {
+          return {
+            ok: false as const,
+            error: "Additional verification is required but could not be loaded. Try again.",
+          };
+        }
         return {
           ok: false as const,
           needsSecurity: true as const,
           challenge: {
             email: emailNorm,
             password,
-            securityQuestion1:
-              result.securityQuestions?.[0] ?? cached?.securityQuestion1 ?? "Security question 1",
-            securityQuestion2:
-              result.securityQuestions?.[1] ?? cached?.securityQuestion2 ?? "Security question 2",
+            challengeToken: result.challengeToken,
+            securityQuestion1: q1.text,
+            securityQuestion2: q2.text,
           },
         };
       }
@@ -248,10 +267,9 @@ export function ConsumerAuthProvider({ children }: { children: ReactNode }) {
         const result = await syntrixLoginSecurity({
           email: challenge.email,
           password: challenge.password,
-          security_answer_1: securityAnswer1,
-          security_answer_2: securityAnswer2,
-          securityAnswer1,
-          securityAnswer2,
+          challenge_token: challenge.challengeToken,
+          answer1: securityAnswer1.trim(),
+          answer2: securityAnswer2.trim(),
         });
         const me = result.user ?? (await syntrixMe(result.accessToken));
         finishLogin(result.accessToken, me, challenge.email, me.phone ?? "");

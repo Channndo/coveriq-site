@@ -34,9 +34,9 @@ export type ConsumerSignupInput = {
   state: string;
   zip: string;
   currentInsuranceProvider: string;
-  securityQuestion1: string;
+  securityQuestion1Id: number;
   securityAnswer1: string;
-  securityQuestion2: string;
+  securityQuestion2Id: number;
   securityAnswer2: string;
 };
 

@@ -48,11 +48,17 @@ export interface SyntrixMeUser {
   [key: string]: unknown;
 }
 
+export interface SyntrixSecurityQuestion {
+  id: number;
+  text: string;
+}
+
 export interface SyntrixAuthResult {
   accessToken: string;
   user?: SyntrixMeUser;
   requiresSecurity?: boolean;
-  securityQuestions?: string[];
+  challengeToken?: string;
+  securityQuestions?: SyntrixSecurityQuestion[];
 }
 
 function extractToken(data: Record<string, unknown>): string | null {
@@ -87,9 +93,17 @@ async function syntrixFetch(path: string, init: RequestInit): Promise<Response> 
 function errorMessage(data: Record<string, unknown>, fallback: string): string {
   const detail = data.detail;
   if (typeof detail === "string") return detail;
-  if (Array.isArray(detail) && detail[0] && typeof detail[0] === "object") {
-    const first = detail[0] as { msg?: string };
-    if (first.msg) return first.msg;
+  if (Array.isArray(detail)) {
+    const msgs = detail
+      .map((item) => {
+        if (typeof item === "object" && item && "msg" in item) {
+          return String((item as { msg?: string }).msg ?? "");
+        }
+        return "";
+      })
+      .filter(Boolean);
+    if (msgs.length === 1) return msgs[0];
+    if (msgs.length > 1) return msgs.join(" ");
   }
   if (typeof data.message === "string") return data.message;
   if (typeof data.error === "string") return data.error;
@@ -128,13 +142,27 @@ export async function syntrixLogin(email: string, password: string): Promise<Syn
   }
 
   const requiresSecurity =
+    data.requires_security_questions === true ||
     data.requires_security === true ||
     data.requiresSecurity === true ||
     data.security_required === true;
 
   if (requiresSecurity) {
-    const questions = (data.security_questions ?? data.securityQuestions) as string[] | undefined;
-    return { accessToken: "", requiresSecurity: true, securityQuestions: questions };
+    const raw = (data.questions ?? data.security_questions ?? data.securityQuestions) as
+      | Array<{ id?: number; text?: string } | string>
+      | undefined;
+    const questions: SyntrixSecurityQuestion[] = (raw ?? []).map((q, i) =>
+      typeof q === "string"
+        ? { id: i + 1, text: q }
+        : { id: Number(q.id ?? i + 1), text: String(q.text ?? "Security question") }
+    );
+    const challengeToken = String(data.challenge_token ?? data.challengeToken ?? "");
+    return {
+      accessToken: "",
+      requiresSecurity: true,
+      challengeToken,
+      securityQuestions: questions,
+    };
   }
 
   const token = extractToken(data);
@@ -193,9 +221,9 @@ export function buildRegisterPayload(input: {
   state: string;
   zip: string;
   currentInsuranceProvider: string;
-  securityQuestion1: string;
+  securityQuestion1Id: number;
   securityAnswer1: string;
-  securityQuestion2: string;
+  securityQuestion2Id: number;
   securityAnswer2: string;
 }): Record<string, unknown> {
   return {
@@ -203,19 +231,15 @@ export function buildRegisterPayload(input: {
     password: input.password,
     first_name: input.firstName.trim(),
     last_name: input.lastName.trim(),
-    firstName: input.firstName.trim(),
-    lastName: input.lastName.trim(),
     phone: input.phone.trim(),
     street: input.street.trim(),
     city: input.city.trim(),
     state: input.state.trim().toUpperCase(),
     zip: input.zip.trim(),
-    postal_code: input.zip.trim(),
     current_insurance_provider: input.currentInsuranceProvider.trim(),
-    currentInsuranceProvider: input.currentInsuranceProvider.trim(),
-    security_question_1: input.securityQuestion1,
-    security_answer_1: input.securityAnswer1,
-    security_question_2: input.securityQuestion2,
-    security_answer_2: input.securityAnswer2,
+    security_q1_id: input.securityQuestion1Id,
+    security_q2_id: input.securityQuestion2Id,
+    security_answer1: input.securityAnswer1.trim(),
+    security_answer2: input.securityAnswer2.trim(),
   };
 }

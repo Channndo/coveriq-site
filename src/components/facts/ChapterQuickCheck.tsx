@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { QuizQuestion } from "../../lib/factsQuizTypes";
 import { CHAPTER_QUICK_CHECK_LENGTH } from "../../lib/factsQuizTypes";
 import { gradeSession, pickChapterQuickCheck } from "../../lib/factsQuizUtils";
-import { markChapterQuickCheckPassed } from "../../lib/educationProgress";
+import { markChapterQuickCheckPassed, recordQuizQuestionStats } from "../../lib/educationProgress";
 import { readConsumerSession } from "../../lib/consumerSession";
 
 type Phase = "idle" | "quiz" | "results";
@@ -39,8 +39,11 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
     setGraded(result);
     setPhase("results");
     const session = readConsumerSession();
-    if (session?.email && result.score === result.total) {
-      markChapterQuickCheckPassed(session.email, chapterNumber);
+    if (session?.email) {
+      recordQuizQuestionStats(session.email, result.results);
+      if (result.score === result.total) {
+        markChapterQuickCheckPassed(session.email, chapterNumber);
+      }
     }
   };
 

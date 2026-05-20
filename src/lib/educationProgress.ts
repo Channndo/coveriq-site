@@ -1,5 +1,12 @@
+import { chapterForQuizQuestion } from "./factsQuizUtils";
+import type { QuizQuestion } from "./factsQuizTypes";
 import { TEXTBOOK_CHAPTER_COUNT } from "./factsQuizTypes";
 import type { ConsumerUser } from "./consumerSession";
+
+export interface ChapterStat {
+  correct: number;
+  incorrect: number;
+}
 
 const STORAGE_PREFIX = "coveriq_education_progress_v1";
 
@@ -13,6 +20,7 @@ export interface QuizAttemptRecord {
 
 export interface EducationProgressData {
   chapterQuickChecks: Record<string, boolean>;
+  chapterStats?: Record<string, ChapterStat>;
   exam10?: QuizAttemptRecord;
   quiz20?: QuizAttemptRecord;
   quiz50?: QuizAttemptRecord;
@@ -25,21 +33,40 @@ function storageKey(email: string): string {
 export function readEducationProgress(email: string): EducationProgressData {
   try {
     const raw = localStorage.getItem(storageKey(email));
-    if (!raw) return { chapterQuickChecks: {} };
+    if (!raw) return { chapterQuickChecks: {}, chapterStats: {} };
     const parsed = JSON.parse(raw) as EducationProgressData;
     return {
       chapterQuickChecks: parsed.chapterQuickChecks ?? {},
+      chapterStats: parsed.chapterStats ?? {},
       exam10: parsed.exam10,
       quiz20: parsed.quiz20,
       quiz50: parsed.quiz50,
     };
   } catch {
-    return { chapterQuickChecks: {} };
+    return { chapterQuickChecks: {}, chapterStats: {} };
   }
 }
 
 function writeEducationProgress(email: string, data: EducationProgressData): void {
   localStorage.setItem(storageKey(email), JSON.stringify(data));
+}
+
+/** Updates per-chapter accuracy from any graded quiz or quick check. */
+export function recordQuizQuestionStats(
+  email: string,
+  results: { question: QuizQuestion; correct: boolean }[]
+): void {
+  if (!email || results.length === 0) return;
+  const data = readEducationProgress(email);
+  if (!data.chapterStats) data.chapterStats = {};
+  for (const r of results) {
+    const ch = String(chapterForQuizQuestion(r.question.id));
+    const stat = data.chapterStats[ch] ?? { correct: 0, incorrect: 0 };
+    if (r.correct) stat.correct += 1;
+    else stat.incorrect += 1;
+    data.chapterStats[ch] = stat;
+  }
+  writeEducationProgress(email, data);
 }
 
 export function markChapterQuickCheckPassed(email: string, chapterNumber: number): void {

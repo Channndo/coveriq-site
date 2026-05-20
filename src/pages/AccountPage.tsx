@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { AuthShell } from "../components/auth/AuthShell";
 import { AccountAvatarPicker } from "../components/account/AccountAvatarPicker";
 import { EducationProgressCard } from "../components/account/EducationProgressCard";
+import { StudyInsightsCard } from "../components/account/StudyInsightsCard";
 import { useConsumerAuth } from "../context/ConsumerAuthContext";
 import { readConsumerSession } from "../lib/consumerSession";
 import { educationProgressSummary } from "../lib/educationProgress";
@@ -64,6 +65,8 @@ export function AccountPage() {
         </section>
 
         <EducationProgressCard user={session} />
+
+        <StudyInsightsCard user={session} />
 
         <section className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
           <h2 className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Quizzes</h2>

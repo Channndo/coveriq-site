@@ -12,6 +12,7 @@ import {
   isAdvancedQuizUnlocked,
   isPassingScore,
   recordQuizAttempt,
+  recordQuizQuestionStats,
   type QuizSize,
 } from "../lib/educationProgress";
 
@@ -73,8 +74,11 @@ export function FactsQuizPage() {
     const result = gradeSession(questions, answers);
     setGraded(result);
     setPhase("results");
-    if (user?.email && isPassingScore(result.score, result.total)) {
-      recordQuizAttempt(user.email, questionCount, result.score, result.total);
+    if (user?.email) {
+      recordQuizQuestionStats(user.email, result.results);
+      if (isPassingScore(result.score, result.total)) {
+        recordQuizAttempt(user.email, questionCount, result.score, result.total);
+      }
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

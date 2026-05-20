@@ -108,7 +108,20 @@
   status = 200
   force = true
 
+# Syntrix consumer auth (same-origin — browser cannot call api.syntrix.solutions directly)
+[[redirects]]
+  from = "/api/auth/*"
+  to = "https://api.syntrix.solutions/api/auth/:splat"
+  status = 200
+  force = true
+
 # MIRA API proxy (same-origin — avoids CORS)
+[[redirects]]
+  from = "/api/mira/chat"
+  to = "/.netlify/functions/mira-chat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/mira/*"
   to = "https://api.syntrix.solutions/api/mira/:splat"

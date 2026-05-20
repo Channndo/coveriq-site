@@ -7,6 +7,11 @@ import {
   MIRA_QUICK_PROMPTS,
   MIRA_WELCOME,
 } from "../../lib/miraConfig";
+import {
+  MIRA_OFF_TOPIC_REPLY,
+  assessConversationOnTopic,
+  assessMiraUserMessage,
+} from "../../lib/miraGuardrails";
 import { fetchMiraStatus, sendMiraChat, type MiraMessage } from "../../lib/miraApi";
 import "./mira-widget.css";
 
@@ -58,6 +63,20 @@ export function MiraWidget() {
     async (text: string) => {
       const trimmed = text.trim();
       if (!trimmed || loading || !ready) return;
+
+      const priorOnTopic = assessConversationOnTopic(messages);
+      const gate = assessMiraUserMessage(trimmed, priorOnTopic);
+      if (!gate.allowed) {
+        setShowSuggestions(false);
+        setMessages((prev) => [
+          ...prev,
+          { role: "user", content: trimmed },
+          { role: "assistant", content: MIRA_OFF_TOPIC_REPLY },
+        ]);
+        setInput("");
+        return;
+      }
+
       setShowSuggestions(false);
       const nextMessages: MiraMessage[] = [...messages, { role: "user", content: trimmed }];
       setMessages(nextMessages);
@@ -168,7 +187,7 @@ export function MiraWidget() {
                   rows={3}
                   maxLength={12000}
                   disabled={!ready || loading}
-                  placeholder={ready ? "Ask MIRA about coverage concepts…" : "MIRA unavailable…"}
+                  placeholder={ready ? "Insurance, risk, or coverage questions only…" : "MIRA unavailable…"}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendText(input); } }}

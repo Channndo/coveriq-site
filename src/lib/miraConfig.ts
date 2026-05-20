@@ -1,8 +1,8 @@
 export const MIRA_WELCOME =
-  "Hi — I'm MIRA. I help explain insurance concepts in plain language — coverage types, deductibles, liability, and how quotes generally work. I do not provide binding coverage advice or recommend specific policies. How can I help you learn today?";
+  "Hi — I'm MIRA. I only discuss insurance, risk, and related financial protection topics in plain language — coverage types, deductibles, liability, claims, and how quotes generally work. I do not provide binding coverage advice or recommend specific policies. What would you like to learn?";
 
 export const MIRA_DISCLAIMER_AVAILABLE =
-  "AI-generated educational guidance only — not legal, financial, or coverage advice. Verify details with a licensed professional and your actual policy documents.";
+  "Insurance & risk topics only · AI educational guidance — not legal, financial, or binding coverage advice. Verify with a licensed professional and your policy documents.";
 
 export const MIRA_QUICK_PROMPTS = [
   {

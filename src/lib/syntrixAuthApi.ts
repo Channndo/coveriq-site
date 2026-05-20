@@ -1,14 +1,13 @@
 /**
  * Syntrix password auth API (consumer accounts).
- * Base URL: VITE_SYNTRIX_API_URL (default https://api.syntrix.solutions)
+ * Default: same-origin via Netlify proxy (/api/auth/* → api.syntrix.solutions).
+ * Set VITE_SYNTRIX_API_URL only for local dev against Syntrix directly if needed.
  */
-
-const DEFAULT_BASE = "https://api.syntrix.solutions";
 
 export function syntrixApiBase(): string {
   const env = import.meta.env.VITE_SYNTRIX_API_URL as string | undefined;
-  const base = (env?.trim() || DEFAULT_BASE).replace(/\/$/, "");
-  return base;
+  if (env !== undefined && env !== "") return env.replace(/\/$/, "");
+  return "";
 }
 
 export class SyntrixAuthError extends Error {
@@ -69,6 +68,18 @@ async function parseJson(res: Response): Promise<Record<string, unknown>> {
   }
 }
 
+async function syntrixFetch(path: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(`${syntrixApiBase()}${path}`, init);
+  } catch (e) {
+    throw new SyntrixAuthError(
+      "Could not reach the account service. Check your connection and try again.",
+      0,
+      "network"
+    );
+  }
+}
+
 function errorMessage(data: Record<string, unknown>, fallback: string): string {
   const detail = data.detail;
   if (typeof detail === "string") return detail;
@@ -82,7 +93,7 @@ function errorMessage(data: Record<string, unknown>, fallback: string): string {
 }
 
 export async function syntrixRegister(body: Record<string, unknown>): Promise<SyntrixAuthResult> {
-  const res = await fetch(`${syntrixApiBase()}/api/auth/password/register`, {
+  const res = await syntrixFetch("/api/auth/password/register", {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(body),
@@ -102,7 +113,7 @@ export async function syntrixRegister(body: Record<string, unknown>): Promise<Sy
 }
 
 export async function syntrixLogin(email: string, password: string): Promise<SyntrixAuthResult> {
-  const res = await fetch(`${syntrixApiBase()}/api/auth/password/login`, {
+  const res = await syntrixFetch("/api/auth/password/login", {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
@@ -153,7 +164,7 @@ export async function syntrixLoginSecurity(body: Record<string, unknown>): Promi
 }
 
 export async function syntrixMe(accessToken: string): Promise<SyntrixMeUser> {
-  const res = await fetch(`${syntrixApiBase()}/api/auth/me`, {
+  const res = await syntrixFetch("/api/auth/me", {
     method: "GET",
     headers: {
       Accept: "application/json",

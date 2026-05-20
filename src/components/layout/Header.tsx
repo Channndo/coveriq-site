@@ -61,7 +61,7 @@ export function Header() {
             )
           )}
           <Link
-            to="/login"
+            to={user ? "/account" : "/login"}
             className="ml-2 flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm text-slate-300 transition hover:border-cyan-500/40 hover:text-white"
           >
             {user ? (isAdmin ? "Admin" : "Account") : "Login"}
@@ -123,11 +123,11 @@ export function Header() {
                 )
               )}
               <Link
-                to="/login"
+                to={user ? "/account" : "/login"}
                 className="mt-2 rounded-lg border border-white/15 px-3 py-2.5 text-center text-slate-300 hover:bg-white/5"
                 onClick={() => setOpen(false)}
               >
-                Login
+                {user ? (isAdmin ? "Admin account" : "Account") : "Login"}
               </Link>
               <NavHashLink
                 hash="#quote"

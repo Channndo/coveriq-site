@@ -32,7 +32,7 @@ export function ConsumerOnboardingPage() {
     setSubmitting(true);
     await completeOnboarding(finalSelections);
     setSubmitting(false);
-    navigate(fromMira ? "/?openMira=1" : "/", { replace: true });
+    navigate("/account", { replace: true });
   };
 
   const next = () => {

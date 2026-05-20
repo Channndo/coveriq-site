@@ -21,6 +21,10 @@ export interface ConsumerUser {
   createdAt: string;
   role: AccountRole;
   onboardingComplete: boolean;
+  /** Preset avatar id from accountAvatars.ts */
+  avatarId?: string;
+  /** Optional data URL photo (device-local) */
+  avatarPhoto?: string;
 }
 
 export type ConsumerSignupInput = {

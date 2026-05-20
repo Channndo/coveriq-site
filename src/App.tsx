@@ -12,6 +12,7 @@ import { FactsPage } from "./pages/FactsPage";
 import { FactsQuizPage } from "./pages/FactsQuizPage";
 import { AgentPage } from "./pages/AgentPage";
 import { LoginPage } from "./pages/LoginPage";
+import { AccountPage } from "./pages/AccountPage";
 import { SignupPage } from "./pages/SignupPage";
 import { ConsumerOnboardingPage } from "./pages/ConsumerOnboardingPage";
 import { MiraWidget } from "./components/mira/MiraWidget";
@@ -40,7 +41,8 @@ export default function App() {
     isThankYou ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
-    location.pathname === "/onboarding";
+    location.pathname === "/onboarding" ||
+    location.pathname === "/account";
 
   return (
     <ConsumerAuthProvider>
@@ -55,6 +57,7 @@ export default function App() {
           <Route path="/facts/quiz" element={<FactsQuizPage />} />
           <Route path="/agent" element={<AgentPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/account" element={<AccountPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/onboarding" element={<ConsumerOnboardingPage />} />
         </Routes>

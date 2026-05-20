@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { AuthShell } from "../components/auth/AuthShell";
 import { useConsumerAuth, type SecurityLoginChallenge } from "../context/ConsumerAuthContext";
 import { readConsumerSession } from "../lib/consumerSession";
@@ -8,7 +8,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const fromMira = searchParams.get("from") === "mira";
-  const { user, isAdmin, signIn, completeSecurityLogin, signOut } = useConsumerAuth();
+  const { user, signIn, completeSecurityLogin } = useConsumerAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,14 +18,12 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const afterAuthPath = fromMira ? "/?openMira=1" : "/";
-
   const goAfterAuth = (session: { onboardingComplete: boolean }) => {
     if (!session.onboardingComplete) {
       navigate(fromMira ? "/onboarding?from=mira" : "/onboarding", { replace: true });
       return;
     }
-    navigate(afterAuthPath, { replace: true });
+    navigate(fromMira ? "/account?from=mira" : "/account", { replace: true });
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -37,7 +35,7 @@ export function LoginPage() {
     if (result.ok) {
       const session = readConsumerSession();
       if (session) goAfterAuth(session);
-      else navigate(afterAuthPath, { replace: true });
+      else navigate("/account", { replace: true });
       return;
     }
     if ("needsSecurity" in result && result.needsSecurity) {
@@ -66,45 +64,11 @@ export function LoginPage() {
     }
     const session = readConsumerSession();
     if (session) goAfterAuth(session);
-    else navigate(afterAuthPath, { replace: true });
+    else navigate("/account", { replace: true });
   };
 
   if (user) {
-    return (
-      <AuthShell
-        title={`Welcome back, ${user.firstName}`}
-        subtitle={
-          isAdmin
-            ? "Signed in as site admin. You have full access including MIRA."
-            : "You're signed in and can use MIRA on CoverIQ."
-        }
-      >
-        <div className="mt-6 space-y-3">
-          {!user.onboardingComplete ? (
-            <Link
-              to={fromMira ? "/onboarding?from=mira" : "/onboarding"}
-              className="btn-primary block w-full text-center"
-            >
-              Complete setup
-            </Link>
-          ) : (
-            <Link to="/?openMira=1" className="btn-primary block w-full text-center">
-              Open MIRA
-            </Link>
-          )}
-          <Link to="/" className="btn-secondary block w-full text-center">
-            Back to homepage
-          </Link>
-          <button
-            type="button"
-            className="w-full py-2 text-sm text-slate-500 hover:text-slate-300"
-            onClick={signOut}
-          >
-            Sign out
-          </button>
-        </div>
-      </AuthShell>
-    );
+    return <Navigate to="/account" replace />;
   }
 
   if (securityChallenge) {

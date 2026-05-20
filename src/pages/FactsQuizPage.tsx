@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import type { QuizQuestion } from "../lib/factsQuizTypes";
 import { QUIZ_SESSION_LENGTH } from "../lib/factsQuizTypes";
@@ -7,22 +7,47 @@ import { pickQuizSession, gradeSession } from "../lib/factsQuizUtils";
 import { Disclaimer } from "../components/ui/Disclaimer";
 import { GLOBAL_DISCLAIMER } from "../lib/constants";
 import { TechBackground } from "../components/ui/TechBackground";
+import { useConsumerAuth } from "../context/ConsumerAuthContext";
+import {
+  isAdvancedQuizUnlocked,
+  isPassingScore,
+  recordQuizAttempt,
+  type QuizSize,
+} from "../lib/educationProgress";
 
-type Phase = "intro" | "quiz" | "results";
+type Phase = "intro" | "quiz" | "results" | "locked";
+
+const ALLOWED_COUNTS: QuizSize[] = [10, 20, 50];
+
+function parseQuestionCount(raw: string | null): QuizSize {
+  const n = parseInt(raw || String(QUIZ_SESSION_LENGTH), 10);
+  return ALLOWED_COUNTS.includes(n as QuizSize) ? (n as QuizSize) : QUIZ_SESSION_LENGTH;
+}
 
 export function FactsQuizPage() {
-  const [phase, setPhase] = useState<Phase>("intro");
+  const [searchParams] = useSearchParams();
+  const { user } = useConsumerAuth();
+  const questionCount = parseQuestionCount(searchParams.get("count"));
+  const needsAccount = questionCount === 20 || questionCount === 50;
+  const advancedLocked = needsAccount && !isAdvancedQuizUnlocked(user);
+
+  const [phase, setPhase] = useState<Phase>(advancedLocked ? "locked" : "intro");
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [graded, setGraded] = useState<ReturnType<typeof gradeSession> | null>(null);
 
   useEffect(() => {
-    document.title = "Insurance Facts Quiz | CoverIQ";
+    document.title = `Insurance Facts Quiz (${questionCount}) | CoverIQ`;
     return () => {
       document.title = "CoverIQ | Insurance Explained Simply";
     };
-  }, []);
+  }, [questionCount]);
+
+  useEffect(() => {
+    if (advancedLocked) setPhase("locked");
+    else if (phase === "locked") setPhase("intro");
+  }, [advancedLocked, phase]);
 
   const current = questions[index];
   const answeredCount = useMemo(
@@ -32,12 +57,12 @@ export function FactsQuizPage() {
   const allAnswered = questions.length > 0 && answeredCount === questions.length;
 
   const startQuiz = useCallback(() => {
-    setQuestions(pickQuizSession(QUIZ_SESSION_LENGTH));
+    setQuestions(pickQuizSession(questionCount));
     setIndex(0);
     setAnswers({});
     setGraded(null);
     setPhase("quiz");
-  }, []);
+  }, [questionCount]);
 
   const selectAnswer = (optionIndex: number) => {
     if (!current) return;
@@ -48,6 +73,9 @@ export function FactsQuizPage() {
     const result = gradeSession(questions, answers);
     setGraded(result);
     setPhase("results");
+    if (user?.email && isPassingScore(result.score, result.total)) {
+      recordQuizAttempt(user.email, questionCount, result.score, result.total);
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -84,13 +112,47 @@ export function FactsQuizPage() {
             Insurance knowledge quiz
           </h1>
           <p className="textbook-prose-muted mt-4">
-            A {QUIZ_SESSION_LENGTH}-question exam — one question per textbook chapter — drawn from a
-            vetted question bank covering principles, history, regulation, and major lines of coverage.
+            {questionCount === 10
+              ? "A 10-question exam — one question per textbook chapter — from the CoverIQ Facts bank."
+              : questionCount === 20
+                ? "A 20-question comprehensive review for signed-in learners who completed the full Facts path once."
+                : "A 50-question mastery exam for signed-in learners who completed the full Facts path once."}{" "}
             General U.S. concepts, not state exam prep.
           </p>
         </header>
 
         <AnimatePresence mode="wait">
+          {phase === "locked" && (
+            <motion.div
+              key="locked"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mt-10 space-y-4 rounded-xl border border-amber-500/25 bg-amber-500/5 p-6"
+            >
+              {!user ? (
+                <>
+                  <p className="text-sm text-slate-300">
+                    Sign in to access the {questionCount}-question quiz.
+                  </p>
+                  <Link to="/login" className="inline-block text-sm font-semibold text-cyan-300 hover:text-cyan-200">
+                    Sign in →
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-slate-300">
+                    Complete account setup, pass all 10 chapter quick checks, and pass the 10-question
+                    exam once to unlock this quiz.
+                  </p>
+                  <Link to="/account" className="inline-block text-sm font-semibold text-cyan-300 hover:text-cyan-200">
+                    View your progress →
+                  </Link>
+                </>
+              )}
+            </motion.div>
+          )}
+
           {phase === "intro" && (
             <motion.div
               key="intro"
@@ -101,9 +163,9 @@ export function FactsQuizPage() {
             >
               <div className="textbook-callout text-sm leading-relaxed text-slate-400">
                 <ul className="list-disc space-y-2 pl-5">
-                  <li>Each exam includes one question per chapter ({QUIZ_SESSION_LENGTH} total).</li>
+                  <li>{questionCount} questions drawn from the vetted bank.</li>
                   <li>Answer every question, then review your score and explanations.</li>
-                  <li>Retake anytime for a new mix — great after reading the Facts chapters.</li>
+                  <li>Passing score is 70% or higher (saved to your account on this device).</li>
                 </ul>
               </div>
               <button

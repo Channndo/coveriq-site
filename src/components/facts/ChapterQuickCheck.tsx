@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { QuizQuestion } from "../../lib/factsQuizTypes";
 import { CHAPTER_QUICK_CHECK_LENGTH } from "../../lib/factsQuizTypes";
 import { gradeSession, pickChapterQuickCheck } from "../../lib/factsQuizUtils";
+import { markChapterQuickCheckPassed } from "../../lib/educationProgress";
+import { readConsumerSession } from "../../lib/consumerSession";
 
 type Phase = "idle" | "quiz" | "results";
 
@@ -33,8 +35,13 @@ export function ChapterQuickCheck({ chapterNumber, chapterTitle }: ChapterQuickC
   }, [chapterNumber]);
 
   const submit = () => {
-    setGraded(gradeSession(questions, answers));
+    const result = gradeSession(questions, answers);
+    setGraded(result);
     setPhase("results");
+    const session = readConsumerSession();
+    if (session?.email && result.score === result.total) {
+      markChapterQuickCheckPassed(session.email, chapterNumber);
+    }
   };
 
   const retry = () => {

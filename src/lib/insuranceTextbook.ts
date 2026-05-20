@@ -26,7 +26,7 @@ export const TEXTBOOK_INTRO = {
   paragraphs: [
     "Insurance is not a single product or company — it is a system societies built to survive unpredictable loss. When thousands of households and businesses each pay a relatively small amount into a pool, the pool can pay the few who suffer large losses. That idea has shaped commerce, homeownership, driving, healthcare, and employment for centuries.",
     "This guide explains where insurance came from, why it became essential to modern life, how the United States regulates it, which laws and acts apply, and what rules insurers must follow. It is written for learners — consumers, students, and future producers — not as legal advice. Every state has its own statutes; federal law intersects mainly in health, benefits, flood, terrorism, and privacy.",
-    "Use the table of contents to jump between ten chapters. Read straight through for the full narrative, or return to specific sections when you study for licensing exams or counsel clients.",
+    "Use the table of contents to jump between ten chapters. Read straight through for the full narrative, or return to specific sections when you want a refresher before talking with an agent or using MIRA. This is general education — not state licensing exam preparation.",
   ],
 };
 
@@ -64,7 +64,7 @@ export const INSURANCE_TEXTBOOK: TextbookChapter[] = [
         id: "principles",
         title: "1.3 Core principles insurers use",
         paragraphs: [
-          "Insurers rely on several foundational concepts taught in every licensing course: indemnity (restoring financial position, not profiting from loss), insurable interest (you must suffer financial harm), utmost good faith (honest applications), subrogation (insurer may recover from responsible third parties), and contribution (multiple policies share a loss).",
+          "Insurers rely on several foundational concepts you will see in introductory insurance education and producer training: indemnity (restoring financial position, not profiting from loss), insurable interest (you must suffer financial harm), utmost good faith (honest applications), subrogation (insurer may recover from responsible third parties), and contribution (multiple policies share a loss).",
           "Actuarial science uses mortality, morbidity, and loss data to estimate how much premium must be collected to pay future claims and expenses. Underwriting selects and prices risk; claims adjusts losses; reinsurance spreads catastrophic exposure globally.",
         ],
       },

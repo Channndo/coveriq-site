@@ -1,6 +1,6 @@
 const USER_ACCOUNTS_WEB_APP_URL =
   process.env.USER_ACCOUNTS_WEB_APP_URL ||
-  "https://script.google.com/macros/s/AKfycbxxfasEMttNXmhcrzFJGZ8V82Jh2SYfwxS-LFPBNNqr8AGSBehPC68rt2Ja4WcfyLLZ/exec";
+  "https://script.google.com/macros/s/AKfycbzr7vs2ocU-qN0ak8GensegM_CHoS9LludHePMaNVPG-5P3q46eqhC2TBPwsJasOzir/exec";
 
 export const handler = async (event: {
   httpMethod: string;

@@ -5,7 +5,6 @@ import type { QuizQuestion } from "../lib/factsQuizTypes";
 import { QUIZ_SESSION_LENGTH } from "../lib/factsQuizTypes";
 import { pickQuizSession, gradeSession } from "../lib/factsQuizUtils";
 import { QuizAnswerFieldset } from "../components/facts/QuizAnswerFieldset";
-import { Disclaimer } from "../components/ui/Disclaimer";
 import { GLOBAL_DISCLAIMER } from "../lib/constants";
 import { TechBackground } from "../components/ui/TechBackground";
 import { useConsumerAuth } from "../context/ConsumerAuthContext";
@@ -386,8 +385,7 @@ export function FactsQuizPage() {
           )}
         </AnimatePresence>
 
-        <Disclaimer className="mt-14" />
-        <p className="mt-4 text-xs leading-relaxed text-slate-600">
+        <p className="prose-disclaimer mt-14 text-slate-600">
           {GLOBAL_DISCLAIMER} This quiz is for general education only and is not preparation for any
           licensing or state examination.
         </p>

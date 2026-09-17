@@ -83,6 +83,8 @@ export function SignupPage() {
         <motion.div className="grid grid-cols-2 gap-3">
           <input
             type="text"
+            name="firstName"
+            autoComplete="given-name"
             required
             className="input-tech"
             placeholder="First name"
@@ -91,6 +93,8 @@ export function SignupPage() {
           />
           <input
             type="text"
+            name="lastName"
+            autoComplete="family-name"
             required
             className="input-tech"
             placeholder="Last name"
@@ -100,6 +104,8 @@ export function SignupPage() {
         </motion.div>
         <input
           type="email"
+          name="email"
+          autoComplete="email"
           required
           className="input-tech w-full"
           placeholder="Email"
@@ -129,6 +135,8 @@ export function SignupPage() {
         />
         <input
           type="tel"
+          name="phone"
+          autoComplete="tel"
           required
           className="input-tech w-full"
           placeholder="Phone"
@@ -137,6 +145,8 @@ export function SignupPage() {
         />
         <input
           type="text"
+          name="street"
+          autoComplete="street-address"
           required
           className="input-tech w-full"
           placeholder="Street address"
@@ -214,6 +224,7 @@ export function SignupPage() {
         <input
           type="text"
           required
+          autoComplete="off"
           className="input-tech w-full"
           placeholder="Answer"
           value={securityAnswer1}
@@ -233,6 +244,7 @@ export function SignupPage() {
         <input
           type="text"
           required
+          autoComplete="off"
           className="input-tech w-full"
           placeholder="Answer"
           value={securityAnswer2}

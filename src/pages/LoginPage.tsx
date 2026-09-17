@@ -128,6 +128,7 @@ export function LoginPage() {
       <form onSubmit={handleSubmit} className="mt-6 space-y-3">
         <input
           type="email"
+          name="email"
           required
           autoComplete="email"
           className="input-tech w-full"
@@ -137,6 +138,7 @@ export function LoginPage() {
         />
         <input
           type="password"
+          name="password"
           required
           autoComplete="current-password"
           minLength={8}
@@ -145,6 +147,21 @@ export function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
+        <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+          <Link
+            to={fromMira ? "/forgot-password?from=mira" : "/forgot-password"}
+            className="text-cyan-400 hover:text-cyan-300"
+          >
+            Forgot password?
+          </Link>
+          <Link
+            to={fromMira ? "/forgot-email?from=mira" : "/forgot-email"}
+            className="text-slate-500 hover:text-slate-300"
+          >
+            Forgot email?
+          </Link>
+        </div>
 
         {error && (
           <p className="text-sm text-rose-400">

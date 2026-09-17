@@ -75,6 +75,7 @@ export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps
             <input
               type="text"
               name="firstName"
+              autoComplete="given-name"
               required
               className={inputClass}
               placeholder="First name"
@@ -84,6 +85,7 @@ export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps
             <input
               type="text"
               name="lastName"
+              autoComplete="family-name"
               required
               className={inputClass}
               placeholder="Last name"
@@ -94,6 +96,7 @@ export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps
           <input
             type="email"
             name="email"
+            autoComplete="email"
             required
             className={inputClass}
             placeholder="Email address"
@@ -103,6 +106,7 @@ export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps
           <input
             type="tel"
             name="phone"
+            autoComplete="tel"
             required
             className={inputClass}
             placeholder="Phone number"
@@ -112,6 +116,7 @@ export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps
           <input
             type="text"
             name="address"
+            autoComplete="street-address"
             required
             className={inputClass}
             placeholder="Street address"
@@ -121,6 +126,7 @@ export function QuoteEngine({ initialInsuranceType = "", tip }: QuoteEngineProps
           <input
             type="text"
             name="zipCode"
+            autoComplete="postal-code"
             required
             pattern="[0-9]{5}"
             className={inputClass}

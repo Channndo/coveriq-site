@@ -18,6 +18,27 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173)
 
+If `npm run dev` fails with `uv_interface_addresses` / `networkInterfaces`, use `npm run dev` (not `dev:lan`). The default binds to localhost only; `npm run dev:lan` exposes the dev server on your network when that works on your machine.
+
+### omni.games arcade cabinet (local)
+
+The retro cabinet launcher lives in `omni.games/created games/CoverIQ Arcade` (port **5175**).
+
+From your Mac terminal (use the full path — `coveriq-site` is not in your home folder):
+
+```bash
+cd "/Users/chandlerhill/Omnistrata/other ventures/CoverIQ/coveriq-site"
+npm install
+npm run dev:all
+```
+
+- CoverIQ: [http://localhost:5173](http://localhost:5173)
+- Arcade cabinet: [http://localhost:5173/arcade](http://localhost:5173/arcade) (embeds the hub) or directly [http://localhost:5175](http://localhost:5175)
+
+If port 5173 is busy, stop the other process (`lsof -i :5173`) or run `npm run dev` only after closing old Vite windows.
+
+Or run separately in two terminals: `npm run dev` and `npm run dev:arcade`.
+
 ## Preview (staging build)
 
 ```bash

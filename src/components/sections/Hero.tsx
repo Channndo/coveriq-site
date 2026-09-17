@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { TechBackground } from "../ui/TechBackground";
 
 const TRUST_ITEMS = [
@@ -15,7 +16,7 @@ const COVERAGE_TOPICS = [
 
 export function Hero() {
   return (
-    <section className="relative min-h-[92vh] overflow-hidden bg-[#030712] text-white">
+    <section className="relative min-h-[78vh] overflow-hidden bg-[#030712] text-white">
       <TechBackground />
       <motion.div
         className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"
@@ -70,12 +71,12 @@ export function Hero() {
               transition={{ delay: 0.45 }}
               className="mt-10 flex flex-wrap gap-3"
             >
-              <a href="#quote" className="btn-primary">
+              <Link to="/quote" className="btn-primary">
                 Get My Quote
                 <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
-              </a>
+              </Link>
               <a href="#coverage" className="btn-secondary">
                 Explore Coverage
               </a>

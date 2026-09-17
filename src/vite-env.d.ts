@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_SYNTRIX_API_URL?: string;
   readonly VITE_USER_ACCOUNTS_WEB_APP_URL?: string;
   readonly VITE_AGENT_ACCOUNTS_WEB_APP_URL?: string;
+  readonly VITE_ARCADE_URL?: string;
 }
 
 interface ImportMeta {

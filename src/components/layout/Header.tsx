@@ -9,10 +9,20 @@ const NAV = [
   { label: "Coverage", href: "#coverage" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "AI", href: "#ai-guidance" },
+  { label: "Quote", href: "/quote" },
   { label: "Exchange", href: "/agent" },
   { label: "Facts", href: "/facts" },
   { label: "FAQ", href: "#faq" },
   { label: "Glossary", href: "/glossary" },
+];
+
+/** Compact bar links — full list stays in the hamburger menu */
+const DESKTOP_NAV = [
+  { label: "Coverage", href: "#coverage" },
+  { label: "Quote", href: "/quote" },
+  { label: "Facts", href: "/facts" },
+  { label: "Exchange", href: "/agent" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 export function Header() {
@@ -51,35 +61,38 @@ export function Header() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link to="/" className="group flex items-center gap-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
+        <Link to="/" className="group flex shrink-0 items-center gap-3">
           <LogoMark className="transition group-hover:opacity-90" />
           <span className="font-display text-lg font-bold text-white">CoverIQ</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
-          {NAV.map((item) =>
-            item.href.startsWith("/") ? (
-              <Link
-                key={item.href}
-                to={item.href}
-                className="rounded-lg px-3 py-2 text-sm text-slate-400 transition hover:bg-white/5 hover:text-cyan-300"
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <NavHashLink
-                key={item.href}
-                hash={item.href}
-                className="rounded-lg px-3 py-2 text-sm text-slate-400 transition hover:bg-white/5 hover:text-cyan-300"
-              >
-                {item.label}
-              </NavHashLink>
-            )
-          )}
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-1 sm:gap-2">
+          <nav className="hidden items-center gap-0.5 xl:flex">
+            {DESKTOP_NAV.map((item) =>
+              item.href.startsWith("/") ? (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className="rounded-lg px-2.5 py-2 text-sm text-slate-400 transition hover:bg-white/5 hover:text-cyan-300"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <NavHashLink
+                  key={item.href}
+                  hash={item.href}
+                  className="rounded-lg px-2.5 py-2 text-sm text-slate-400 transition hover:bg-white/5 hover:text-cyan-300"
+                >
+                  {item.label}
+                </NavHashLink>
+              )
+            )}
+          </nav>
+
           <Link
             to={user ? "/account" : "/login"}
-            className="ml-2 flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm text-slate-300 transition hover:border-cyan-500/40 hover:text-white"
+            className="hidden items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-slate-300 transition hover:border-cyan-500/40 hover:text-white sm:inline-flex"
           >
             {user ? (isAdmin ? "Admin" : "Account") : "Login"}
             {isAdmin && (
@@ -88,25 +101,31 @@ export function Header() {
               </span>
             )}
           </Link>
-          <NavHashLink hash="#quote" className="btn-primary ml-2 !py-2.5 !px-5 text-sm">
-            Get Quote
-          </NavHashLink>
-        </nav>
 
-        <button
-          type="button"
-          className="rounded-lg border border-white/10 p-2 text-slate-300 lg:hidden"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {open ? (
-              <path strokeLinecap="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
+          <Link
+            to="/quote"
+            className="btn-primary hidden !px-4 !py-2 text-sm sm:inline-flex"
+          >
+            Get Quote
+          </Link>
+
+          {/* Always visible — was lg:hidden, so fullscreen desktop had no menu control */}
+          <button
+            type="button"
+            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-white/10 p-2 text-slate-300 transition hover:border-cyan-500/30 hover:text-cyan-300"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+            aria-expanded={open}
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {open ? (
+                <path strokeLinecap="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -115,9 +134,9 @@ export function Header() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-white/5 bg-[#030712]/95 backdrop-blur-2xl lg:hidden"
+            className="overflow-hidden border-t border-white/5 bg-[#030712]/95 backdrop-blur-2xl"
           >
-            <div className="flex flex-col gap-1 px-4 py-4">
+            <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6 lg:px-8">
               {NAV.map((item) =>
                 item.href.startsWith("/") ? (
                   <Link
@@ -141,18 +160,18 @@ export function Header() {
               )}
               <Link
                 to={user ? "/account" : "/login"}
-                className="mt-2 rounded-lg border border-white/15 px-3 py-2.5 text-center text-slate-300 hover:bg-white/5"
+                className="mt-2 rounded-lg border border-white/15 px-3 py-2.5 text-center text-slate-300 hover:bg-white/5 sm:hidden"
                 onClick={() => setOpen(false)}
               >
                 {user ? (isAdmin ? "Admin account" : "Account") : "Login"}
               </Link>
-              <NavHashLink
-                hash="#quote"
-                className="btn-primary mt-2 text-center"
-                onNavigate={() => setOpen(false)}
+              <Link
+                to="/quote"
+                className="btn-primary mt-2 text-center sm:hidden"
+                onClick={() => setOpen(false)}
               >
                 Get Quote
-              </NavHashLink>
+              </Link>
             </div>
           </motion.nav>
         )}

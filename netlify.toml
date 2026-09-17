@@ -115,6 +115,13 @@
   status = 200
   force = true
 
+# Consumer forgot-password → Apps Script (user + admin email)
+[[redirects]]
+  from = "/api/password-reset-request"
+  to = "/.netlify/functions/password-reset-request"
+  status = 200
+  force = true
+
 # Facts education progress (Syntrix auth + Apps Script storage)
 [[redirects]]
   from = "/api/education-progress"

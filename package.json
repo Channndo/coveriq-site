@@ -4,9 +4,12 @@
   "version": "2.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
+    "dev:lan": "vite --host",
+    "dev:arcade": "npm run dev --prefix \"../../../omni.games/created games/CoverIQ Arcade\"",
+    "dev:all": "concurrently -n site,arcade -c cyan,magenta \"npm run dev\" \"npm run dev:arcade\"",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "preview": "vite preview --port 4173",
     "start": "npm run build && npm run preview",
     "lint": "eslint ."
   },
@@ -22,6 +25,7 @@
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react": "^4.5.0",
+    "concurrently": "^9.2.1",
     "eslint": "^9.28.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",

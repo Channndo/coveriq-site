@@ -85,6 +85,12 @@ function doPost(e) {
       if (raw.action === 'educationProgressGet' || raw.action === 'educationProgressSave') {
         return jsonResponse_(handleEducationProgress_(raw));
       }
+      if (raw.action === 'forgedProgressGet' || raw.action === 'forgedProgressSave') {
+        return jsonResponse_(handleForgedProgress_(raw));
+      }
+      if (raw.action === 'passwordResetRequest') {
+        return jsonResponse_(handlePasswordResetRequest_(raw));
+      }
     }
     const payload = parsePayload_(e);
     validatePayload_(payload);
@@ -559,10 +565,136 @@ function isValidEmail_(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+/**
+ * Consumer forgot-password — emails the user (if on sheet) + admin copy.
+ * Passwords live in Syntrix; this logs the request and sends help instructions.
+ */
+function handlePasswordResetRequest_(raw) {
+  var email = trim_(raw.email, CONFIG.MAX_LEN.email).toLowerCase();
+  if (!email || !isValidEmail_(email)) {
+    throw new Error('Valid email is required.');
+  }
+  checkRateLimit_(email);
+
+  var match = findAccountByEmail_(email);
+  var userSent = false;
+  var userError = '';
+
+  if (match) {
+    var userResult = sendPasswordResetToUser_(email, match);
+    userSent = userResult.emailSent;
+    userError = userResult.emailError || '';
+  }
+
+  var adminResult = sendPasswordResetAdminNotice_(email, match, userSent, userError);
+
+  return {
+    ok: true,
+    message:
+      'If an account exists for this email, you will receive reset instructions shortly. Check spam and promotions folders.',
+    userEmailSent: userSent,
+    adminEmailSent: adminResult.emailSent
+  };
+}
+
+/** Column 6 = Email in User Accounts sheet */
+function findAccountByEmail_(email) {
+  var sheet = getSheet_();
+  var data = sheet.getDataRange().getValues();
+  if (data.length < 2) return null;
+
+  for (var r = 1; r < data.length; r++) {
+    var rowEmail = String(data[r][5] || '').trim().toLowerCase();
+    if (rowEmail === email) {
+      return {
+        accountId: String(data[r][0] || ''),
+        firstName: String(data[r][3] || ''),
+        lastName: String(data[r][4] || ''),
+        email: rowEmail
+      };
+    }
+  }
+  return null;
+}
+
+function sendPasswordResetToUser_(email, match) {
+  var loginUrl = (CONFIG.WEBSITE_URL || 'https://cover-iq.com') + '/login';
+  var subject = 'CoverIQ password reset request';
+  var body = [
+    'Hi ' + (match.firstName || 'there') + ',',
+    '',
+    'We received a request to reset the password for your CoverIQ account (' + email + ').',
+    '',
+    'Your sign-in username is your email address. If you only forgot your email, use that same address at:',
+    '  ' + loginUrl,
+    '',
+    'To complete a password reset, reply to this message or email support@cover-iq.com from this address.',
+    'Our team will verify your account and send a secure reset link.',
+    '',
+    'If you did not request this, you can ignore this email. Your password will not change until you confirm with us.',
+    '',
+    '— CoverIQ',
+    CONFIG.WEBSITE_URL || 'https://cover-iq.com'
+  ].join('\n');
+
+  try {
+    GmailApp.sendEmail(email, subject, body, { name: 'CoverIQ Accounts' });
+    return { emailSent: true, emailError: '' };
+  } catch (gmailErr) {
+    try {
+      MailApp.sendEmail(email, subject, body);
+      return { emailSent: true, emailError: '' };
+    } catch (mailErr) {
+      return {
+        emailSent: false,
+        emailError: (mailErr && mailErr.message) || (gmailErr && gmailErr.message) || 'Send failed'
+      };
+    }
+  }
+}
+
+function sendPasswordResetAdminNotice_(email, match, userSent, userError) {
+  var recipients = getNotificationRecipients_();
+  if (!recipients.length) {
+    return { emailSent: false, emailError: 'No EMAIL_RECIPIENTS' };
+  }
+
+  var subject = 'Password reset requested — ' + email;
+  var body = [
+    'Password reset request from ' + (CONFIG.WEBSITE_URL || 'cover-iq.com'),
+    '',
+    'Email: ' + email,
+    'Found in User Accounts sheet: ' + (match ? 'yes (' + match.accountId + ')' : 'no'),
+    'User notification sent: ' + (userSent ? 'yes' : 'no'),
+    userError ? 'User send error: ' + userError : '',
+    '',
+    'Process reset in Syntrix admin for this email, then reply to the user.',
+    '',
+    '— CoverIQ user accounts'
+  ].filter(Boolean).join('\n');
+
+  var errors = [];
+  for (var i = 0; i < recipients.length; i++) {
+    try {
+      GmailApp.sendEmail(recipients[i], subject, body, { name: 'CoverIQ Signups' });
+    } catch (e1) {
+      try {
+        MailApp.sendEmail(recipients[i], subject, body);
+      } catch (e2) {
+        errors.push(recipients[i] + ': ' + ((e2 && e2.message) || (e1 && e1.message)));
+      }
+    }
+  }
+  return { emailSent: errors.length === 0, emailError: errors.join(' | ') };
+}
+
 /** Education progress — synced from Netlify (Syntrix-authenticated users). */
 var PROGRESS_SHEET_NAME = 'Education Progress';
 var PROGRESS_HEADERS = ['Email', 'Progress JSON', 'Updated At'];
 var PROGRESS_SECRET_PROP = 'EDUCATION_PROGRESS_SECRET';
+
+/** ForgEd learning progress — same secret, separate sheet (Vercel /api/forged-progress). */
+var FORGED_PROGRESS_SHEET_NAME = 'ForgEd Progress';
 
 function getProgressSecret_() {
   return (
@@ -603,6 +735,93 @@ function handleEducationProgress_(data) {
   }
 
   throw new Error('Unknown education progress action.');
+}
+
+function handleForgedProgress_(data) {
+  var secret = String(data.serverSecret || '');
+  var expected = getProgressSecret_();
+  if (!expected || secret !== expected) {
+    throw new Error('Unauthorized.');
+  }
+
+  var email = String(data.email || '')
+    .trim()
+    .toLowerCase();
+  if (!email || !isValidEmail_(email)) {
+    throw new Error('Valid email is required.');
+  }
+
+  if (data.action === 'forgedProgressGet') {
+    return {
+      ok: true,
+      progress: getForgedProgressForEmail_(email)
+    };
+  }
+
+  if (data.action === 'forgedProgressSave') {
+    var json = String(data.progressJson || '');
+    if (json.length > 50000) {
+      throw new Error('Progress payload too large.');
+    }
+    saveForgedProgressForEmail_(email, json);
+    return { ok: true };
+  }
+
+  throw new Error('Unknown ForgEd progress action.');
+}
+
+function getForgedProgressSheet_() {
+  var ss = getSpreadsheet_();
+  var sheet = ss.getSheetByName(FORGED_PROGRESS_SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(FORGED_PROGRESS_SHEET_NAME);
+    sheet.getRange(1, 1, 1, PROGRESS_HEADERS.length).setValues([PROGRESS_HEADERS]);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function getForgedProgressForEmail_(email) {
+  var sheet = getForgedProgressSheet_();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return null;
+
+  var emails = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+  for (var i = 0; i < emails.length; i++) {
+    if (String(emails[i][0] || '').toLowerCase() === email) {
+      var json = sheet.getRange(i + 2, 2).getValue();
+      if (!json) return null;
+      try {
+        return JSON.parse(String(json));
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+  return null;
+}
+
+function saveForgedProgressForEmail_(email, progressJson) {
+  var sheet = getForgedProgressSheet_();
+  var lastRow = sheet.getLastRow();
+  var rowIndex = -1;
+
+  if (lastRow >= 2) {
+    var emails = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (var i = 0; i < emails.length; i++) {
+      if (String(emails[i][0] || '').toLowerCase() === email) {
+        rowIndex = i + 2;
+        break;
+      }
+    }
+  }
+
+  var now = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd'T'HH:mm:ss");
+  if (rowIndex > 0) {
+    sheet.getRange(rowIndex, 2, 1, 2).setValues([[progressJson, now]]);
+  } else {
+    sheet.appendRow([email, progressJson, now]);
+  }
 }
 
 function getProgressSheet_() {

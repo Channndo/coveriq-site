@@ -1,3 +1,10 @@
+/**
+ * COVERIQ ONLY — MIRA UI copy and quick prompts are locked to insurance & risk education.
+ *
+ * DO NOT copy ForgEd src/services/ai/kodaPrompt.ts here (ForgEd KODA is cross-domain on forgedlearn.com).
+ * Server-side /api/mira uses syntrix mira_prompt.py + mira_topic_guard (cybersecurity/IT lock) — do not
+ * broaden those when editing this file.
+ */
 export const MIRA_WELCOME =
   "Hi — I'm MIRA. I only discuss insurance, risk, and related financial protection topics in plain language — coverage types, deductibles, liability, claims, and how quotes generally work. I do not provide binding coverage advice or recommend specific policies. What would you like to learn?";
 

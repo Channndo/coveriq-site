@@ -1,39 +1,30 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Hero } from "../components/sections/Hero";
 import { CoverageHub } from "../components/sections/CoverageHub";
-import { LineSelector } from "../components/sections/LineSelector";
 import { HowInsuranceWorks } from "../components/sections/HowInsuranceWorks";
 import { AiGuidance } from "../components/sections/AiGuidance";
-import { AgentPlatform } from "../components/sections/AgentPlatform";
-import { TrustSection } from "../components/sections/TrustSection";
 import { FAQ } from "../components/sections/FAQ";
-import { QuoteSection } from "../components/sections/QuoteSection";
-import { BlogResources } from "../components/sections/BlogResources";
 import { FaqSchema } from "../components/seo/FaqSchema";
 
 export function HomePage() {
-  const [selectedType, setSelectedType] = useState("");
+  const navigate = useNavigate();
 
-  const handleGetQuote = useCallback((formValue: string) => {
-    setSelectedType(formValue);
-    setTimeout(() => {
-      document.getElementById("quote")?.scrollIntoView({ behavior: "smooth" });
-    }, 50);
-  }, []);
+  const handleGetQuote = useCallback(
+    (formValue: string) => {
+      navigate(`/quote?type=${encodeURIComponent(formValue)}`);
+    },
+    [navigate]
+  );
 
   return (
     <>
       <FaqSchema />
       <Hero />
       <CoverageHub onGetQuote={handleGetQuote} />
-      <LineSelector onSelect={handleGetQuote} />
       <HowInsuranceWorks />
       <AiGuidance />
-      <AgentPlatform />
-      <TrustSection />
       <FAQ />
-      <QuoteSection selectedType={selectedType} />
-      <BlogResources />
     </>
   );
 }

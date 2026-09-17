@@ -17,7 +17,7 @@ export const SUPPORT_PHONE_HREF = "tel:5743090107";
 export const SUPPORT_EMAIL = "chandler@cover-iq.com";
 
 /** Social */
-export const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61584270693578";
+export const FACEBOOK_URL = "https://www.facebook.com/coveriqfb";
 export const INSTAGRAM_URL = "https://www.instagram.com/coveriqinsta";
 
 /** Sole site admin (see src/lib/admin.ts). */

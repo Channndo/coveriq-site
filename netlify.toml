@@ -4,6 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  VITE_ARCADE_URL = "https://channndo.github.io/CoverIQ-Arcade/"
 
 [functions]
   directory = "netlify/functions"

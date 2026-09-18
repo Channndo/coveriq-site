@@ -6,11 +6,10 @@ import { NavHashLink } from "./NavHashLink";
 import { LogoMark } from "../ui/LogoMark";
 
 const NAV = [
-  { label: "Coverage", href: "#coverage" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "AI", href: "#ai-guidance" },
+  { label: "How It Works", href: "#coverage" },
   { label: "Quote", href: "/quote" },
   { label: "Exchange", href: "/agent" },
+  { label: "Arcade", href: "/arcade" },
   { label: "Facts", href: "/facts" },
   { label: "FAQ", href: "#faq" },
   { label: "Glossary", href: "/glossary" },
@@ -18,8 +17,9 @@ const NAV = [
 
 /** Compact bar links — full list stays in the hamburger menu */
 const DESKTOP_NAV = [
-  { label: "Coverage", href: "#coverage" },
+  { label: "How It Works", href: "#coverage" },
   { label: "Quote", href: "/quote" },
+  { label: "Arcade", href: "/arcade" },
   { label: "Facts", href: "/facts" },
   { label: "Exchange", href: "/agent" },
   { label: "FAQ", href: "#faq" },

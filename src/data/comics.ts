@@ -65,11 +65,11 @@ export const COMICS: Comic[] = [
   {
     id: "captain-coveriq-01",
     slug: "captain-coveriq-issue-1",
-    title: "Captain CoverIQ",
-    issue: "Issue #1",
+    title: "The Greed Syndicate",
+    issue: "CoverIQ Chronicles · Vol. I",
     description:
-      "The origin of Captain CoverIQ — a hero who turns confusing insurance fine print into clear, confident decisions. Issue #1 is in production; the cover is here and interior pages are on the way.",
-    coverImage: `${CAPTAIN_COVERIQ_DIR}/cover.svg`,
+      "Behind every problem there is a plan, and behind every plan there is greed. As the Greed Syndicate — Identity Thief, Fine Print Bandit, Deductible Doom, Marshal Delay, and the Claim Crushers — moves to break your claim, Captain CoverIQ and his team fight for a safer, smarter, stronger tomorrow. Volume I; interior pages are on the way.",
+    coverImage: `${CAPTAIN_COVERIQ_DIR}/cover.jpg`,
     pages: [
       // ↓↓↓ Add interior pages here, one line each, in reading order. ↓↓↓
       // `${CAPTAIN_COVERIQ_DIR}/page-01.png`,

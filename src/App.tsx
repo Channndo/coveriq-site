@@ -20,6 +20,7 @@ import { AccountPage } from "./pages/AccountPage";
 import { SignupPage } from "./pages/SignupPage";
 import { ConsumerOnboardingPage } from "./pages/ConsumerOnboardingPage";
 import { ArcadePage } from "./pages/ArcadePage";
+import { ComicsPage } from "./pages/ComicsPage";
 import { MiraWidget } from "./components/mira/MiraWidget";
 import { SyntrixGuard } from "./components/layout/SyntrixGuard";
 
@@ -81,6 +82,7 @@ export default function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/onboarding" element={<ConsumerOnboardingPage />} />
           <Route path="/arcade/*" element={<ArcadePage />} />
+          <Route path="/comics" element={<ComicsPage />} />
         </Routes>
       </main>
       {!hideChrome && (

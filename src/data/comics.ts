@@ -56,6 +56,12 @@ export interface Comic {
    * `coverImage`). Add one line per page. Leave empty until pages exist.
    */
   pages: string[];
+  /**
+   * When `true`, the issue is shown in the library (cover + "Coming Soon" lock)
+   * but CANNOT be opened/read. Flip to `false` (or remove) once the full story
+   * is posted to unlock the reader.
+   */
+  locked?: boolean;
 }
 
 /** Base folder for the Captain CoverIQ issue art. */
@@ -76,6 +82,8 @@ export const COMICS: Comic[] = [
       // `${CAPTAIN_COVERIQ_DIR}/page-02.png`,
       // ...up to ~28
     ],
+    // Locked until the full story is posted — set to false to unlock the reader.
+    locked: true,
   },
 ];
 
